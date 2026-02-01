@@ -157,24 +157,6 @@ const Navbar = () => {
               <NotificationCenter />
               <ThemeToggle />
               <LanguageSwitcher />
-
-
-
-              {/* Account / Dashboard Button */}
-              {user ? (
-                <Link to={isAdmin ? "/admin" : "/profile"}>
-                  <Button variant="ghost" size="icon" className="group relative rounded-full hover:bg-primary/10">
-                    <User className="h-5 w-5 text-foreground group-hover:text-primary transition-colors" />
-                    <span className="sr-only">{isAdmin ? "Admin" : "Profile"}</span>
-                  </Button>
-                </Link>
-              ) : (
-                <Link to="/auth">
-                  <Button variant="ghost" size="icon" className="group rounded-full hover:bg-primary/10">
-                    <User className="h-5 w-5 text-foreground group-hover:text-primary transition-colors" />
-                  </Button>
-                </Link>
-              )}
             </div>
 
             <CartSheet />
@@ -264,6 +246,41 @@ const Navbar = () => {
                   <span className="text-sm font-bold">{isRTL ? "اللغة" : "Language"}</span>
                   <LanguageSwitcher />
                 </div>
+              </div>
+
+              {/* Mobile Auth Actions */}
+              <div className="mt-4 pt-4 border-t border-border/10">
+                {user ? (
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3 px-2 mb-4">
+                      <Avatar className="h-10 w-10">
+                        <AvatarImage src={user.user_metadata.avatar_url} />
+                        <AvatarFallback>{getInitials(user.user_metadata.full_name)}</AvatarFallback>
+                      </Avatar>
+                      <div className="overflow-hidden">
+                        <p className="text-sm font-bold truncate">{user.user_metadata.full_name || "User"}</p>
+                        <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+                      </div>
+                    </div>
+                    <Link to={isAdmin ? "/admin" : "/profile"} onClick={() => setIsOpen(false)}>
+                      <Button className="w-full justify-start gap-2 h-12 text-base" variant="outline">
+                        {isAdmin ? <Settings className="h-5 w-5" /> : <User className="h-5 w-5" />}
+                        {isAdmin ? (isRTL ? "لوحة التحكم" : "Dashboard") : (isRTL ? "حسابي" : "My Account")}
+                      </Button>
+                    </Link>
+                    <Button onClick={() => { handleLogout(); setIsOpen(false); }} className="w-full justify-start gap-2 h-12 text-base text-destructive hover:bg-destructive/10" variant="ghost">
+                      <LogOut className="h-5 w-5" />
+                      {t.nav.logout}
+                    </Button>
+                  </div>
+                ) : (
+                  <Link to="/auth" onClick={() => setIsOpen(false)}>
+                    <Button className="w-full gap-2 h-12 font-bold text-base" variant="gold">
+                      <LogIn className="h-5 w-5" />
+                      {t.nav.login}
+                    </Button>
+                  </Link>
+                )}
               </div>
             </div>
           </motion.div>

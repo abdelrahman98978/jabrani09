@@ -9,88 +9,72 @@ const TopBar = () => {
   const { language } = useLanguage();
   const isRTL = language === "ar";
 
-  const workingHours = isRTL 
+  const workingHours = isRTL
     ? (settings?.working_hours_ar || "الأحد - الخميس: 9 ص - 9 م")
     : (settings?.working_hours || "Sun - Thu: 9 AM - 9 PM");
 
   return (
-    <div className="wp-topbar bg-accent text-accent-foreground py-2 border-b border-border/30 hidden md:block">
+    <div className="wp-topbar bg-accent text-accent-foreground py-2 border-b border-border/30 relative z-[60]">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between text-sm">
+        <div className="flex flex-col md:flex-row items-center justify-between text-xs md:text-sm gap-2 md:gap-0">
           {/* Contact Info */}
-          <div className="flex items-center gap-6">
-            <a 
+          <div className="flex flex-wrap justify-center md:justify-start items-center gap-4 md:gap-6 w-full md:w-auto">
+            <a
               href={`tel:${settings?.phone || "+966543389314"}`}
               className="flex items-center gap-2 hover:text-primary transition-colors"
             >
-              <Phone className="h-3.5 w-3.5" />
+              <Phone className="h-3 md:h-3.5 w-3 md:w-3.5" />
               <span dir="ltr">{settings?.phone || "+966 54 338 9314"}</span>
             </a>
-            <a 
-              href={`mailto:${settings?.email || "info@aljabrani.com"}`}
-              className="flex items-center gap-2 hover:text-primary transition-colors"
-            >
-              <Mail className="h-3.5 w-3.5" />
-              <span>{settings?.email || "info@aljabrani.com"}</span>
-            </a>
-            <div className="flex items-center gap-2 text-accent-foreground/80">
-              <Clock className="h-3.5 w-3.5" />
+            <div className="hidden sm:flex items-center gap-2 text-accent-foreground/80">
+              <Clock className="h-3 md:h-3.5 w-3 md:w-3.5" />
               <span>{workingHours}</span>
             </div>
           </div>
 
-          {/* Social & Controls */}
+          {/* Social Links - Language/Theme moved to Navbar only to save space */}
           <div className="flex items-center gap-4">
-            {/* Social Links */}
             <div className="flex items-center gap-2">
               {settings?.facebook_url && (
-                <a 
-                  href={settings.facebook_url} 
-                  target="_blank" 
+                <a
+                  href={settings.facebook_url}
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="p-1.5 hover:text-primary transition-colors"
                 >
-                  <Facebook className="h-3.5 w-3.5" />
+                  <Facebook className="h-3 md:h-3.5 w-3 md:w-3.5" />
                 </a>
               )}
               {settings?.twitter_url && (
-                <a 
-                  href={settings.twitter_url} 
-                  target="_blank" 
+                <a
+                  href={settings.twitter_url}
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="p-1.5 hover:text-primary transition-colors"
                 >
-                  <Twitter className="h-3.5 w-3.5" />
+                  <Twitter className="h-3 md:h-3.5 w-3 md:w-3.5" />
                 </a>
               )}
               {settings?.instagram_url && (
-                <a 
-                  href={settings.instagram_url} 
-                  target="_blank" 
+                <a
+                  href={settings.instagram_url}
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="p-1.5 hover:text-primary transition-colors"
                 >
-                  <Instagram className="h-3.5 w-3.5" />
+                  <Instagram className="h-3 md:h-3.5 w-3 md:w-3.5" />
                 </a>
               )}
               {settings?.tiktok_url && (
-                <a 
-                  href={settings.tiktok_url} 
-                  target="_blank" 
+                <a
+                  href={settings.tiktok_url}
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="p-1.5 hover:text-primary transition-colors"
                 >
-                  <Youtube className="h-3.5 w-3.5" />
+                  <Youtube className="h-3 md:h-3.5 w-3 md:w-3.5" />
                 </a>
               )}
-            </div>
-
-            <div className="w-px h-4 bg-border/50" />
-
-            {/* Theme & Language */}
-            <div className="flex items-center gap-1">
-              <LanguageSwitcher />
-              <ThemeToggle />
             </div>
           </div>
         </div>

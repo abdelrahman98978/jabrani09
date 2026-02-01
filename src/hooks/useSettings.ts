@@ -6,7 +6,7 @@ export const useSettings = () => {
     queryKey: ["site-settings"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("showroom_settings")
+        .from("settings")
         .select("*")
         .limit(1)
         .maybeSingle();

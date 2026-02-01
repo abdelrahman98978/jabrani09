@@ -28,6 +28,7 @@ import BrandsPage from "./pages/BrandsPage";
 import AboutPage from "./pages/AboutPage";
 import ContactPage from "./pages/ContactPage";
 import AuthPage from "./pages/AuthPage";
+import AuthCallback from "./pages/AuthCallback";
 import AdminPage from "./pages/AdminPage";
 import ProfilePage from "./pages/ProfilePage";
 import NotFound from "./pages/NotFound";
@@ -131,11 +132,11 @@ const AppInner = () => {
           <CompareProvider>
             <WishlistProvider>
               <TooltipProvider>
-              <AnnouncementBar />
-              <ReadingProgress />
-              <Toaster />
-              <Sonner />
-              <BrowserRouter>
+                <AnnouncementBar />
+                <ReadingProgress />
+                <Toaster />
+                <Sonner />
+                <BrowserRouter>
                   <Routes>
                     <Route path="/" element={<Index />} />
                     <Route path="/cars" element={<CarsPage />} />
@@ -145,6 +146,7 @@ const AppInner = () => {
                     <Route path="/about" element={<AboutPage />} />
                     <Route path="/contact" element={<ContactPage />} />
                     <Route path="/auth" element={<AuthPage />} />
+                    <Route path="/auth/callback" element={<AuthCallback />} />
                     <Route path="/admin" element={<AdminPage />} />
                     <Route path="/profile" element={<ProfilePage />} />
                     <Route path="/order-confirmation/:orderId" element={<OrderConfirmationPage />} />
@@ -162,7 +164,7 @@ const AppInner = () => {
                   <PushNotificationManager />
                   <CompareDrawer />
                   <RealtimeNotifications />
-              </BrowserRouter>
+                </BrowserRouter>
               </TooltipProvider>
             </WishlistProvider>
           </CompareProvider>

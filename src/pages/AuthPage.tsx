@@ -97,7 +97,7 @@ const AuthPage = () => {
           email: formData.email,
           password: formData.password,
           options: {
-            emailRedirectTo: `${window.location.origin}/profile`,
+            emailRedirectTo: `${window.location.origin}/auth/callback`,
             data: {
               full_name: formData.fullName,
               phone: formData.phone,
@@ -143,7 +143,7 @@ const AuthPage = () => {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: `${window.location.origin}/profile`, // Default to profile, will redirect to admin if needed via logic
+          redirectTo: `${window.location.origin}/auth/callback`,
         },
       });
       if (error) throw error;

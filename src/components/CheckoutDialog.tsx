@@ -70,30 +70,17 @@ const CheckoutDialog = ({ open, onOpenChange }: CheckoutDialogProps) => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
 
-      // Create or get customer
-      const { data: existingCustomer } = await supabase
-        .from("customers")
-        .select("id")
-        .eq("phone", formData.customerPhone)
-        .maybeSingle();
+      // Use Secure RPC to get or create customer
+      const { data: customerId, error: customerError } = await supabase
+        .rpc('get_or_create_customer', {
+          p_name: formData.customerName,
+          p_phone: formData.customerPhone,
+          p_email: formData.customerEmail || null,
+          p_user_id: user?.id || null,
+        });
 
-      let customerId = existingCustomer?.id;
-
-      if (!customerId) {
-        const { data: newCustomer, error: customerError } = await supabase
-          .from("customers")
-          .insert({
-            name: formData.customerName,
-            phone: formData.customerPhone,
-            email: formData.customerEmail || null,
-            user_id: user?.id || null,
-          })
-          .select("id")
-          .single();
-
-        if (customerError) throw customerError;
-        customerId = newCustomer.id;
-      }
+      if (customerError) throw customerError;
+      if (!customerId) throw new Error("Failed to generate customer ID");
 
       // Create orders for each cart item
       let lastOrderId: string | null = null;

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Fuel, Gauge, Calendar, Eye, ShoppingCart, Maximize2, Sparkles, Star } from "lucide-react";
+import { Fuel, Gauge, Calendar, Eye, ShoppingCart, Maximize2, Sparkles, Star, ShieldCheck } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
 import CompareButton from "@/components/CompareButton";
 import WishlistButton from "@/components/WishlistButton";

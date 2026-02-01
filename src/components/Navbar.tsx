@@ -95,198 +95,195 @@ const Navbar = () => {
   const isTransparent = isAtTop && isHomePage;
 
   return (
-    <motion.nav
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.6 }}
-      className={`fixed top-4 right-4 left-4 z-50 transition-all duration-500 rounded-2xl ${isTransparent
-        ? 'bg-transparent border-transparent py-4'
-        : 'glass-effect py-3 shadow-2xl border border-white/10'
-        }`}
-    >
-      <div className="container mx-auto px-4 md:px-6">
-        <div className="flex items-center justify-between gap-4">
-          {/* Logo Section */}
-          <Link to="/" className="flex items-center group relative">
-            <div className="relative">
-              <div className="absolute -inset-2 bg-primary/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
-              <img
-                src={showroomLogo}
-                alt={siteName}
-                className={`h-10 w-10 md:h-12 md:w-12 rounded-xl object-cover shadow-2xl transition-all duration-500 ${isTransparent ? 'scale-110' : 'scale-100'}`}
-              />
-            </div>
-            <div className={`ms-3 flex flex-col transition-all duration-500 ${isTransparent ? 'translate-x-1' : 'translate-x-0'}`}>
-              <span className={`text-lg md:text-xl font-black leading-none tracking-tight ${isTransparent ? 'text-white' : 'text-foreground'}`}>
-                {siteName}
-                <Sparkles className="inline-block h-3 w-3 ms-1 text-primary animate-pulse" />
-              </span>
-              <span className={`text-[10px] uppercase tracking-[0.3em] font-bold ${isTransparent ? 'text-white/60' : 'text-muted-foreground'}`}>
-                Premium Motors
-              </span>
-            </div>
-          </Link>
+    <header className="sticky top-0 z-50 w-full transition-all duration-300">
+      <nav
+        className={`w-full transition-all duration-300 ${isTransparent
+          ? "bg-transparent border-transparent py-4"
+          : "bg-background/95 backdrop-blur-md border-b border-border/40 py-3 shadow-sm"
+          }`}
+      >
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="flex items-center justify-between gap-4">
+            {/* Logo Section */}
+            <Link to="/" className="flex items-center group relative">
+              <div className="relative">
+                <div className="absolute -inset-2 bg-primary/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                <img
+                  src={showroomLogo}
+                  alt={siteName}
+                  className={`h-10 w-10 md:h-12 md:w-12 rounded-xl object-cover shadow-2xl transition-all duration-500 ${isTransparent ? 'scale-110' : 'scale-100'}`}
+                />
+              </div>
+              <div className={`ms-3 flex flex-col transition-all duration-500 ${isTransparent ? 'translate-x-1' : 'translate-x-0'}`}>
+                <span className={`text-lg md:text-xl font-black leading-none tracking-tight ${isTransparent ? 'text-white' : 'text-foreground'}`}>
+                  {siteName}
+                  <Sparkles className="inline-block h-3 w-3 ms-1 text-primary animate-pulse" />
+                </span>
+                <span className={`text-[10px] uppercase tracking-[0.3em] font-bold ${isTransparent ? 'text-white/60' : 'text-muted-foreground'}`}>
+                  Premium Motors
+                </span>
+              </div>
+            </Link>
 
-          {/* Desktop Nav Links */}
-          <nav className="hidden lg:flex items-center gap-1">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                to={link.href}
-                className={`px-5 py-2 rounded-full text-sm font-black uppercase tracking-widest transition-all relative group ${isActive(link.href)
-                  ? isTransparent ? 'text-white' : 'text-primary'
-                  : isTransparent ? 'text-white/70 hover:text-white' : 'text-muted-foreground hover:text-foreground'
-                  }`}
-              >
-                {link.label}
-                {isActive(link.href) && (
-                  <motion.div
-                    layoutId="nav-active"
-                    className={`absolute inset-0 rounded-full -z-10 ${isTransparent ? 'bg-white/10' : 'bg-primary/5'}`}
-                  />
-                )}
-                <span className={`absolute bottom-1 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-4 ${isActive(link.href) ? 'w-4' : 'w-0'}`} />
-              </Link>
-            ))}
-          </nav>
-
-          {/* Action Buttons */}
-          <div className="flex items-center gap-2 md:gap-4">
-            <div className="hidden sm:flex items-center gap-2">
-              <GlobalSearch />
-              <NotificationCenter />
-              <ThemeToggle />
-              <LanguageSwitcher />
-            </div>
-
-            <CartSheet />
-
-            {user ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-10 w-10 rounded-full border-2 border-primary/20 hover:border-primary/50 p-0 transition-all">
-                    <Avatar className="h-full w-full">
-                      <AvatarImage src={user.user_metadata.avatar_url} />
-                      <AvatarFallback className="bg-primary/5 text-primary text-xs font-black">
-                        {getInitials(user.user_metadata.full_name)}
-                      </AvatarFallback>
-                    </Avatar>
-                    <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-green-500 border-2 border-background" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 mt-2 rounded-2xl bg-card/95 backdrop-blur-xl border-border/50">
-                  <div className="p-4 border-b border-border/50">
-                    <p className="text-sm font-black truncate">{user.user_metadata.full_name || user.email}</p>
-                    <p className="text-[10px] text-muted-foreground truncate uppercase tracking-widest">{user.email}</p>
-                  </div>
-                  <DropdownMenuItem onClick={() => navigate("/admin")} className="py-3 px-4 rounded-xl cursor-pointer">
-                    <Settings className="me-2 h-4 w-4" />
-                    <span>{isRTL ? "لوحة التحكم" : "Dashboard"}</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleLogout} className="py-3 px-4 rounded-xl cursor-pointer text-destructive focus:bg-destructive/10">
-                    <LogOut className="me-2 h-4 w-4" />
-                    <span>{t.nav.logout}</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            ) : (
-              <Link to="/auth">
-                <Button
-                  variant={isTransparent ? "outline" : "gold"}
-                  className={`rounded-full px-6 font-black uppercase tracking-tighter ${isTransparent ? 'border-white/30 text-white hover:bg-white hover:text-black' : 'shadow-lg shadow-primary/20'}`}
-                >
-                  <LogIn className="h-4 w-4 me-2" />
-                  {t.nav.login}
-                </Button>
-              </Link>
-            )}
-
-            {/* Mobile Menu Toggle */}
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              className={`lg:hidden p-2 rounded-xl transition-colors ${isTransparent ? 'text-white hover:bg-white/10' : 'text-foreground hover:bg-secondary'
-                }`}
-            >
-              {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Mobile Menu Overlay */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="lg:hidden bg-background/95 backdrop-blur-2xl border-t border-border/50 overflow-hidden"
-          >
-            <div className="container mx-auto px-4 py-8 flex flex-col gap-2">
+            {/* Desktop Nav Links */}
+            <div className="hidden lg:flex items-center gap-6">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   to={link.href}
-                  onClick={() => setIsOpen(false)}
-                  className={`px-4 py-4 rounded-2xl text-lg font-black uppercase tracking-widest transition-all ${isActive(link.href)
-                    ? 'bg-primary text-white shadow-lg'
-                    : 'hover:bg-secondary text-muted-foreground hover:text-foreground'
+                  className={`relative text-sm font-bold uppercase tracking-wider transition-colors py-2 ${isActive(link.href)
+                    ? "text-primary"
+                    : isTransparent
+                      ? "text-white/90 hover:text-white"
+                      : "text-foreground/80 hover:text-primary"
                     }`}
                 >
                   {link.label}
+                  {isActive(link.href) && (
+                    <span className="absolute bottom-0 left-0 w-full h-0.5 bg-primary rounded-full" />
+                  )}
                 </Link>
               ))}
-              <div className="grid grid-cols-2 gap-2 mt-4">
-                <div className="flex items-center justify-between p-4 rounded-2xl bg-secondary/50">
-                  <span className="text-sm font-bold">{isRTL ? "الوضع المظلم" : "Dark Mode"}</span>
-                  <ThemeToggle />
-                </div>
-                <div className="flex items-center justify-between p-4 rounded-2xl bg-secondary/50">
-                  <span className="text-sm font-bold">{isRTL ? "اللغة" : "Language"}</span>
-                  <LanguageSwitcher />
-                </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex items-center gap-2 md:gap-4">
+              <div className="hidden sm:flex items-center gap-2">
+                <GlobalSearch />
+                <NotificationCenter />
+                <ThemeToggle />
+                <LanguageSwitcher />
               </div>
 
-              {/* Mobile Auth Actions */}
-              <div className="mt-4 pt-4 border-t border-border/10">
-                {user ? (
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3 px-2 mb-4">
-                      <Avatar className="h-10 w-10">
+              <CartSheet />
+
+              {user ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="relative h-10 w-10 rounded-full border-2 border-primary/20 hover:border-primary/50 p-0 transition-all">
+                      <Avatar className="h-full w-full">
                         <AvatarImage src={user.user_metadata.avatar_url} />
-                        <AvatarFallback>{getInitials(user.user_metadata.full_name)}</AvatarFallback>
+                        <AvatarFallback className="bg-primary/5 text-primary text-xs font-black">
+                          {getInitials(user.user_metadata.full_name)}
+                        </AvatarFallback>
                       </Avatar>
-                      <div className="overflow-hidden">
-                        <p className="text-sm font-bold truncate">{user.user_metadata.full_name || "User"}</p>
-                        <p className="text-xs text-muted-foreground truncate">{user.email}</p>
-                      </div>
+                      <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-green-500 border-2 border-background" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56 mt-2 rounded-2xl bg-card/95 backdrop-blur-xl border-border/50">
+                    <div className="p-4 border-b border-border/50">
+                      <p className="text-sm font-black truncate">{user.user_metadata.full_name || user.email}</p>
+                      <p className="text-[10px] text-muted-foreground truncate uppercase tracking-widest">{user.email}</p>
                     </div>
-                    <Link to={isAdmin ? "/admin" : "/profile"} onClick={() => setIsOpen(false)}>
-                      <Button className="w-full justify-start gap-2 h-12 text-base" variant="outline">
-                        {isAdmin ? <Settings className="h-5 w-5" /> : <User className="h-5 w-5" />}
-                        {isAdmin ? (isRTL ? "لوحة التحكم" : "Dashboard") : (isRTL ? "حسابي" : "My Account")}
+                    <DropdownMenuItem onClick={() => navigate("/admin")} className="py-3 px-4 rounded-xl cursor-pointer">
+                      <Settings className="me-2 h-4 w-4" />
+                      <span>{isRTL ? "لوحة التحكم" : "Dashboard"}</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={handleLogout} className="py-3 px-4 rounded-xl cursor-pointer text-destructive focus:bg-destructive/10">
+                      <LogOut className="me-2 h-4 w-4" />
+                      <span>{t.nav.logout}</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <Link to="/auth">
+                  <Button
+                    variant={isTransparent ? "outline" : "gold"}
+                    className={`rounded-full px-6 font-black uppercase tracking-tighter ${isTransparent ? 'border-white/30 text-white hover:bg-white hover:text-black' : 'shadow-lg shadow-primary/20'}`}
+                  >
+                    <LogIn className="h-4 w-4 me-2" />
+                    {t.nav.login}
+                  </Button>
+                </Link>
+              )}
+
+              {/* Mobile Menu Toggle */}
+              <button
+                onClick={() => setIsOpen(!isOpen)}
+                className={`lg:hidden p-2 rounded-xl transition-colors ${isTransparent ? 'text-white hover:bg-white/10' : 'text-foreground hover:bg-secondary'
+                  }`}
+              >
+                {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Menu Overlay */}
+        <AnimatePresence>
+          {isOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="lg:hidden bg-background/95 backdrop-blur-2xl border-t border-border/50 overflow-hidden"
+            >
+              <div className="container mx-auto px-4 py-8 flex flex-col gap-2">
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.href}
+                    to={link.href}
+                    onClick={() => setIsOpen(false)}
+                    className={`px-4 py-4 rounded-2xl text-lg font-black uppercase tracking-widest transition-all ${isActive(link.href)
+                      ? 'bg-primary text-white shadow-lg'
+                      : 'hover:bg-secondary text-muted-foreground hover:text-foreground'
+                      }`}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+                <div className="grid grid-cols-2 gap-2 mt-4">
+                  <div className="flex items-center justify-between p-4 rounded-2xl bg-secondary/50">
+                    <span className="text-sm font-bold">{isRTL ? "الوضع المظلم" : "Dark Mode"}</span>
+                    <ThemeToggle />
+                  </div>
+                  <div className="flex items-center justify-between p-4 rounded-2xl bg-secondary/50">
+                    <span className="text-sm font-bold">{isRTL ? "اللغة" : "Language"}</span>
+                    <LanguageSwitcher />
+                  </div>
+                </div>
+
+                {/* Mobile Auth Actions */}
+                <div className="mt-4 pt-4 border-t border-border/10">
+                  {user ? (
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-3 px-2 mb-4">
+                        <Avatar className="h-10 w-10">
+                          <AvatarImage src={user.user_metadata.avatar_url} />
+                          <AvatarFallback>{getInitials(user.user_metadata.full_name)}</AvatarFallback>
+                        </Avatar>
+                        <div className="overflow-hidden">
+                          <p className="text-sm font-bold truncate">{user.user_metadata.full_name || "User"}</p>
+                          <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+                        </div>
+                      </div>
+                      <Link to={isAdmin ? "/admin" : "/profile"} onClick={() => setIsOpen(false)}>
+                        <Button className="w-full justify-start gap-2 h-12 text-base" variant="outline">
+                          {isAdmin ? <Settings className="h-5 w-5" /> : <User className="h-5 w-5" />}
+                          {isAdmin ? (isRTL ? "لوحة التحكم" : "Dashboard") : (isRTL ? "حسابي" : "My Account")}
+                        </Button>
+                      </Link>
+                      <Button onClick={() => { handleLogout(); setIsOpen(false); }} className="w-full justify-start gap-2 h-12 text-base text-destructive hover:bg-destructive/10" variant="ghost">
+                        <LogOut className="h-5 w-5" />
+                        {t.nav.logout}
+                      </Button>
+                    </div>
+                  ) : (
+                    <Link to="/auth" onClick={() => setIsOpen(false)}>
+                      <Button className="w-full gap-2 h-12 font-bold text-base" variant="gold">
+                        <LogIn className="h-5 w-5" />
+                        {t.nav.login}
                       </Button>
                     </Link>
-                    <Button onClick={() => { handleLogout(); setIsOpen(false); }} className="w-full justify-start gap-2 h-12 text-base text-destructive hover:bg-destructive/10" variant="ghost">
-                      <LogOut className="h-5 w-5" />
-                      {t.nav.logout}
-                    </Button>
-                  </div>
-                ) : (
-                  <Link to="/auth" onClick={() => setIsOpen(false)}>
-                    <Button className="w-full gap-2 h-12 font-bold text-base" variant="gold">
-                      <LogIn className="h-5 w-5" />
-                      {t.nav.login}
-                    </Button>
-                  </Link>
-                )}
+                  )}
+                </div>
               </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.nav>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </nav>
+    </header>
   );
 };
 

@@ -99,9 +99,9 @@ const Navbar = () => {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.6 }}
-      className={`fixed top-0 right-0 left-0 z-50 transition-all duration-500 ${isTransparent
-        ? 'bg-transparent border-transparent py-6'
-        : 'bg-background/80 backdrop-blur-xl border-b border-white/10 py-3 shadow-2xl'
+      className={`fixed top-4 right-4 left-4 z-50 transition-all duration-500 rounded-2xl ${isTransparent
+        ? 'bg-transparent border-transparent py-4'
+        : 'glass-effect py-3 shadow-2xl border border-white/10'
         }`}
     >
       <div className="container mx-auto px-4 md:px-6">

@@ -145,6 +145,21 @@ const Navbar = () => {
               <ThemeToggle />
               <LanguageSwitcher />
 
+              {/* Account Check */}
+              {user ? (
+                <Link to={isAdmin ? "/admin" : "/profile"}>
+                  <Button variant="ghost" size="icon" className="group rounded-full hover:bg-primary/10">
+                    <User className="h-5 w-5 text-foreground group-hover:text-primary transition-colors" />
+                  </Button>
+                </Link>
+              ) : (
+                <Link to="/auth">
+                  <Button variant="ghost" size="icon" className="group rounded-full hover:bg-primary/10">
+                    <User className="h-5 w-5 text-foreground group-hover:text-primary transition-colors" />
+                  </Button>
+                </Link>
+              )}
+
               {/* Account / Dashboard Button */}
               {user ? (
                 <Link to={isAdmin ? "/admin" : "/profile"}>

@@ -20,9 +20,10 @@ import { supabase } from "@/integrations/supabase/client";
 interface AdminHeaderProps {
   onLogout: () => void;
   userEmail?: string;
+  children?: React.ReactNode;
 }
 
-const AdminHeader = ({ onLogout, userEmail }: AdminHeaderProps) => {
+const AdminHeader = ({ onLogout, userEmail, children }: AdminHeaderProps) => {
   const { data: settings } = useSettings();
   const { language } = useLanguage();
   const isRTL = language === "ar";
@@ -84,6 +85,7 @@ const AdminHeader = ({ onLogout, userEmail }: AdminHeaderProps) => {
 
         {/* Actions */}
         <div className="flex items-center gap-2">
+          {children}
           <ThemeToggle />
 
           {/* Notifications */}

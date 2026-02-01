@@ -16,11 +16,11 @@ const Footer = () => {
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const siteName = language === "ar" 
+  const siteName = language === "ar"
     ? (settings?.showroom_name || t.siteName)
     : (settings?.showroom_name_en || t.siteName);
 
-  const workingHours = isRTL 
+  const workingHours = isRTL
     ? (settings?.working_hours_ar || "الأحد - الخميس: 9 ص - 9 م")
     : (settings?.working_hours || "Sun - Thu: 9 AM - 9 PM");
 
@@ -80,7 +80,7 @@ const Footer = () => {
     <footer className="wp-footer bg-accent text-accent-foreground relative overflow-hidden">
       {/* Wave Top */}
       <div className="wp-section-wave-top" />
-      
+
       {/* Main Footer */}
       <div className="container mx-auto px-4 pt-20 pb-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8">
@@ -88,8 +88,8 @@ const Footer = () => {
           <div className="space-y-6">
             <div className="flex items-center gap-3">
               {settings?.logo_url ? (
-                <img 
-                  src={settings.logo_url} 
+                <img
+                  src={settings.logo_url}
                   alt={siteName}
                   className="h-14 w-14 object-contain rounded-xl bg-white/10 p-2"
                 />
@@ -106,7 +106,7 @@ const Footer = () => {
               </div>
             </div>
             <p className="text-sm text-accent-foreground/80 leading-relaxed">
-              {language === "ar" 
+              {language === "ar"
                 ? (settings?.about_text_ar || t.whyUs.qualityDesc)
                 : (settings?.about_text || t.whyUs.qualityDesc)
               }
@@ -150,8 +150,8 @@ const Footer = () => {
             <ul className="space-y-3">
               {quickLinks.map((link, idx) => (
                 <li key={idx}>
-                  <Link 
-                    to={link.href} 
+                  <Link
+                    to={link.href}
                     className="text-sm text-accent-foreground/70 hover:text-primary transition-colors flex items-center gap-2 group"
                   >
                     <span className="w-1.5 h-1.5 rounded-full bg-primary/50 group-hover:bg-primary transition-colors" />
@@ -161,8 +161,8 @@ const Footer = () => {
               ))}
               {legalLinks.map((link, idx) => (
                 <li key={`legal-${idx}`}>
-                  <Link 
-                    to={link.href} 
+                  <Link
+                    to={link.href}
                     className="text-sm text-accent-foreground/70 hover:text-primary transition-colors flex items-center gap-2 group"
                   >
                     <span className="w-1.5 h-1.5 rounded-full bg-primary/50 group-hover:bg-primary transition-colors" />
@@ -215,7 +215,7 @@ const Footer = () => {
                 <div>
                   <p className="text-xs text-accent-foreground/50 mb-1">{isRTL ? "العنوان" : "Address"}</p>
                   <span className="font-medium">
-                    {language === "ar" 
+                    {language === "ar"
                       ? (settings?.address_ar || "المملكة العربية السعودية")
                       : (settings?.address || "Saudi Arabia")
                     }
@@ -241,8 +241,8 @@ const Footer = () => {
               <span className="absolute -bottom-2 start-0 w-12 h-0.5 bg-primary rounded" />
             </h4>
             <p className="text-sm text-accent-foreground/70">
-              {isRTL 
-                ? "اشترك للحصول على أحدث العروض والأخبار" 
+              {isRTL
+                ? "اشترك للحصول على أحدث العروض والأخبار"
                 : "Subscribe to get the latest offers and news"}
             </p>
             <form onSubmit={handleSubscribe} className="space-y-3">
@@ -255,8 +255,8 @@ const Footer = () => {
                   className="h-12 bg-background/10 border-background/20 text-accent-foreground placeholder:text-accent-foreground/50 pe-12"
                   required
                 />
-                <Button 
-                  type="submit" 
+                <Button
+                  type="submit"
                   size="icon"
                   disabled={isLoading}
                   className="absolute end-1 top-1 h-10 w-10 bg-primary hover:bg-primary/90"
@@ -279,10 +279,14 @@ const Footer = () => {
         {/* Divider */}
         <div className="border-t border-background/10 mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-sm text-accent-foreground/60 text-center md:text-start">
-              © {new Date().getFullYear()} {siteName}. {t.footer.rights}.
-            </p>
-            
+            <div className="flex flex-col items-center gap-2 md:items-start text-sm text-accent-foreground/60 text-center md:text-start">
+              <p>© {new Date().getFullYear()} {siteName}. {t.footer.rights}.</p>
+              <div className="flex items-center gap-2 mt-2">
+                <img src="https://monshaat.gov.sa/sites/default/files/styles/logo_header/public/2022-09/logo.png" alt="Saudi Business Center" className="h-8 opacity-80 hover:opacity-100 transition-opacity bg-white/90 rounded px-1" />
+                <span className="text-xs">موثق لدى المركز السعودي للأعمال</span>
+              </div>
+            </div>
+
             {/* Scroll to Top */}
             <Button
               variant="outline"

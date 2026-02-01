@@ -169,7 +169,16 @@ const AdminPage = () => {
 
   return (
     <div className="min-h-screen bg-[#F8F9FA] dark:bg-[#0B0E14] text-foreground flex flex-col">
-      <AdminHeader onLogout={handleLogout} userEmail={user.email} />
+      <AdminHeader onLogout={handleLogout} userEmail={user.email}>
+        <Button
+          variant="outline"
+          onClick={() => navigate("/")}
+          className="me-2 hidden md:flex items-center gap-2 border-primary/20 hover:bg-primary/5"
+        >
+          <ChevronRight className={`h-4 w-4 ${isRTL ? "rotate-180" : ""}`} />
+          {isRTL ? "العودة للرئيسية" : "Back to Home"}
+        </Button>
+      </AdminHeader>
 
       <div className="flex-1 flex overflow-hidden">
         {/* Modern Sidebar */}
@@ -192,8 +201,8 @@ const AdminPage = () => {
                       key={item.id}
                       onClick={() => setActiveTab(item.id)}
                       className={`w-full group flex items-center gap-3 px-4 py-3 rounded-2xl transition-all relative ${activeTab === item.id
-                          ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
-                          : "hover:bg-secondary/80 text-muted-foreground hover:text-foreground"
+                        ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
+                        : "hover:bg-secondary/80 text-muted-foreground hover:text-foreground"
                         }`}
                     >
                       <item.icon className={`h-5 w-5 transition-transform duration-300 ${activeTab === item.id ? 'scale-110' : 'group-hover:scale-110'}`} />

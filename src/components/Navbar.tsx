@@ -87,8 +87,8 @@ const Navbar = () => {
       animate={{ y: 0 }}
       transition={{ duration: 0.6 }}
       className={`fixed top-0 right-0 left-0 z-50 transition-all duration-500 ${isTransparent
-          ? 'bg-transparent border-transparent py-6'
-          : 'bg-background/80 backdrop-blur-xl border-b border-white/10 py-3 shadow-2xl'
+        ? 'bg-transparent border-transparent py-6'
+        : 'bg-background/80 backdrop-blur-xl border-b border-white/10 py-3 shadow-2xl'
         }`}
     >
       <div className="container mx-auto px-4 md:px-6">
@@ -121,8 +121,8 @@ const Navbar = () => {
                 key={link.href}
                 to={link.href}
                 className={`px-5 py-2 rounded-full text-sm font-black uppercase tracking-widest transition-all relative group ${isActive(link.href)
-                    ? isTransparent ? 'text-white' : 'text-primary'
-                    : isTransparent ? 'text-white/70 hover:text-white' : 'text-muted-foreground hover:text-foreground'
+                  ? isTransparent ? 'text-white' : 'text-primary'
+                  : isTransparent ? 'text-white/70 hover:text-white' : 'text-muted-foreground hover:text-foreground'
                   }`}
               >
                 {link.label}
@@ -144,6 +144,22 @@ const Navbar = () => {
               <NotificationCenter />
               <ThemeToggle />
               <LanguageSwitcher />
+
+              {/* Account / Dashboard Button */}
+              {user ? (
+                <Link to={isAdmin ? "/admin" : "/profile"}>
+                  <Button variant="ghost" size="icon" className="group relative rounded-full hover:bg-primary/10">
+                    <User className="h-5 w-5 text-foreground group-hover:text-primary transition-colors" />
+                    <span className="sr-only">{isAdmin ? "Admin" : "Profile"}</span>
+                  </Button>
+                </Link>
+              ) : (
+                <Link to="/auth">
+                  <Button variant="ghost" size="icon" className="group rounded-full hover:bg-primary/10">
+                    <User className="h-5 w-5 text-foreground group-hover:text-primary transition-colors" />
+                  </Button>
+                </Link>
+              )}
             </div>
 
             <CartSheet />
@@ -217,8 +233,8 @@ const Navbar = () => {
                   to={link.href}
                   onClick={() => setIsOpen(false)}
                   className={`px-4 py-4 rounded-2xl text-lg font-black uppercase tracking-widest transition-all ${isActive(link.href)
-                      ? 'bg-primary text-white shadow-lg'
-                      : 'hover:bg-secondary text-muted-foreground hover:text-foreground'
+                    ? 'bg-primary text-white shadow-lg'
+                    : 'hover:bg-secondary text-muted-foreground hover:text-foreground'
                     }`}
                 >
                   {link.label}

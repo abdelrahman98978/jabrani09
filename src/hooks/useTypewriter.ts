@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 interface TypewriterOptions {
   speed?: number;
@@ -14,55 +14,58 @@ const useTypewriter = (
   const [displayText, setDisplayText] = useState('');
   const [isComplete, setIsComplete] = useState(false);
   const [isStarted, setIsStarted] = useState(false);
-  const onCompleteRef = useRef(onComplete);
-  const textRef = useRef(text);
 
-  // Update refs when props change
+  const onCompleteRef = useRef(onComplete);
+  const timeoutsRaw = useRef<NodeJS.Timeout[]>([]);
+
   useEffect(() => {
     onCompleteRef.current = onComplete;
   }, [onComplete]);
 
   useEffect(() => {
-    textRef.current = text;
-  }, [text]);
-
-  const startTyping = useCallback(() => {
-    if (!text || text.length === 0) {
-      setDisplayText('');
-      setIsComplete(true);
-      return;
-    }
-
+    // Reset state when text changes
     setDisplayText('');
     setIsComplete(false);
     setIsStarted(false);
 
+    // Clear any existing timers
+    timeoutsRaw.current.forEach(clearTimeout);
+    timeoutsRaw.current = [];
+
+    if (!text) {
+      setIsComplete(true);
+      return;
+    }
+
+    // Start delay timer
     const delayTimer = setTimeout(() => {
       setIsStarted(true);
       let currentIndex = 0;
-      
-      const typeTimer = setInterval(() => {
-        const currentText = textRef.current;
-        if (currentIndex < currentText.length) {
-          setDisplayText(currentText.slice(0, currentIndex + 1));
+
+      // We use a recursive setTimeout instead of setInterval for better control
+      const typeNextChar = () => {
+        if (currentIndex < text.length) {
+          setDisplayText(text.slice(0, currentIndex + 1));
           currentIndex++;
+          const timerId = setTimeout(typeNextChar, speed);
+          timeoutsRaw.current.push(timerId);
         } else {
           setIsComplete(true);
-          clearInterval(typeTimer);
           onCompleteRef.current?.();
         }
-      }, speed);
+      };
 
-      return () => clearInterval(typeTimer);
+      typeNextChar();
+
     }, delay);
 
-    return () => clearTimeout(delayTimer);
-  }, [text, speed, delay]);
+    timeoutsRaw.current.push(delayTimer);
 
-  useEffect(() => {
-    const cleanup = startTyping();
-    return cleanup;
-  }, [startTyping]);
+    return () => {
+      timeoutsRaw.current.forEach(clearTimeout);
+      timeoutsRaw.current = [];
+    };
+  }, [text, speed, delay]);
 
   return { displayText, isComplete, isStarted };
 };

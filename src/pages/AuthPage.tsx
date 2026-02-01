@@ -3,10 +3,23 @@ import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Loader2, Chrome, Mail, Lock, User, Phone, Eye, EyeOff, ArrowLeft, Sparkles } from "lucide-react";
+import {
+  Loader2,
+  Chrome,
+  Mail,
+  Lock,
+  User,
+  Phone,
+  Eye,
+  EyeOff,
+  ArrowLeft,
+  Sparkles,
+  ShieldCheck,
+  Zap
+} from "lucide-react";
 import alJabraniLogo from "@/assets/al-jabrani-logo.jpg";
 import { Separator } from "@/components/ui/separator";
 
@@ -14,6 +27,7 @@ const AuthPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { t, language } = useLanguage();
+  const isRTL = language === "ar";
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
@@ -52,7 +66,7 @@ const AuthPage = () => {
           password: formData.password,
         });
         if (error) throw error;
-        toast({ title: language === "ar" ? "تم تسجيل الدخول بنجاح" : "Logged in successfully" });
+        toast({ title: isRTL ? "تم تسجيل الدخول بنجاح" : "Logged in successfully" });
       } else {
         const { data, error } = await supabase.auth.signUp({
           email: formData.email,
@@ -66,8 +80,7 @@ const AuthPage = () => {
           },
         });
         if (error) throw error;
-        
-        // Send welcome email
+
         if (data.user) {
           try {
             await supabase.functions.invoke('send-welcome-email', {
@@ -81,18 +94,18 @@ const AuthPage = () => {
             console.error('Failed to send welcome email:', emailError);
           }
         }
-        
+
         toast({
-          title: language === "ar" ? "تم إنشاء الحساب بنجاح" : "Account created successfully",
-          description: language === "ar" ? "تم إرسال بريد ترحيبي إليك" : "A welcome email has been sent to you",
+          title: isRTL ? "تم إنشاء الحساب بنجاح" : "Account created successfully",
+          description: isRTL ? "تم إرسال بريد ترحيبي إليك" : "A welcome email has been sent to you",
         });
         setIsLogin(true);
       }
     } catch (error: any) {
       toast({
         variant: "destructive",
-        title: language === "ar" ? "خطأ" : "Error",
-        description: error.message || (language === "ar" ? "حدث خطأ ما" : "An error occurred"),
+        title: isRTL ? "خطأ" : "Error",
+        description: error.message || (isRTL ? "حدث خطأ ما" : "An error occurred"),
       });
     } finally {
       setLoading(false);
@@ -112,8 +125,8 @@ const AuthPage = () => {
     } catch (error: any) {
       toast({
         variant: "destructive",
-        title: language === "ar" ? "خطأ" : "Error",
-        description: error.message || (language === "ar" ? "فشل تسجيل الدخول بجوجل" : "Google login failed"),
+        title: isRTL ? "خطأ" : "Error",
+        description: error.message || (isRTL ? "فشل تسجيل الدخول بجوجل" : "Google login failed"),
       });
       setGoogleLoading(false);
     }
@@ -124,59 +137,65 @@ const AuthPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Background decorations */}
-      <div className="absolute inset-0 pattern-overlay opacity-30" />
-      <div className="absolute top-0 left-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
-      <div className="absolute bottom-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl translate-x-1/2 translate-y-1/2" />
-      
+    <div className="min-h-screen bg-background relative overflow-hidden font-cairo">
+      {/* Dynamic Background */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/10 rounded-full blur-[120px] animate-pulse" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-primary/10 rounded-full blur-[120px] animate-pulse delay-1000" />
+        <div className="absolute inset-0 pattern-overlay opacity-20" />
+      </div>
+
       <div className="relative z-10 min-h-screen flex flex-col">
-        {/* Header */}
-        <div className="p-4">
+        {/* Navigation */}
+        <div className="p-6 flex justify-between items-center">
           <Link
             to="/"
-            className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors"
+            className="group flex items-center gap-2 text-muted-foreground hover:text-primary transition-all duration-300"
           >
-            <ArrowLeft className="h-5 w-5" />
-            <span>{language === "ar" ? "العودة للرئيسية" : "Back to Home"}</span>
+            <div className="h-10 w-10 flex items-center justify-center rounded-full bg-secondary group-hover:bg-primary/10 transition-colors">
+              <ArrowLeft className={`h-5 w-5 transition-transform duration-300 ${isRTL ? 'group-hover:translate-x-1' : 'group-hover:-translate-x-1'}`} />
+            </div>
+            <span className="font-bold">{isRTL ? "العودة للرئيسية" : "Back to Home"}</span>
           </Link>
+          <div className="hidden sm:flex items-center gap-4 text-xs font-bold text-muted-foreground/60 uppercase tracking-widest">
+            <span className="flex items-center gap-1"><ShieldCheck className="h-3 w-3 text-primary" /> SECURE</span>
+            <span className="flex items-center gap-1"><Zap className="h-3 w-3 text-primary" /> FAST</span>
+          </div>
         </div>
 
-        {/* Main Content */}
+        {/* Auth Container */}
         <div className="flex-1 flex items-center justify-center p-4">
-          <div className="w-full max-w-lg">
-            <Card className="border-border/50 shadow-premium-lg backdrop-blur-sm bg-card/95">
-              <CardHeader className="text-center pb-2">
-                {/* Logo */}
-                <div className="flex justify-center mb-6">
-                  <div className="relative">
-                    <img 
-                      src={alJabraniLogo} 
-                      alt="AL JABRANI CARS" 
-                      className="h-20 w-20 rounded-2xl object-cover shadow-premium"
-                    />
-                    <div className="absolute -top-1 -right-1">
-                      <Sparkles className="h-5 w-5 text-primary animate-pulse" />
-                    </div>
+          <div className="w-full max-w-xl">
+            <div className="text-center mb-8 stagger-fade-in">
+              <div className="flex justify-center mb-6">
+                <div className="relative group">
+                  <div className="absolute -inset-1 bg-gradient-to-r from-primary to-accent rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
+                  <img
+                    src={alJabraniLogo}
+                    alt="AL JABRANI CARS"
+                    className="relative h-24 w-24 rounded-2xl object-cover shadow-2xl transition-transform duration-500 group-hover:scale-110"
+                  />
+                  <div className="absolute -top-2 -right-2 bg-background border border-border rounded-full p-1.5 shadow-lg">
+                    <Sparkles className="h-4 w-4 text-primary animate-pulse" />
                   </div>
                 </div>
+              </div>
+              <h1 className="text-4xl font-black tracking-tight text-foreground mb-3 text-gradient-gold">
+                {isLogin ? t.auth.login : t.auth.signup}
+              </h1>
+              <p className="text-muted-foreground max-w-xs mx-auto text-sm leading-relaxed">
+                {isLogin ? (isRTL ? "أهلاً بك مجدداً في الجبراني للسيارات" : "Welcome back to Al Jabrani Cars") : (isRTL ? "انضم إلينا للحصول على عروض حصرية" : "Join us for exclusive showroom offers")}
+              </p>
+            </div>
 
-                {/* Title */}
-                <h1 className="text-3xl font-black text-foreground mb-2">
-                  {isLogin ? t.auth.login : t.auth.signup}
-                </h1>
-                <p className="text-muted-foreground">
-                  {isLogin ? t.auth.dashboardAccess : t.auth.createAccount}
-                </p>
-              </CardHeader>
-
-              <CardContent className="pt-6">
-                {/* Google Login */}
+            <Card className="border-border/40 shadow-2xl backdrop-blur-md bg-card/80 overflow-hidden car-card">
+              <CardContent className="p-8">
+                {/* Google Auth */}
                 <Button
                   type="button"
                   variant="outline"
                   size="lg"
-                  className="w-full gap-3 h-14 text-base border-2 hover:border-primary hover:bg-primary/5 transition-all duration-300"
+                  className="w-full gap-3 h-14 text-base font-bold border-2 hover:border-primary hover:bg-primary/5 transition-all duration-500 group"
                   onClick={handleGoogleLogin}
                   disabled={googleLoading}
                 >
@@ -184,41 +203,40 @@ const AuthPage = () => {
                     <Loader2 className="h-5 w-5 animate-spin" />
                   ) : (
                     <>
-                      <Chrome className="h-6 w-6" />
+                      <Chrome className="h-6 w-6 transition-transform group-hover:rotate-12" />
                       {t.auth.loginWithGoogle}
                     </>
                   )}
                 </Button>
 
-                {/* Divider */}
-                <div className="relative my-8">
-                  <Separator className="bg-border" />
-                  <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-4 text-sm text-muted-foreground font-medium">
-                    {language === "ar" ? "أو بالبريد الإلكتروني" : "or with email"}
+                {/* Separator */}
+                <div className="relative my-10">
+                  <Separator className="bg-border/60" />
+                  <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-card/80 backdrop-blur-sm px-6 text-xs text-muted-foreground font-black uppercase tracking-widest">
+                    {isRTL ? "أو" : "OR"}
                   </span>
                 </div>
 
-                {/* Form */}
-                <form onSubmit={handleSubmit} className="space-y-5">
+                <form onSubmit={handleSubmit} className="space-y-6">
                   {!isLogin && (
-                    <>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <label className="text-sm font-semibold text-foreground flex items-center gap-2">
-                          <User className="h-4 w-4 text-primary" />
+                        <label className="text-xs font-black text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+                          <User className="h-3 w-3 text-primary" />
                           {t.auth.fullName}
                         </label>
                         <Input
                           name="fullName"
                           value={formData.fullName}
                           onChange={handleChange}
-                          placeholder={language === "ar" ? "أدخل اسمك الكامل" : "Enter your full name"}
+                          placeholder={isRTL ? "الاسم الكامل" : "Full Name"}
                           required={!isLogin}
-                          className="h-12 text-base border-2 focus:border-primary transition-colors"
+                          className="h-12 bg-background/50 border-2 focus:border-primary transition-all duration-300"
                         />
                       </div>
                       <div className="space-y-2">
-                        <label className="text-sm font-semibold text-foreground flex items-center gap-2">
-                          <Phone className="h-4 w-4 text-primary" />
+                        <label className="text-xs font-black text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+                          <Phone className="h-3 w-3 text-primary" />
                           {t.auth.phone}
                         </label>
                         <Input
@@ -226,17 +244,17 @@ const AuthPage = () => {
                           type="tel"
                           value={formData.phone}
                           onChange={handleChange}
-                          placeholder="+966 5XX XXX XXXX"
+                          placeholder="+966"
                           dir="ltr"
-                          className="h-12 text-base border-2 focus:border-primary transition-colors"
+                          className="h-12 bg-background/50 border-2 focus:border-primary transition-all duration-300"
                         />
                       </div>
-                    </>
+                    </div>
                   )}
-                  
+
                   <div className="space-y-2">
-                    <label className="text-sm font-semibold text-foreground flex items-center gap-2">
-                      <Mail className="h-4 w-4 text-primary" />
+                    <label className="text-xs font-black text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+                      <Mail className="h-3 w-3 text-primary" />
                       {t.auth.email}
                     </label>
                     <Input
@@ -244,95 +262,83 @@ const AuthPage = () => {
                       type="email"
                       value={formData.email}
                       onChange={handleChange}
-                      placeholder="example@email.com"
+                      placeholder="email@example.com"
                       required
                       dir="ltr"
-                      className="h-12 text-base border-2 focus:border-primary transition-colors"
+                      className="h-12 bg-background/50 border-2 focus:border-primary transition-all duration-300"
                     />
                   </div>
-                  
+
                   <div className="space-y-2">
-                    <label className="text-sm font-semibold text-foreground flex items-center gap-2">
-                      <Lock className="h-4 w-4 text-primary" />
-                      {t.auth.password}
-                    </label>
+                    <div className="flex justify-between items-center">
+                      <label className="text-xs font-black text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+                        <Lock className="h-3 w-3 text-primary" />
+                        {t.auth.password}
+                      </label>
+                      {isLogin && (
+                        <button type="button" className="text-[10px] font-bold text-primary hover:underline uppercase tracking-tighter">
+                          {isRTL ? "نسيت؟" : "Forgot?"}
+                        </button>
+                      )}
+                    </div>
                     <div className="relative">
                       <Input
                         name="password"
                         type={showPassword ? "text" : "password"}
                         value={formData.password}
                         onChange={handleChange}
-                        placeholder={language === "ar" ? "أدخل كلمة المرور" : "Enter password"}
+                        placeholder="••••••••"
                         required
                         minLength={6}
-                        className="h-12 text-base border-2 focus:border-primary transition-colors pe-12"
+                        className="h-12 bg-background/50 border-2 focus:border-primary transition-all duration-300 pe-12"
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                        className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
                       >
                         {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                       </button>
                     </div>
                   </div>
 
-                  {isLogin && (
-                    <div className="text-end">
-                      <button
-                        type="button"
-                        className="text-sm text-primary hover:underline font-medium"
-                      >
-                        {language === "ar" ? "نسيت كلمة المرور؟" : "Forgot password?"}
-                      </button>
-                    </div>
-                  )}
-
                   <Button
                     type="submit"
                     variant="default"
                     size="lg"
-                    className="w-full h-14 text-lg font-bold shadow-premium hover:shadow-premium-lg transition-all duration-300"
+                    className="w-full h-14 text-lg font-black shadow-xl hover:shadow-primary/20 hover:-translate-y-1 bg-gradient-to-r from-primary to-accent transition-all duration-300 active:scale-95 group"
                     disabled={loading}
                   >
                     {loading ? (
                       <Loader2 className="h-5 w-5 animate-spin" />
-                    ) : isLogin ? (
-                      t.auth.login
                     ) : (
-                      t.auth.signup
+                      <span className="flex items-center gap-2">
+                        {isLogin ? t.auth.login : t.auth.signup}
+                        <Zap className="h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      </span>
                     )}
                   </Button>
                 </form>
 
-                {/* Toggle Form */}
-                <div className="mt-8 text-center">
-                  <p className="text-muted-foreground">
+                <div className="mt-10 pt-6 border-t border-border/40 text-center">
+                  <p className="text-sm font-medium text-muted-foreground mb-2">
                     {isLogin ? t.auth.noAccount : t.auth.hasAccount}
                   </p>
                   <button
                     type="button"
                     onClick={() => setIsLogin(!isLogin)}
-                    className="text-primary hover:underline font-bold text-lg mt-1"
+                    className="text-foreground font-black text-lg hover:text-primary transition-colors relative group"
                   >
-                    {isLogin
-                      ? language === "ar"
-                        ? "إنشاء حساب جديد"
-                        : "Create new account"
-                      : language === "ar"
-                      ? "تسجيل الدخول"
-                      : "Sign in"}
+                    {isLogin ? (isRTL ? "إنشاء حساب جديد" : "Create Now") : (isRTL ? "تسجيل الدخول" : "Sign In")}
+                    <span className="absolute -bottom-1 left-0 w-0 h-1 bg-primary transition-all duration-300 group-hover:w-full" />
                   </button>
                 </div>
-
-                {/* Terms */}
-                <p className="text-xs text-muted-foreground text-center mt-6">
-                  {language === "ar"
-                    ? "بالمتابعة، أنت توافق على شروط الاستخدام وسياسة الخصوصية"
-                    : "By continuing, you agree to our Terms of Use and Privacy Policy"}
-                </p>
               </CardContent>
             </Card>
+
+            <p className="text-[10px] text-muted-foreground/50 text-center mt-8 uppercase tracking-[0.2em]">
+              {isRTL ? "جميع الحقوق محفوظة © الجبراني للسيارات" : "All rights reserved © Al Jabrani Cars"}
+            </p>
           </div>
         </div>
       </div>

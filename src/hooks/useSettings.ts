@@ -5,13 +5,18 @@ export const useSettings = () => {
   return useQuery({
     queryKey: ["site-settings"],
     queryFn: async () => {
-      const { data } = await supabase
-        .from("settings")
+      const { data, error } = await supabase
+        .from("showroom_settings")
         .select("*")
         .limit(1)
         .maybeSingle();
+
+      if (error) {
+        console.error("Error fetching settings:", error);
+        return null;
+      }
       return data;
     },
-    staleTime: 1000 * 60 * 5, // 5 minutes cache
+    staleTime: 1000 * 60 * 60, // 1 hour cache
   });
 };

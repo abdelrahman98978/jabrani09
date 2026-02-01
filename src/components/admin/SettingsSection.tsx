@@ -28,7 +28,7 @@ const SettingsSection = () => {
   const { data: settings, isLoading } = useQuery({
     queryKey: ["admin-settings"],
     queryFn: async () => {
-      const { data } = await supabase.from("settings").select("*").limit(1).maybeSingle();
+      const { data } = await supabase.from("showroom_settings").select("*").limit(1).maybeSingle();
       return data;
     },
   });
@@ -36,10 +36,10 @@ const SettingsSection = () => {
   const saveSettings = useMutation({
     mutationFn: async (settingsData: any) => {
       if (settings?.id) {
-        const { error } = await supabase.from("settings").update(settingsData).eq("id", settings.id);
+        const { error } = await supabase.from("showroom_settings").update(settingsData).eq("id", settings.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from("settings").insert(settingsData);
+        const { error } = await supabase.from("showroom_settings").insert(settingsData);
         if (error) throw error;
       }
     },
@@ -109,11 +109,11 @@ const SettingsSection = () => {
         .from('car-images')
         .getPublicUrl(filePath);
 
-      await saveSettings.mutateAsync({ 
+      await saveSettings.mutateAsync({
         hero_video_url: publicUrl,
         hero_type: "video"
       });
-      
+
       toast({
         title: isRTL ? "تم رفع الفيديو بنجاح" : "Video uploaded successfully",
       });
@@ -135,7 +135,7 @@ const SettingsSection = () => {
     e.preventDefault();
     const form = e.currentTarget;
     const formData = new FormData(form);
-    
+
     saveSettings.mutate({
       showroom_name: formData.get("showroom_name"),
       showroom_name_en: formData.get("showroom_name_en"),
@@ -184,7 +184,7 @@ const SettingsSection = () => {
           <AlertTriangle className="h-4 w-4" />
           <AlertTitle>{isRTL ? "إعدادات ناقصة!" : "Missing Settings!"}</AlertTitle>
           <AlertDescription>
-            {isRTL 
+            {isRTL
               ? `يرجى إكمال: ${missingSettings.join("، ")} - هذه البيانات مطلوبة للفواتير والرسائل`
               : `Please complete: ${missingSettings.join(", ")} - Required for invoices and messages`}
           </AlertDescription>
@@ -210,7 +210,7 @@ const SettingsSection = () => {
                   {isRTL ? "معلومات المعرض" : "Showroom Info"}
                 </CardTitle>
                 <p className="text-sm text-muted-foreground">
-                  {isRTL 
+                  {isRTL
                     ? "هذه البيانات تُستخدم تلقائياً في الفواتير، الحملات التسويقية، والتوليد بالذكاء الاصطناعي"
                     : "This data is automatically used in invoices, marketing campaigns, and AI generation"}
                 </p>
@@ -218,7 +218,7 @@ const SettingsSection = () => {
               <CardContent className="space-y-4">
                 <div className="p-3 rounded-lg bg-primary/10 border border-primary/20 mb-4">
                   <p className="text-sm font-medium text-primary">
-                    {isRTL 
+                    {isRTL
                       ? "💡 أدخل اسم معرضك هنا (مثل: معرض الجبراني للسيارات) ليظهر في جميع الفواتير والحملات البريدية"
                       : "💡 Enter your showroom name here (e.g., Al-Jibrani Car Showroom) to appear in all invoices and email campaigns"}
                   </p>
@@ -226,18 +226,18 @@ const SettingsSection = () => {
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
                     <Label>{isRTL ? "اسم المعرض بالعربي *" : "Showroom Name (Arabic) *"}</Label>
-                    <Input 
-                      name="showroom_name" 
-                      defaultValue={settings?.showroom_name || ""} 
+                    <Input
+                      name="showroom_name"
+                      defaultValue={settings?.showroom_name || ""}
                       placeholder={isRTL ? "معرض الجبراني للسيارات" : "معرض الجبراني للسيارات"}
                       className="text-right"
                     />
                   </div>
                   <div>
                     <Label>{isRTL ? "اسم المعرض بالإنجليزي *" : "Showroom Name (English) *"}</Label>
-                    <Input 
-                      name="showroom_name_en" 
-                      defaultValue={settings?.showroom_name_en || ""} 
+                    <Input
+                      name="showroom_name_en"
+                      defaultValue={settings?.showroom_name_en || ""}
                       placeholder="Al-Jibrani Car Showroom"
                     />
                   </div>
@@ -286,7 +286,7 @@ const SettingsSection = () => {
                 {/* Hero Section */}
                 <div className="space-y-4 border-t pt-4">
                   <Label className="text-base font-semibold">{isRTL ? "خلفية الهيرو" : "Hero Background"}</Label>
-                  
+
                   {/* Hero Type Selection */}
                   <RadioGroup
                     value={(settings as any)?.hero_type || "image"}
@@ -341,10 +341,10 @@ const SettingsSection = () => {
                             {isRTL ? "رفع صورة" : "Upload Image"}
                           </label>
                         </Button>
-                        <Button 
-                          type="button" 
-                          variant="gold" 
-                          size="sm" 
+                        <Button
+                          type="button"
+                          variant="gold"
+                          size="sm"
                           onClick={() => setShowBannerDialog(true)}
                           className="gap-2"
                         >
@@ -364,10 +364,10 @@ const SettingsSection = () => {
                     <div className="space-y-2">
                       {(settings as any)?.hero_video_url && (
                         <div className="relative group">
-                          <video 
-                            src={(settings as any).hero_video_url} 
-                            className="w-full h-40 object-cover rounded-lg" 
-                            controls 
+                          <video
+                            src={(settings as any).hero_video_url}
+                            className="w-full h-40 object-cover rounded-lg"
+                            controls
                             muted
                           />
                           <Button
@@ -449,8 +449,8 @@ const SettingsSection = () => {
                       </div>
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      {isRTL 
-                        ? "يعرض الشريط آخر السيارات والعروض تلقائياً، أو يمكنك إضافة نص مخصص" 
+                      {isRTL
+                        ? "يعرض الشريط آخر السيارات والعروض تلقائياً، أو يمكنك إضافة نص مخصص"
                         : "The marquee shows latest cars and offers automatically, or you can add custom text"}
                     </p>
                     <div className="grid md:grid-cols-2 gap-4">
@@ -487,7 +487,7 @@ const SettingsSection = () => {
                   {isRTL ? "معلومات التواصل" : "Contact Info"}
                 </CardTitle>
                 <p className="text-sm text-muted-foreground">
-                  {isRTL 
+                  {isRTL
                     ? "هذه البيانات تظهر في الفواتير وتُستخدم للتواصل مع العملاء"
                     : "This data appears in invoices and is used for customer communication"}
                 </p>

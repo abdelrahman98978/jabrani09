@@ -1,73 +1,57 @@
-# Welcome to your Lovable project
+# Al Jabrani Cars - Premium Showroom
 
-## Project info
+This project is a high-end car showroom management system and customer-facing website.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+## Features
 
-## How can I edit this code?
+- **Premium UI**: Modern, responsive design with glassmorphism and 3D effects.
+- **Dynamic Content**: All car data, brands, and settings are managed via an Admin Dashboard.
+- **Multilingual Support**: Arabic, English, French, and German support with RTL layout for Arabic.
+- **Interactive UI**: 360° car video views for a premium experience.
+- **Admin Dashboard**: Comprehensive management of cars, orders, customers, and settings.
+- **Authentication**: Secure login and signup via Supabase Auth and Google OAuth.
+- **AI Chatbot**: Intelligent customer assistant powered by AI.
 
-There are several ways of editing your application.
+## Technologies Used
 
-**Use Lovable**
+- **Framework**: Vite + React
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS + shadcn/ui
+- **Backend/Database**: Supabase
+- **Icons**: Lucide React
+- **State Management**: TanStack Query (React Query)
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+## Getting Started
 
-Changes made via Lovable will be committed automatically to this repo.
+1. **Clone the repository**:
+   ```sh
+   git clone https://github.com/abdelrahman98978/jabrani09.git
+   ```
 
-**Use your preferred IDE**
+2. **Install dependencies**:
+   ```sh
+   npm install
+   ```
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+3. **Start the development server**:
+   ```sh
+   npm run dev
+   ```
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## Deployment
 
-Follow these steps:
+To deploy this project, you can use services like Vercel, Netlify, or Fly.io. Simply link your GitHub repository and point to the `dist` folder after building.
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+npm run build
 ```
 
-**Edit a file directly in GitHub**
+## Customization
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+Most aspects of the showroom can be customized through the **Admin Dashboard** once you log in as an administrator. This includes:
 
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+- Showroom Name and Logo
+- Contact Information
+- Bank Details for Transfers
+- SEO Settings
+- Home Page Hero Section (Image or Video)

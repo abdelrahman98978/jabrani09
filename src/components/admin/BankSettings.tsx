@@ -18,7 +18,7 @@ const BankSettings = () => {
   const { data: settings, isLoading } = useQuery({
     queryKey: ["admin-settings"],
     queryFn: async () => {
-      const { data } = await supabase.from("settings").select("*").limit(1).maybeSingle();
+      const { data } = await supabase.from("showroom_settings").select("*").limit(1).maybeSingle();
       return data;
     },
   });
@@ -26,10 +26,10 @@ const BankSettings = () => {
   const saveSettings = useMutation({
     mutationFn: async (settingsData: any) => {
       if (settings?.id) {
-        const { error } = await supabase.from("settings").update(settingsData).eq("id", settings.id);
+        const { error } = await supabase.from("showroom_settings").update(settingsData).eq("id", settings.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from("settings").insert(settingsData);
+        const { error } = await supabase.from("showroom_settings").insert(settingsData);
         if (error) throw error;
       }
     },
@@ -38,9 +38,9 @@ const BankSettings = () => {
       toast({ title: isRTL ? "تم حفظ إعدادات البنك" : "Bank settings saved" });
     },
     onError: () => {
-      toast({ 
+      toast({
         variant: "destructive",
-        title: isRTL ? "فشل حفظ الإعدادات" : "Failed to save settings" 
+        title: isRTL ? "فشل حفظ الإعدادات" : "Failed to save settings"
       });
     },
   });
@@ -49,7 +49,7 @@ const BankSettings = () => {
     e.preventDefault();
     const form = e.currentTarget;
     const formData = new FormData(form);
-    
+
     saveSettings.mutate({
       bank_name: formData.get("bank_name"),
       bank_name_en: formData.get("bank_name_en"),
@@ -81,7 +81,7 @@ const BankSettings = () => {
             {isRTL ? "معلومات الحساب البنكي" : "Bank Account Information"}
           </CardTitle>
           <p className="text-sm text-muted-foreground">
-            {isRTL 
+            {isRTL
               ? "تظهر هذه البيانات في الفواتير وصفحة الطلب للتحويل البنكي"
               : "This information appears in invoices and order pages for bank transfers"}
           </p>
@@ -91,7 +91,7 @@ const BankSettings = () => {
             <div className="p-4 rounded-lg bg-primary/10 border border-primary/20">
               <p className="text-sm font-medium text-primary flex items-center gap-2">
                 <FileText className="h-4 w-4" />
-                {isRTL 
+                {isRTL
                   ? "💳 أدخل بيانات حسابك البنكي ليتمكن العملاء من التحويل مباشرة"
                   : "💳 Enter your bank details so customers can transfer directly"}
               </p>
@@ -103,18 +103,18 @@ const BankSettings = () => {
                   <Landmark className="h-4 w-4" />
                   {isRTL ? "اسم البنك بالعربي" : "Bank Name (Arabic)"}
                 </Label>
-                <Input 
-                  name="bank_name" 
-                  defaultValue={settings?.bank_name || ""} 
+                <Input
+                  name="bank_name"
+                  defaultValue={settings?.bank_name || ""}
                   placeholder={isRTL ? "مثال: بنك الراجحي" : "Example: Al Rajhi Bank"}
                   className="text-right"
                 />
               </div>
               <div>
                 <Label>{isRTL ? "اسم البنك بالإنجليزي" : "Bank Name (English)"}</Label>
-                <Input 
-                  name="bank_name_en" 
-                  defaultValue={settings?.bank_name_en || ""} 
+                <Input
+                  name="bank_name_en"
+                  defaultValue={settings?.bank_name_en || ""}
                   placeholder="Example: Al Rajhi Bank"
                 />
               </div>
@@ -125,9 +125,9 @@ const BankSettings = () => {
                 <CreditCard className="h-4 w-4" />
                 {isRTL ? "اسم صاحب الحساب" : "Account Holder Name"}
               </Label>
-              <Input 
-                name="bank_account_name" 
-                defaultValue={settings?.bank_account_name || ""} 
+              <Input
+                name="bank_account_name"
+                defaultValue={settings?.bank_account_name || ""}
                 placeholder={isRTL ? "الاسم كما يظهر في الحساب" : "Name as it appears on the account"}
               />
             </div>
@@ -135,18 +135,18 @@ const BankSettings = () => {
             <div className="grid md:grid-cols-2 gap-4">
               <div>
                 <Label>{isRTL ? "رقم الحساب" : "Account Number"}</Label>
-                <Input 
-                  name="bank_account_number" 
-                  defaultValue={settings?.bank_account_number || ""} 
+                <Input
+                  name="bank_account_number"
+                  defaultValue={settings?.bank_account_number || ""}
                   placeholder="XXXXXXXXXX"
                   dir="ltr"
                 />
               </div>
               <div>
                 <Label>{isRTL ? "رقم الآيبان (IBAN)" : "IBAN Number"}</Label>
-                <Input 
-                  name="bank_iban" 
-                  defaultValue={settings?.bank_iban || ""} 
+                <Input
+                  name="bank_iban"
+                  defaultValue={settings?.bank_iban || ""}
                   placeholder="SA0000000000000000000000"
                   dir="ltr"
                 />

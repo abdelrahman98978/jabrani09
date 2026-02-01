@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import CarCard, { mapCarToCardData } from "./CarCard";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft, Loader2, Sparkles } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface Promotion {
   id: string;
@@ -17,6 +18,7 @@ interface Promotion {
   start_date: string | null;
   end_date: string | null;
 }
+
 const applyPromotions = (cars: any[], promotions: Promotion[]) => {
   const now = new Date();
 
@@ -28,10 +30,13 @@ const applyPromotions = (cars: any[], promotions: Promotion[]) => {
   });
 
   return cars.map((car) => {
-    if (car.has_discount && !car.original_price) return car; // خصم يدوي
-
     let bestDiscount = 0;
     let bestPromo: Promotion | null = null;
+
+    // Manual discount check
+    if (car.original_price && car.original_price > car.price) {
+      bestDiscount = car.original_price - car.price;
+    }
 
     for (const promo of activePromos) {
       const matchesCar =
@@ -46,43 +51,44 @@ const applyPromotions = (cars: any[], promotions: Promotion[]) => {
 
       if (!promo.discount_type || !promo.discount_value) continue;
 
-      let discountedPrice = car.price;
+      let promoDiscount = 0;
       if (promo.discount_type === "percentage") {
-        discountedPrice = car.price * (1 - promo.discount_value / 100);
+        promoDiscount = car.price * (promo.discount_value / 100);
       } else {
-        discountedPrice = car.price - promo.discount_value;
+        promoDiscount = promo.discount_value;
       }
 
-      discountedPrice = Math.max(discountedPrice, 0);
-      const discountAmount = car.price - discountedPrice;
-
-      if (discountAmount > bestDiscount) {
-        bestDiscount = discountAmount;
+      if (promoDiscount > bestDiscount) {
+        bestDiscount = promoDiscount;
         bestPromo = promo;
       }
     }
 
-      if (!bestPromo) return car;
+    if (bestDiscount <= 0) return car;
 
-      const discountedPrice = car.price - bestDiscount;
-      const percent = Math.round((bestDiscount / car.price) * 100);
+    const discountedPrice = car.price - (bestPromo ? bestDiscount : 0);
+    const originalPrice = car.original_price ?? car.price;
+    const percent = Math.round((bestDiscount / originalPrice) * 100);
 
-      return {
-        ...car,
-        original_price: car.original_price ?? car.price,
-        price: discountedPrice,
-        has_discount: true,
-        promotion_percent: percent,
-        promotion_type: bestPromo.discount_type || undefined,
-      };
-    });
+    return {
+      ...car,
+      original_price: originalPrice,
+      price: bestPromo ? discountedPrice : car.price,
+      has_discount: true,
+      promotion_percent: percent,
+      promotion_type: bestPromo?.discount_type || undefined,
+    };
+  });
 };
 
 const FeaturedCars = () => {
+  const { language } = useLanguage();
+  const isRTL = language === "ar";
+
   const { data: cars, isLoading } = useQuery({
     queryKey: ["featured-cars"],
     queryFn: async () => {
-      const [{ data: cars, error }, { data: promotions, error: promoError }] = await Promise.all([
+      const [{ data: carsData, error }, { data: promotions, error: promoError }] = await Promise.all([
         supabase
           .from("cars")
           .select("*")
@@ -93,59 +99,84 @@ const FeaturedCars = () => {
         supabase.from("promotions").select("*"),
       ]);
 
-      if (error) throw error;
-      if (promoError) throw promoError;
+      if (error) {
+        console.error("Error fetching cars:", error);
+        return [];
+      }
+      if (promoError) console.error("Error fetching promotions:", promoError);
 
-      const carsWithPromos = applyPromotions(cars || [], (promotions as Promotion[]) || []);
-
-      // إظهار السيارات التي عليها عروض أو خصومات فقط
-      const discountedCars = carsWithPromos.filter(
-        (car: any) => car.has_discount || (car.promotion_percent && car.promotion_percent > 0)
-      );
-
-      return discountedCars;
+      return applyPromotions(carsData || [], (promotions as Promotion[]) || []);
     },
   });
 
   return (
-    <section className="py-20 bg-gradient-to-b from-background to-card/50 relative overflow-hidden">
+    <section className="py-24 bg-gradient-to-b from-background to-secondary/20 relative overflow-hidden">
       {/* Background decoration */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 left-0 w-96 h-96 bg-accent/5 rounded-full blur-3xl" />
-      
+      <div className="absolute top-1/4 -right-20 w-80 h-80 bg-primary/10 rounded-full blur-[100px] animate-pulse" />
+      <div className="absolute bottom-1/4 -left-20 w-80 h-80 bg-accent/10 rounded-full blur-[100px] animate-pulse delay-1000" />
+
       <div className="container mx-auto px-4 relative z-10">
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-12 animate-fade-in">
-          <div>
-            <h2 className="text-3xl md:text-4xl font-black text-foreground">
-              السيارات <span className="text-gradient-gold">المميزة</span>
+        <div className="flex flex-col md:flex-row justify-between items-end gap-6 mb-16">
+          <div className="space-y-4 max-w-2xl">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider">
+              <Sparkles className="h-3 w-3" />
+              {isRTL ? "مختاراتنا لك" : "Our Handpicked Selection"}
+            </div>
+            <h2 className="text-4xl md:text-5xl font-black text-foreground leading-tight">
+              {isRTL ? "السيارات" : "Featured"} <span className="text-gradient-gold">{isRTL ? "المميزة" : "Inventory"}</span>
             </h2>
-            <p className="text-muted-foreground mt-2">اكتشف أفضل العروض المتاحة لدينا</p>
+            <p className="text-muted-foreground text-lg">
+              {isRTL
+                ? "انطلق في رحلة الفخامة مع مجموعتنا الاستثنائية من أحدث موديلات السيارات العالمية"
+                : "Embark on a luxury journey with our exceptional collection of the latest global car models"}
+            </p>
           </div>
-          <Link to="/cars">
-            <Button variant="outline" className="gap-2 hover-lift-3d">
-              عرض الكل
-              <ArrowLeft className="h-4 w-4" />
+          <Link to="/cars" className="group">
+            <Button variant="ghost" className="gap-2 text-lg font-bold hover:bg-primary/5 hover:text-primary transition-all duration-500">
+              {isRTL ? "استكشف كامل المخزون" : "Explore Full Inventory"}
+              <ArrowLeft className={`h-5 w-5 transition-transform duration-300 ${isRTL ? 'group-hover:translate-x-1' : 'group-hover:-translate-x-1'}`} />
             </Button>
           </Link>
         </div>
 
         {/* Cars Grid */}
         {isLoading ? (
-          <div className="flex justify-center items-center py-20">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="h-[400px] rounded-2xl bg-muted animate-pulse" />
+            ))}
           </div>
         ) : cars && cars.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 stagger-3d-entrance">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {cars.map((car, index) => (
-              <div key={car.id} style={{ animationDelay: `${index * 0.08}s` }}>
+              <div
+                key={car.id}
+                className="stagger-item opacity-0 animate-in fade-in slide-in-from-bottom-10"
+                style={{ animationDelay: `${index * 100}ms`, animationFillMode: 'forwards' }}
+              >
                 <CarCard car={mapCarToCardData(car)} />
               </div>
             ))}
           </div>
         ) : (
-          <div className="text-center py-20">
-            <p className="text-muted-foreground">لا توجد سيارات مميزة حالياً</p>
+          <div className="text-center py-24 rounded-3xl border-2 border-dashed border-border/50 bg-card/50 backdrop-blur-sm">
+            <div className="h-20 w-20 bg-secondary rounded-full flex items-center justify-center mx-auto mb-6">
+              <Sparkles className="h-10 w-10 text-muted-foreground/30" />
+            </div>
+            <h3 className="text-2xl font-bold mb-2">
+              {isRTL ? "لا توجد سيارات مميزة حالياً" : "No Featured Cars Yet"}
+            </h3>
+            <p className="text-muted-foreground max-w-xs mx-auto mb-8">
+              {isRTL
+                ? "نحن بصدد تحديث مجموعتنا المميزة بآخر الموديلات. ترقبوا قريباً!"
+                : "We are updating our premium collection with the latest models. Stay tuned!"}
+            </p>
+            <Link to="/cars">
+              <Button variant="outline" size="lg">
+                {isRTL ? "تصفح جميع السيارات" : "Browse All Cars"}
+              </Button>
+            </Link>
           </div>
         )}
       </div>

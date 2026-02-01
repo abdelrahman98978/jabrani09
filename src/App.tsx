@@ -21,6 +21,7 @@ import PushNotificationManager from "@/components/PushNotificationManager";
 import AnnouncementBar from "@/components/AnnouncementBar";
 import CompareDrawer from "@/components/CompareDrawer";
 import RealtimeNotifications from "@/components/RealtimeNotifications";
+import SalesNotification from "@/components/SalesNotification";
 import PrivacyPolicyPage from "@/pages/PrivacyPolicyPage";
 import TermsPage from "@/pages/TermsPage";
 import CarDetailsPage from "./pages/CarDetailsPage";
@@ -164,6 +165,7 @@ const AppInner = () => {
                   <PushNotificationManager />
                   <CompareDrawer />
                   <RealtimeNotifications />
+                  <SalesNotification />
                 </BrowserRouter>
               </TooltipProvider>
             </WishlistProvider>

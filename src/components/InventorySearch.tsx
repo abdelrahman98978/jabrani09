@@ -13,7 +13,7 @@ const InventorySearch = () => {
   const navigate = useNavigate();
   const { language } = useLanguage();
   const isRTL = language === "ar";
-  
+
   const [keyword, setKeyword] = useState("");
   const [brand, setBrand] = useState("");
   const [fuelType, setFuelType] = useState("");
@@ -52,7 +52,7 @@ const InventorySearch = () => {
     if (year) params.set("year", year);
     if (priceRange[0] > 0) params.set("minPrice", priceRange[0].toString());
     if (priceRange[1] < 1000000) params.set("maxPrice", priceRange[1].toString());
-    
+
     navigate(`/cars?${params.toString()}`);
   };
 
@@ -72,7 +72,7 @@ const InventorySearch = () => {
   };
 
   return (
-    <div className="wp-inventory-search relative z-20 -mt-24 mb-12">
+    <div className="wp-inventory-search relative z-20 mb-12">
       <div className="container mx-auto px-4">
         <div className="bg-card rounded-2xl shadow-2xl border border-border/50 overflow-hidden">
           {/* Header */}
@@ -157,8 +157,8 @@ const InventorySearch = () => {
 
               {/* Search Button */}
               <div>
-                <Button 
-                  variant="gold" 
+                <Button
+                  variant="gold"
                   className="w-full h-12 gap-2 text-base font-bold"
                   onClick={handleSearch}
                 >

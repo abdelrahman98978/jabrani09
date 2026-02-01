@@ -28,7 +28,7 @@ const Index = () => {
           <HeroSection />
         </motion.div>
 
-        <section className="relative z-20 -mt-10 md:-mt-20">
+        <section className="relative z-20 -mt-8 md:-mt-16">
           <div className="container mx-auto px-4">
             <motion.div
               initial={{ opacity: 0, y: 50 }}

@@ -202,3 +202,17 @@ USING (EXISTS (SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND ro
 DROP POLICY IF EXISTS "Admins can update all orders" ON public.orders;
 CREATE POLICY "Admins can update all orders" ON public.orders FOR UPDATE TO authenticated 
 USING (EXISTS (SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role = 'admin'));
+- -   T e m p o r a r y   f i x   t o   a l l o w   l e g a c y / c a c h e d   c l i e n t s   t o   w o r k   u n t i l   t h e y   r e f r e s h  
+ - -   A l l o w   A N Y O N E   t o   s e l e c t   f r o m   c u s t o m e r s   ( n e e d e d   f o r   c h e c k i n g   i f   c u s t o m e r   e x i s t s   b y   p h o n e   i n   o l d   c o d e )  
+ - -   T h i s   i s   a   t e m p o r a r y   m e a s u r e   t o   s t o p   t h e   4 0 3   e r r o r s   i m m e d i a t e l y .  
+  
+ D R O P   P O L I C Y   I F   E X I S T S   " A n y o n e   c a n   s e l e c t   c u s t o m e r s "   O N   p u b l i c . c u s t o m e r s ;  
+ C R E A T E   P O L I C Y   " A n y o n e   c a n   s e l e c t   c u s t o m e r s "   O N   p u b l i c . c u s t o m e r s   F O R   S E L E C T   T O   p u b l i c   U S I N G   ( t r u e ) ;  
+  
+ - -   E n s u r e   i n s e r t   i s   a l s o   o p e n   ( a l r e a d y   d o n e   i n   M A S T E R _ F I X _ A L L   b u t   r e i n f o r c i n g )  
+ D R O P   P O L I C Y   I F   E X I S T S   " A n y o n e   c a n   i n s e r t   c u s t o m e r s "   O N   p u b l i c . c u s t o m e r s ;  
+ C R E A T E   P O L I C Y   " A n y o n e   c a n   i n s e r t   c u s t o m e r s "   O N   p u b l i c . c u s t o m e r s   F O R   I N S E R T   T O   p u b l i c   W I T H   C H E C K   ( t r u e ) ;  
+  
+ - -   G r a n t   s e l e c t   p e r m i s s i o n   e x p l i c i t l y   t o   a n o n   r o l e  
+ G R A N T   S E L E C T   O N   p u b l i c . c u s t o m e r s   T O   a n o n ;  
+ 

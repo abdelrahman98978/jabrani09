@@ -104,30 +104,18 @@ export const CarQuickOrderDialog = ({ open, onOpenChange, car }: CarQuickOrderDi
     try {
       const { data: { user } } = await supabase.auth.getUser();
 
-      // Create or get customer by phone
-      const { data: existingCustomer } = await supabase
-        .from("customers")
-        .select("id")
-        .eq("phone", formData.customerPhone)
-        .maybeSingle();
+      // Use Secure RPC to get or create customer
+      // This avoids "Permission denied" errors for guest users trying to SELECT from customers table
+      const { data: customerId, error: customerError } = await supabase
+        .rpc('get_or_create_customer', {
+          p_name: formData.customerName.trim(),
+          p_phone: formData.customerPhone.trim(),
+          p_email: formData.customerEmail?.trim() || null,
+          p_user_id: user?.id || null,
+        });
 
-      let customerId = existingCustomer?.id;
-
-      if (!customerId) {
-        const { data: newCustomer, error: customerError } = await supabase
-          .from("customers")
-          .insert({
-            name: formData.customerName.trim(),
-            phone: formData.customerPhone.trim(),
-            email: formData.customerEmail?.trim() || null,
-            user_id: user?.id || null,
-          })
-          .select("id")
-          .single();
-
-        if (customerError) throw customerError;
-        customerId = newCustomer.id;
-      }
+      if (customerError) throw customerError;
+      if (!customerId) throw new Error("Failed to generate customer ID");
 
       // Create order for this car
       const { data: order, error: orderError } = await supabase

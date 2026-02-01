@@ -175,216 +175,218 @@ export const CarQuickOrderDialog = ({ open, onOpenChange, car }: CarQuickOrderDi
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>{t.order.details}</DialogTitle>
-          <DialogDescription>
-            {isRTL
-              ? "أدخل بياناتك لتأكيد طلب السيارة عبر الموقع."
-              : "Enter your details to confirm the car order via the website."}
-          </DialogDescription>
-        </DialogHeader>
+      <DialogContent className="w-full sm:max-w-2xl h-[100dvh] sm:h-auto sm:max-h-[90vh] overflow-y-auto p-0 sm:p-6">
+        <div className="p-4 sm:p-0 space-y-4">
+          <DialogHeader>
+            <DialogTitle>{t.order.details}</DialogTitle>
+            <DialogDescription>
+              {isRTL
+                ? "أدخل بياناتك لتأكيد طلب السيارة عبر الموقع."
+                : "Enter your details to confirm the car order via the website."}
+            </DialogDescription>
+          </DialogHeader>
 
-        {/* Car summary */}
-        {car && (
-          <div className="mb-4 flex items-center gap-4 rounded-lg bg-secondary/40 p-3 border border-border/50">
-            <img
-              src={car.main_image || "/placeholder.svg"}
-              alt={language === "ar" ? car.name_ar : car.name}
-              className="h-16 w-24 rounded-md object-cover border border-border/50"
-            />
-            <div className="space-y-1">
-              <p className="font-semibold text-sm">{language === "ar" ? car.name_ar : car.name}</p>
-              <p className="text-xs text-muted-foreground">
-                {car.model} - {car.year}
-              </p>
-              <p className="text-sm font-bold text-primary">
-                {Number(car.price || 0).toLocaleString()} {isRTL ? "ر.س" : "SAR"}
-              </p>
-            </div>
-          </div>
-        )}
-
-        <div className="space-y-6 py-2">
-          {/* Customer Info */}
-          <div className="space-y-4">
-            <h3 className="text-sm font-semibold">
-              {t.order.customerInfo}
-            </h3>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="name-quick">{isRTL ? "الاسم" : "Name"}</Label>
-                <Input
-                  id="name-quick"
-                  value={formData.customerName}
-                  onChange={(e) => setFormData({ ...formData, customerName: e.target.value })}
-                  placeholder={isRTL ? "أدخل اسمك" : "Enter your name"}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="phone-quick">{isRTL ? "رقم الهاتف" : "Phone"}</Label>
-                <Input
-                  id="phone-quick"
-                  value={formData.customerPhone}
-                  onChange={(e) => setFormData({ ...formData, customerPhone: e.target.value })}
-                  placeholder={isRTL ? "05xxxxxxxx" : "05xxxxxxxx"}
-                  dir="ltr"
-                />
-              </div>
-              <div className="space-y-2 sm:col-span-2">
-                <Label htmlFor="email-quick">
-                  {isRTL ? "البريد الإلكتروني (اختياري)" : "Email (optional)"}
-                </Label>
-                <Input
-                  id="email-quick"
-                  type="email"
-                  value={formData.customerEmail}
-                  onChange={(e) => setFormData({ ...formData, customerEmail: e.target.value })}
-                  placeholder="example@email.com"
-                  dir="ltr"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Delivery Method */}
-          <div className="space-y-3">
-            <h3 className="text-sm font-semibold">
-              {t.order.deliveryMethod}
-            </h3>
-            <RadioGroup value={deliveryMethod} onValueChange={(v) => setDeliveryMethod(v as any)}>
-              <div className="flex items-center space-x-2 space-x-reverse border rounded-lg p-3 hover:bg-secondary/20 cursor-pointer">
-                <RadioGroupItem value="pickup" id="pickup-quick" />
-                <Label htmlFor="pickup-quick" className="flex items-center gap-2 cursor-pointer flex-1">
-                  <Package className="h-5 w-5 text-primary" />
-                  <div>
-                    <p className="font-medium">
-                      {t.order.pickup}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {isRTL
-                        ? "استلم سيارتك مباشرة من المعرض"
-                        : "Collect your car directly from the showroom"}
-                    </p>
-                  </div>
-                </Label>
-              </div>
-              <div className="flex items-center space-x-2 space-x-reverse border rounded-lg p-3 hover:bg-secondary/20 cursor-pointer">
-                <RadioGroupItem value="delivery" id="delivery-quick" />
-                <Label htmlFor="delivery-quick" className="flex items-center gap-2 cursor-pointer flex-1">
-                  <Truck className="h-5 w-5 text-primary" />
-                  <div>
-                    <p className="font-medium">
-                      {t.order.delivery}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {isRTL
-                        ? "نقوم بتوصيل السيارة إلى عنوانك"
-                        : "We will deliver the car to your address"}
-                    </p>
-                  </div>
-                </Label>
-              </div>
-            </RadioGroup>
-          </div>
-
-          {/* Delivery Address (if delivery selected) */}
-          {deliveryMethod === "delivery" && (
-            <div className="space-y-4 border rounded-lg p-4 bg-secondary/30">
-              <h3 className="text-sm font-semibold">
-                {t.order.deliveryAddress}
-              </h3>
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="city-quick">{isRTL ? "المدينة" : "City"}</Label>
-                  <Input
-                    id="city-quick"
-                    value={formData.deliveryCity}
-                    onChange={(e) => setFormData({ ...formData, deliveryCity: e.target.value })}
-                    placeholder={isRTL ? "مثال: الخرطوم" : "Example: Khartoum"}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="address-quick">
-                    {isRTL ? "العنوان التفصيلي" : "Detailed address"}
-                  </Label>
-                  <Input
-                    id="address-quick"
-                    value={formData.deliveryAddress}
-                    onChange={(e) => setFormData({ ...formData, deliveryAddress: e.target.value })}
-                    placeholder={isRTL ? "الحي، الشارع، المعلم" : "Neighborhood, street, landmark"}
-                  />
-                </div>
+          {/* Car summary */}
+          {car && (
+            <div className="mb-4 flex items-center gap-4 rounded-lg bg-secondary/40 p-3 border border-border/50">
+              <img
+                src={car.main_image || "/placeholder.svg"}
+                alt={language === "ar" ? car.name_ar : car.name}
+                className="h-16 w-24 rounded-md object-cover border border-border/50"
+              />
+              <div className="space-y-1">
+                <p className="font-semibold text-sm">{language === "ar" ? car.name_ar : car.name}</p>
+                <p className="text-xs text-muted-foreground">
+                  {car.model} - {car.year}
+                </p>
+                <p className="text-sm font-bold text-primary">
+                  {Number(car.price || 0).toLocaleString()} {isRTL ? "ر.س" : "SAR"}
+                </p>
               </div>
             </div>
           )}
 
-          {/* Payment Method */}
-          <div className="space-y-3">
-            <h3 className="text-sm font-semibold flex items-center gap-2">
-              <CreditCard className="h-4 w-4 text-primary" />
-              {t.order.paymentMethod}
-            </h3>
-            <RadioGroup
-              value={paymentMethod}
-              onValueChange={(v) => setPaymentMethod(v as any)}
-              className="grid gap-4 sm:grid-cols-2"
-            >
-              <div className="flex items-center space-x-2 space-x-reverse border rounded-lg p-3 hover:bg-blue-50/50 dark:hover:bg-blue-950/20 cursor-pointer">
-                <RadioGroupItem value="bank_transfer" id="bank-quick" />
-                <Label htmlFor="bank-quick" className="flex items-center gap-2 cursor-pointer flex-1">
-                  <Building2 className="h-5 w-5 text-blue-600" />
-                  <div>
-                    <p className="font-medium">
-                      {t.order.bankTransfer}
-                    </p>
-                    <p className="text-[10px] text-muted-foreground">
-                      {isRTL ? settings?.bank_name : (settings?.bank_name_en || settings?.bank_name)}
-                    </p>
-                  </div>
-                </Label>
+          <div className="space-y-6 py-2">
+            {/* Customer Info */}
+            <div className="space-y-4">
+              <h3 className="text-sm font-semibold">
+                {t.order.customerInfo}
+              </h3>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="name-quick">{isRTL ? "الاسم" : "Name"}</Label>
+                  <Input
+                    id="name-quick"
+                    value={formData.customerName}
+                    onChange={(e) => setFormData({ ...formData, customerName: e.target.value })}
+                    placeholder={isRTL ? "أدخل اسمك" : "Enter your name"}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="phone-quick">{isRTL ? "رقم الهاتف" : "Phone"}</Label>
+                  <Input
+                    id="phone-quick"
+                    value={formData.customerPhone}
+                    onChange={(e) => setFormData({ ...formData, customerPhone: e.target.value })}
+                    placeholder={isRTL ? "05xxxxxxxx" : "05xxxxxxxx"}
+                    dir="ltr"
+                  />
+                </div>
+                <div className="space-y-2 sm:col-span-2">
+                  <Label htmlFor="email-quick">
+                    {isRTL ? "البريد الإلكتروني (اختياري)" : "Email (optional)"}
+                  </Label>
+                  <Input
+                    id="email-quick"
+                    type="email"
+                    value={formData.customerEmail}
+                    onChange={(e) => setFormData({ ...formData, customerEmail: e.target.value })}
+                    placeholder="example@email.com"
+                    dir="ltr"
+                  />
+                </div>
               </div>
-              <div className="flex items-center space-x-2 space-x-reverse border rounded-lg p-3 hover:bg-secondary/20 cursor-pointer">
-                <RadioGroupItem value="cash_on_delivery" id="cash-quick" />
-                <Label htmlFor="cash-quick" className="flex items-center gap-2 cursor-pointer flex-1">
-                  <CreditCard className="h-5 w-5 text-primary" />
-                  <div>
-                    <p className="font-medium">
-                      {t.order.cashOnDelivery}
-                    </p>
-                    <p className="text-[10px] text-muted-foreground">
-                      {isRTL ? "نقدًا عند الاستلام" : "Cash on delivery"}
-                    </p>
+            </div>
+
+            {/* Delivery Method */}
+            <div className="space-y-3">
+              <h3 className="text-sm font-semibold">
+                {t.order.deliveryMethod}
+              </h3>
+              <RadioGroup value={deliveryMethod} onValueChange={(v) => setDeliveryMethod(v as any)}>
+                <div className="flex items-center space-x-2 space-x-reverse border rounded-lg p-3 hover:bg-secondary/20 cursor-pointer">
+                  <RadioGroupItem value="pickup" id="pickup-quick" />
+                  <Label htmlFor="pickup-quick" className="flex items-center gap-2 cursor-pointer flex-1">
+                    <Package className="h-5 w-5 text-primary" />
+                    <div>
+                      <p className="font-medium">
+                        {t.order.pickup}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {isRTL
+                          ? "استلم سيارتك مباشرة من المعرض"
+                          : "Collect your car directly from the showroom"}
+                      </p>
+                    </div>
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2 space-x-reverse border rounded-lg p-3 hover:bg-secondary/20 cursor-pointer">
+                  <RadioGroupItem value="delivery" id="delivery-quick" />
+                  <Label htmlFor="delivery-quick" className="flex items-center gap-2 cursor-pointer flex-1">
+                    <Truck className="h-5 w-5 text-primary" />
+                    <div>
+                      <p className="font-medium">
+                        {t.order.delivery}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {isRTL
+                          ? "نقوم بتوصيل السيارة إلى عنوانك"
+                          : "We will deliver the car to your address"}
+                      </p>
+                    </div>
+                  </Label>
+                </div>
+              </RadioGroup>
+            </div>
+
+            {/* Delivery Address (if delivery selected) */}
+            {deliveryMethod === "delivery" && (
+              <div className="space-y-4 border rounded-lg p-4 bg-secondary/30">
+                <h3 className="text-sm font-semibold">
+                  {t.order.deliveryAddress}
+                </h3>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="city-quick">{isRTL ? "المدينة" : "City"}</Label>
+                    <Input
+                      id="city-quick"
+                      value={formData.deliveryCity}
+                      onChange={(e) => setFormData({ ...formData, deliveryCity: e.target.value })}
+                      placeholder={isRTL ? "مثال: الخرطوم" : "Example: Khartoum"}
+                    />
                   </div>
-                </Label>
+                  <div className="space-y-2">
+                    <Label htmlFor="address-quick">
+                      {isRTL ? "العنوان التفصيلي" : "Detailed address"}
+                    </Label>
+                    <Input
+                      id="address-quick"
+                      value={formData.deliveryAddress}
+                      onChange={(e) => setFormData({ ...formData, deliveryAddress: e.target.value })}
+                      placeholder={isRTL ? "الحي، الشارع، المعلم" : "Neighborhood, street, landmark"}
+                    />
+                  </div>
+                </div>
               </div>
-            </RadioGroup>
+            )}
+
+            {/* Payment Method */}
+            <div className="space-y-3">
+              <h3 className="text-sm font-semibold flex items-center gap-2">
+                <CreditCard className="h-4 w-4 text-primary" />
+                {t.order.paymentMethod}
+              </h3>
+              <RadioGroup
+                value={paymentMethod}
+                onValueChange={(v) => setPaymentMethod(v as any)}
+                className="grid gap-4 sm:grid-cols-2"
+              >
+                <div className="flex items-center space-x-2 space-x-reverse border rounded-lg p-3 hover:bg-blue-50/50 dark:hover:bg-blue-950/20 cursor-pointer">
+                  <RadioGroupItem value="bank_transfer" id="bank-quick" />
+                  <Label htmlFor="bank-quick" className="flex items-center gap-2 cursor-pointer flex-1">
+                    <Building2 className="h-5 w-5 text-blue-600" />
+                    <div>
+                      <p className="font-medium">
+                        {t.order.bankTransfer}
+                      </p>
+                      <p className="text-[10px] text-muted-foreground">
+                        {isRTL ? settings?.bank_name : (settings?.bank_name_en || settings?.bank_name)}
+                      </p>
+                    </div>
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2 space-x-reverse border rounded-lg p-3 hover:bg-secondary/20 cursor-pointer">
+                  <RadioGroupItem value="cash_on_delivery" id="cash-quick" />
+                  <Label htmlFor="cash-quick" className="flex items-center gap-2 cursor-pointer flex-1">
+                    <CreditCard className="h-5 w-5 text-primary" />
+                    <div>
+                      <p className="font-medium">
+                        {t.order.cashOnDelivery}
+                      </p>
+                      <p className="text-[10px] text-muted-foreground">
+                        {isRTL ? "نقدًا عند الاستلام" : "Cash on delivery"}
+                      </p>
+                    </div>
+                  </Label>
+                </div>
+              </RadioGroup>
+            </div>
+
+            {/* Notes */}
+            <div className="space-y-2">
+              <Label htmlFor="notes-quick">
+                {t.order.notes}
+              </Label>
+              <Textarea
+                id="notes-quick"
+                value={formData.deliveryNotes}
+                onChange={(e) => setFormData({ ...formData, deliveryNotes: e.target.value })}
+                className="min-h-[80px]"
+                placeholder={isRTL ? "أي ملاحظات إضافية..." : "Any additional notes..."}
+              />
+            </div>
           </div>
 
-          {/* Notes */}
-          <div className="space-y-2">
-            <Label htmlFor="notes-quick">
-              {t.order.notes}
-            </Label>
-            <Textarea
-              id="notes-quick"
-              value={formData.deliveryNotes}
-              onChange={(e) => setFormData({ ...formData, deliveryNotes: e.target.value })}
-              className="min-h-[80px]"
-              placeholder={isRTL ? "أي ملاحظات إضافية..." : "Any additional notes..."}
-            />
-          </div>
+          <DialogFooter className="flex flex-col sm:flex-row sm:justify-end gap-2">
+            <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
+              {t.common.cancel}
+            </Button>
+            <Button onClick={handleSubmit} disabled={isSubmitting} className="gap-2">
+              {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Package className="h-4 w-4" />}
+              {isRTL ? "تأكيد الطلب" : "Confirm order"}
+            </Button>
+          </DialogFooter>
         </div>
-
-        <DialogFooter className="flex flex-col sm:flex-row sm:justify-end gap-2">
-          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
-            {t.common.cancel}
-          </Button>
-          <Button onClick={handleSubmit} disabled={isSubmitting} className="gap-2">
-            {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Package className="h-4 w-4" />}
-            {isRTL ? "تأكيد الطلب" : "Confirm order"}
-          </Button>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

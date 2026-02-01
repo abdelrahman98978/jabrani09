@@ -15,15 +15,15 @@ import Footer from "@/components/Footer";
 import InvoicePDF from "@/components/InvoicePDF";
 import CarCard, { mapCarToCardData } from "@/components/CarCard";
 import ReferralCard from "@/components/ReferralCard";
-import { 
-  User, 
-  Mail, 
-  Phone, 
-  Camera, 
-  Save, 
-  Loader2, 
-  LogOut, 
-  ShoppingCart, 
+import {
+  User,
+  Mail,
+  Phone,
+  Camera,
+  Save,
+  Loader2,
+  LogOut,
+  ShoppingCart,
   Heart,
   Eye,
   Clock,
@@ -594,6 +594,57 @@ const ProfilePage = () => {
     }
   };
 
+  // MFA State
+  const [mfaData, setMfaData] = useState<{ id: string; type: string; secret: string; qr_code: string } | null>(null);
+  const [mfaCode, setMfaCode] = useState("");
+  const [isEnrollingMfa, setIsEnrollingMfa] = useState(false);
+  const [verifyingMfa, setVerifyingMfa] = useState(false);
+
+  const handleEnrollMFA = async () => {
+    try {
+      setIsEnrollingMfa(true);
+      const { data, error } = await supabase.auth.mfa.enroll({
+        factorType: 'totp',
+      });
+      if (error) throw error;
+      setMfaData(data);
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: isRTL ? "خطأ" : "Error",
+        description: error.message
+      });
+    } finally {
+      setIsEnrollingMfa(false);
+    }
+  };
+
+  const handleVerifyMFA = async () => {
+    if (!mfaData) return;
+    setVerifyingMfa(true);
+    try {
+      const { data, error } = await supabase.auth.mfa.challengeAndVerify({
+        factorId: mfaData.id,
+        code: mfaCode,
+      });
+      if (error) throw error;
+      toast({
+        title: isRTL ? "تم تفعيل المصادقة الثنائية" : "2FA Enabled",
+        description: isRTL ? "تم تأمين حسابك بنجاح" : "Your account is now secured",
+      });
+      setMfaData(null);
+      setMfaCode("");
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: isRTL ? "رمز غير صحيح" : "Invalid Code",
+        description: error.message
+      });
+    } finally {
+      setVerifyingMfa(false);
+    }
+  };
+
   // Handle password change
   const handlePasswordChange = async () => {
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {
@@ -667,7 +718,7 @@ const ProfilePage = () => {
         .single();
 
       if (error && error.code !== "PGRST116") throw error;
-      
+
       if (data) {
         setProfile(data);
         setFormData({
@@ -786,18 +837,18 @@ const ProfilePage = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      
+
       <main className="pt-20 pb-16">
         {/* Premium Hero Header */}
         <div className="relative overflow-hidden">
           {/* Background with gradient */}
           <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-primary/5" />
           <div className="absolute inset-0 pattern-overlay opacity-30" />
-          
+
           {/* Decorative elements */}
           <div className="absolute top-0 right-0 w-96 h-96 bg-primary/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
           <div className="absolute bottom-0 left-0 w-64 h-64 bg-primary/15 rounded-full blur-2xl translate-y-1/2 -translate-x-1/2" />
-          
+
           <div className="container mx-auto px-4 py-12 relative z-10">
             {/* Profile Header Card */}
             <Card className="border-0 bg-card/80 backdrop-blur-lg shadow-2xl overflow-hidden">
@@ -812,7 +863,7 @@ const ProfilePage = () => {
                   <Sparkles className="absolute top-4 left-4 h-6 w-6 text-white/50 animate-pulse" />
                   <Sparkles className="absolute bottom-4 right-8 h-4 w-4 text-white/40 animate-pulse delay-300" />
                 </div>
-                
+
                 {/* Profile Info */}
                 <div className="relative px-6 pb-6">
                   <div className="flex flex-col md:flex-row gap-6 items-center md:items-end -mt-16 md:-mt-20">
@@ -832,7 +883,7 @@ const ProfilePage = () => {
                         className="hidden"
                         onChange={handleAvatarUpload}
                       />
-                      <button 
+                      <button
                         onClick={() => avatarInputRef.current?.click()}
                         disabled={uploadingAvatar}
                         className="absolute bottom-2 right-2 h-10 w-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-lg hover:scale-110 transition-transform z-20 border-2 border-background disabled:opacity-50"
@@ -843,12 +894,11 @@ const ProfilePage = () => {
                           <Camera className="h-5 w-5" />
                         )}
                       </button>
-                      
+
                       {/* Membership Badge */}
-                      <div className={`absolute -top-2 -right-2 z-20 ${
-                        membership.level === 'gold' ? 'bg-yellow-500' : 
+                      <div className={`absolute -top-2 -right-2 z-20 ${membership.level === 'gold' ? 'bg-yellow-500' :
                         membership.level === 'silver' ? 'bg-gray-400' : 'bg-amber-700'
-                      } rounded-full p-2 shadow-lg`}>
+                        } rounded-full p-2 shadow-lg`}>
                         <Trophy className="h-4 w-4 text-white" />
                       </div>
                     </div>
@@ -859,22 +909,21 @@ const ProfilePage = () => {
                         <h1 className="text-2xl md:text-3xl font-black text-foreground">
                           {profile?.full_name || (isRTL ? "مستخدم جديد" : "New User")}
                         </h1>
-                        <Badge className={`gap-1 ${
-                          membership.level === 'gold' ? 'bg-yellow-500/20 text-yellow-600 border-yellow-500/30' : 
-                          membership.level === 'silver' ? 'bg-gray-500/20 text-gray-600 border-gray-500/30' : 
-                          'bg-amber-700/20 text-amber-700 border-amber-700/30'
-                        }`}>
+                        <Badge className={`gap-1 ${membership.level === 'gold' ? 'bg-yellow-500/20 text-yellow-600 border-yellow-500/30' :
+                          membership.level === 'silver' ? 'bg-gray-500/20 text-gray-600 border-gray-500/30' :
+                            'bg-amber-700/20 text-amber-700 border-amber-700/30'
+                          }`}>
                           <Trophy className="h-3 w-3" />
                           {membership.name}
                         </Badge>
                         {profile?.role && (
                           <Badge variant="secondary" className="gap-1 bg-primary/10 text-primary border-primary/20">
                             <Shield className="h-3 w-3" />
-                            {profile.role === "admin" 
-                              ? (isRTL ? "مدير" : "Admin") 
+                            {profile.role === "admin"
+                              ? (isRTL ? "مدير" : "Admin")
                               : profile.role === "moderator"
-                              ? (isRTL ? "مشرف" : "Moderator")
-                              : (isRTL ? "عضو" : "Member")
+                                ? (isRTL ? "مشرف" : "Moderator")
+                                : (isRTL ? "عضو" : "Member")
                             }
                           </Badge>
                         )}
@@ -1014,8 +1063,8 @@ const ProfilePage = () => {
                           {isRTL ? "تعديل الملف الشخصي" : "Edit Profile"}
                         </CardTitle>
                         <CardDescription className="mt-2">
-                          {isRTL 
-                            ? "قم بتحديث معلوماتك الشخصية" 
+                          {isRTL
+                            ? "قم بتحديث معلوماتك الشخصية"
                             : "Update your personal information"
                           }
                         </CardDescription>
@@ -1071,7 +1120,7 @@ const ProfilePage = () => {
                         {isRTL ? "البريد الإلكتروني تم التحقق منه" : "Email verified"}
                       </p>
                     </div>
-                    
+
                     {editMode && (
                       <div className="flex gap-3 pt-4">
                         <Button onClick={handleSave} disabled={saving} className="gap-2 rounded-xl flex-1">
@@ -1135,17 +1184,15 @@ const ProfilePage = () => {
                   </Card>
 
                   {/* Membership Card */}
-                  <Card className={`overflow-hidden border-2 ${
-                    membership.level === 'gold' ? 'border-yellow-500/30 bg-gradient-to-br from-yellow-500/5 to-transparent' : 
-                    membership.level === 'silver' ? 'border-gray-500/30 bg-gradient-to-br from-gray-500/5 to-transparent' : 
-                    'border-amber-700/30 bg-gradient-to-br from-amber-700/5 to-transparent'
-                  }`}>
+                  <Card className={`overflow-hidden border-2 ${membership.level === 'gold' ? 'border-yellow-500/30 bg-gradient-to-br from-yellow-500/5 to-transparent' :
+                    membership.level === 'silver' ? 'border-gray-500/30 bg-gradient-to-br from-gray-500/5 to-transparent' :
+                      'border-amber-700/30 bg-gradient-to-br from-amber-700/5 to-transparent'
+                    }`}>
                     <CardContent className="p-6">
                       <div className="flex items-center gap-4">
-                        <div className={`h-16 w-16 rounded-2xl flex items-center justify-center ${
-                          membership.level === 'gold' ? 'bg-yellow-500' : 
+                        <div className={`h-16 w-16 rounded-2xl flex items-center justify-center ${membership.level === 'gold' ? 'bg-yellow-500' :
                           membership.level === 'silver' ? 'bg-gray-400' : 'bg-amber-700'
-                        } shadow-lg`}>
+                          } shadow-lg`}>
                           <Trophy className="h-8 w-8 text-white" />
                         </div>
                         <div className="flex-1">
@@ -1154,10 +1201,9 @@ const ProfilePage = () => {
                             {isRTL ? "100 نقطة حتى المستوى التالي" : "100 points to next level"}
                           </p>
                           <div className="w-full h-2 bg-muted rounded-full mt-2 overflow-hidden">
-                            <div className={`h-full rounded-full ${
-                              membership.level === 'gold' ? 'bg-yellow-500' : 
+                            <div className={`h-full rounded-full ${membership.level === 'gold' ? 'bg-yellow-500' :
                               membership.level === 'silver' ? 'bg-gray-400' : 'bg-amber-700'
-                            }`} style={{ width: '60%' }} />
+                              }`} style={{ width: '60%' }} />
                           </div>
                         </div>
                       </div>
@@ -1195,8 +1241,8 @@ const ProfilePage = () => {
                       {isRTL ? "قائمة المفضلة فارغة" : "No Favorites Yet"}
                     </h3>
                     <p className="text-muted-foreground mb-8 max-w-md mx-auto">
-                      {isRTL 
-                        ? "احفظ سياراتك المفضلة هنا لتجدها بسهولة لاحقاً" 
+                      {isRTL
+                        ? "احفظ سياراتك المفضلة هنا لتجدها بسهولة لاحقاً"
                         : "Save your favorite cars here to find them easily later"
                       }
                     </p>
@@ -1262,9 +1308,9 @@ const ProfilePage = () => {
                       )}
                     </CardTitle>
                     {unreadCount > 0 && (
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
+                      <Button
+                        variant="outline"
+                        size="sm"
                         onClick={() => markAllAsReadMutation.mutate()}
                         disabled={markAllAsReadMutation.isPending}
                         className="gap-2"
@@ -1297,11 +1343,10 @@ const ProfilePage = () => {
                       {notifications.map((notification) => (
                         <div
                           key={notification.id}
-                          className={`p-4 rounded-xl border transition-colors cursor-pointer ${
-                            notification.is_read 
-                              ? 'bg-muted/30 border-border/50' 
-                              : 'bg-primary/5 border-primary/20 hover:bg-primary/10'
-                          }`}
+                          className={`p-4 rounded-xl border transition-colors cursor-pointer ${notification.is_read
+                            ? 'bg-muted/30 border-border/50'
+                            : 'bg-primary/5 border-primary/20 hover:bg-primary/10'
+                            }`}
                           onClick={() => {
                             if (!notification.is_read) {
                               markAsReadMutation.mutate(notification.id);
@@ -1312,9 +1357,8 @@ const ProfilePage = () => {
                           }}
                         >
                           <div className="flex gap-4">
-                            <div className={`h-12 w-12 rounded-xl flex items-center justify-center shrink-0 ${
-                              notification.is_read ? 'bg-muted' : 'bg-primary/10'
-                            }`}>
+                            <div className={`h-12 w-12 rounded-xl flex items-center justify-center shrink-0 ${notification.is_read ? 'bg-muted' : 'bg-primary/10'
+                              }`}>
                               {getNotificationIcon(notification.type)}
                             </div>
                             <div className="flex-1 min-w-0">
@@ -1414,8 +1458,8 @@ const ProfilePage = () => {
                               </Badge>
                             </div>
                           </div>
-                          <Button 
-                            size="sm" 
+                          <Button
+                            size="sm"
                             variant={calculatePoints() >= item.points ? "default" : "outline"}
                             disabled={calculatePoints() < item.points}
                           >
@@ -1440,7 +1484,7 @@ const ProfilePage = () => {
                       </div>
                       {isRTL ? "العناوين المحفوظة" : "Saved Addresses"}
                     </CardTitle>
-                    <Button 
+                    <Button
                       onClick={() => {
                         resetAddressForm();
                         setShowAddressForm(true);
@@ -1460,7 +1504,7 @@ const ProfilePage = () => {
                   ) : showAddressForm || editingAddress ? (
                     <div className="space-y-4 max-w-lg">
                       <h3 className="font-semibold">
-                        {editingAddress 
+                        {editingAddress
                           ? (isRTL ? "تعديل العنوان" : "Edit Address")
                           : (isRTL ? "إضافة عنوان جديد" : "Add New Address")
                         }
@@ -1577,17 +1621,15 @@ const ProfilePage = () => {
                       {addresses.map((address) => (
                         <div
                           key={address.id}
-                          className={`p-4 rounded-xl border-2 transition-colors ${
-                            address.is_default 
-                              ? 'border-primary bg-primary/5' 
-                              : 'border-border hover:border-primary/30'
-                          }`}
+                          className={`p-4 rounded-xl border-2 transition-colors ${address.is_default
+                            ? 'border-primary bg-primary/5'
+                            : 'border-border hover:border-primary/30'
+                            }`}
                         >
                           <div className="flex items-start justify-between mb-3">
                             <div className="flex items-center gap-2">
-                              <div className={`h-10 w-10 rounded-lg flex items-center justify-center ${
-                                address.is_default ? 'bg-primary text-primary-foreground' : 'bg-muted'
-                              }`}>
+                              <div className={`h-10 w-10 rounded-lg flex items-center justify-center ${address.is_default ? 'bg-primary text-primary-foreground' : 'bg-muted'
+                                }`}>
                                 {getAddressIcon(address.label)}
                               </div>
                               <div>
@@ -1672,7 +1714,7 @@ const ProfilePage = () => {
                       {isRTL ? "تغيير كلمة المرور" : "Change Password"}
                     </CardTitle>
                     <CardDescription>
-                      {isRTL 
+                      {isRTL
                         ? "قم بتحديث كلمة المرور الخاصة بك للحفاظ على أمان حسابك"
                         : "Update your password to keep your account secure"
                       }
@@ -1743,21 +1785,64 @@ const ProfilePage = () => {
                       </Badge>
                     </div>
 
-                    <div className="flex items-center justify-between p-4 rounded-xl bg-muted/50">
-                      <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 rounded-lg bg-amber-500/20 flex items-center justify-center">
-                          <Smartphone className="h-5 w-5 text-amber-500" />
+                    <div className="flex flex-col gap-4 p-4 rounded-xl bg-muted/50">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="h-10 w-10 rounded-lg bg-amber-500/20 flex items-center justify-center">
+                            <Smartphone className="h-5 w-5 text-amber-500" />
+                          </div>
+                          <div>
+                            <p className="font-medium">{isRTL ? "المصادقة الثنائية" : "Two-Factor Auth"}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {isRTL ? "حماية إضافية لحسابك" : "Extra protection for your account"}
+                            </p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="font-medium">{isRTL ? "المصادقة الثنائية" : "Two-Factor Auth"}</p>
-                          <p className="text-sm text-muted-foreground">
-                            {isRTL ? "حماية إضافية لحسابك" : "Extra protection for your account"}
-                          </p>
-                        </div>
+                        {!mfaData && (
+                          <Button variant="outline" size="sm" onClick={handleEnrollMFA} disabled={isEnrollingMfa}>
+                            {isEnrollingMfa ? <Loader2 className="h-4 w-4 animate-spin" /> : (isRTL ? "تفعيل" : "Enable")}
+                          </Button>
+                        )}
                       </div>
-                      <Badge variant="outline" className="text-amber-500 border-amber-500/30">
-                        {isRTL ? "قريباً" : "Coming Soon"}
-                      </Badge>
+
+                      {mfaData && (
+                        <div className="space-y-4 p-4 border rounded-xl bg-background animate-in fade-in zoom-in-95">
+                          <div className="flex flex-col items-center gap-4">
+                            <p className="text-sm text-center text-muted-foreground">
+                              {isRTL
+                                ? "امسح الرمز المربع باستخدام تطبيق المصادقة (Google Authenticator)"
+                                : "Scan the QR code with your authenticator app (e.g. Google Authenticator)"}
+                            </p>
+                            <img src={mfaData.qr_code} alt="QR Code" className="w-48 h-48 rounded-lg border shadow-sm" />
+                            <p className="text-xs text-muted-foreground font-mono bg-muted p-2 rounded selectable">
+                              {mfaData.secret}
+                            </p>
+                          </div>
+                          <div className="space-y-2">
+                            <label className="text-sm font-medium">{isRTL ? "أدخل رمز التحقق" : "Enter Verification Code"}</label>
+                            <div className="flex gap-2">
+                              <Input
+                                value={mfaCode}
+                                onChange={(e) => setMfaCode(e.target.value)}
+                                placeholder="123456"
+                                className="text-center tracking-widest text-lg"
+                                maxLength={6}
+                              />
+                              <Button onClick={handleVerifyMFA} disabled={verifyingMfa || mfaCode.length < 6}>
+                                {verifyingMfa ? <Loader2 className="h-4 w-4 animate-spin" /> : (isRTL ? "تأكيد" : "Verify")}
+                              </Button>
+                            </div>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="w-full text-destructive hover:text-destructive hover:bg-destructive/10"
+                            onClick={() => setMfaData(null)}
+                          >
+                            {isRTL ? "إلغاء" : "Cancel"}
+                          </Button>
+                        </div>
+                      )}
                     </div>
 
                     <div className="flex items-center justify-between p-4 rounded-xl bg-muted/50">
@@ -1768,7 +1853,7 @@ const ProfilePage = () => {
                         <div>
                           <p className="font-medium">{isRTL ? "آخر تسجيل دخول" : "Last Login"}</p>
                           <p className="text-sm text-muted-foreground">
-                            {user?.last_sign_in_at 
+                            {user?.last_sign_in_at
                               ? new Date(user.last_sign_in_at).toLocaleString(isRTL ? "ar-SA" : "en-US")
                               : (isRTL ? "غير متاح" : "Not available")
                             }

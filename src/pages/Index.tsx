@@ -28,8 +28,8 @@ const Index = () => {
           <HeroSection />
         </motion.div>
 
-        <section className="relative z-20 -mt-8 md:-mt-16">
-          <div className="container mx-auto px-4">
+        <section className="relative z-20 mt-0 md:-mt-24 px-4 container mx-auto">
+          <div className="w-full">
             <motion.div
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}

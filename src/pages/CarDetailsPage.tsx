@@ -28,6 +28,7 @@ import {
   ZoomIn,
   Camera,
   RotateCw,
+  Download,
 } from "lucide-react";
 import { useState, lazy, Suspense, useRef } from "react";
 import HeroVideoControls from "@/components/HeroVideoControls";
@@ -172,7 +173,7 @@ const CarDetailsPage = () => {
     const fuelType = fuelTypes[language]?.[car?.fuel_type || ""] || car?.fuel_type;
     const transmission = transmissionTypes[language]?.[car?.transmission || ""] || car?.transmission;
     const color = language === "ar" ? car?.color_ar : car?.color;
-    
+
     const orderMessages: Record<string, string> = {
       ar: `🚗 *طلب شراء سيارة*\n\n📋 *تفاصيل السيارة:*\n━━━━━━━━━━━━━━━━\n🏷️ الاسم: ${carName}\n🏭 الماركة: ${brandName}\n📅 الموديل: ${car?.model} - ${car?.year}\n💰 السعر: ${formatPrice(car?.price || 0)}\n⛽ الوقود: ${fuelType}\n⚙️ ناقل الحركة: ${transmission}\n🎨 اللون: ${color || "-"}\n📏 المسافة: ${car?.mileage?.toLocaleString() || 0} كم\n━━━━━━━━━━━━━━━━\n\nأرغب في شراء هذه السيارة.`,
       en: `🚗 *Car Purchase Request*\n\n📋 *Car Details:*\n━━━━━━━━━━━━━━━━\n🏷️ Name: ${carName}\n🏭 Brand: ${brandName}\n📅 Model: ${car?.model} - ${car?.year}\n💰 Price: ${formatPrice(car?.price || 0)}\n⛽ Fuel: ${fuelType}\n⚙️ Transmission: ${transmission}\n🎨 Color: ${color || "-"}\n📏 Mileage: ${car?.mileage?.toLocaleString() || 0} km\n━━━━━━━━━━━━━━━━\n\nI would like to purchase this car.`,
@@ -195,7 +196,7 @@ const CarDetailsPage = () => {
   };
 
   const allImages = [car?.main_image, ...(car?.images || [])].filter(Boolean) as string[];
-  
+
   const nextImage = () => {
     setSelectedImageIndex((prev) => (prev + 1) % allImages.length);
   };
@@ -254,7 +255,7 @@ const CarDetailsPage = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      
+
       {/* Hero Video Section */}
       {hasHeroVideo && (
         <section className="relative h-[70vh] md:h-[80vh] overflow-hidden perspective-container hero-video-container">
@@ -270,16 +271,16 @@ const CarDetailsPage = () => {
           >
             <source src={heroVideoUrl} type="video/mp4" />
           </video>
-          
+
           {/* Video Controls */}
-          <HeroVideoControls 
-            videoRef={heroVideoRef} 
-            isRTL={language === "ar"} 
+          <HeroVideoControls
+            videoRef={heroVideoRef}
+            isRTL={language === "ar"}
           />
-          
+
           {/* Animated Overlay */}
           <div className={`absolute inset-0 ${getHeroOverlayClass()}`} />
-          
+
           {/* Floating 3D Particles */}
           <div className="absolute inset-0 pointer-events-none overflow-hidden">
             {[...Array(8)].map((_, i) => (
@@ -295,7 +296,7 @@ const CarDetailsPage = () => {
               />
             ))}
           </div>
-          
+
           {/* Content with 3D Animations */}
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="text-center space-y-6 px-4 stagger-3d-entrance">
@@ -310,17 +311,17 @@ const CarDetailsPage = () => {
                   </span>
                 </div>
               )}
-              
+
               {/* Car Name with 3D Effect */}
               <h1 className="text-4xl sm:text-5xl md:text-7xl font-black text-white hero-text-shadow animate-slide-3d">
                 {language === "ar" ? car.name_ar : car.name}
               </h1>
-              
+
               {/* Model & Year */}
               <p className="text-xl md:text-2xl text-white/80 animate-fade-in" style={{ animationDelay: '0.3s' }}>
                 {car.model} • {car.year}
               </p>
-              
+
               {/* Price with Glow */}
               <div className="space-y-2 animate-pop-3d" style={{ animationDelay: '0.5s' }}>
                 {car.has_discount && car.original_price && (
@@ -337,21 +338,21 @@ const CarDetailsPage = () => {
                   </Badge>
                 )}
               </div>
-              
+
               {/* CTA Buttons */}
               <div className="flex flex-wrap gap-4 justify-center pt-4 animate-fade-in" style={{ animationDelay: '0.7s' }}>
-                <Button 
-                  variant="premium" 
-                  size="lg" 
+                <Button
+                  variant="premium"
+                  size="lg"
                   className="gap-2 hover-lift-3d btn-glow"
                   onClick={handleOrderViaWhatsApp}
                 >
                   <ShoppingCart className="h-5 w-5" />
                   {t.common.whatsappOrder}
                 </Button>
-                <Button 
-                  variant="outline" 
-                  size="lg" 
+                <Button
+                  variant="outline"
+                  size="lg"
                   className="gap-2 border-white/50 text-white hover:bg-white/10 hover-lift-3d"
                   onClick={handleWhatsApp}
                 >
@@ -361,14 +362,14 @@ const CarDetailsPage = () => {
               </div>
             </div>
           </div>
-          
+
           {/* Scroll Indicator */}
           <div className="absolute bottom-8 left-1/2 -translate-x-1/2">
             <div className="w-6 h-10 rounded-full border-2 border-white/50 flex justify-center pt-2 animate-bounce-3d">
               <div className="w-1 h-2 rounded-full bg-white animate-pulse" />
             </div>
           </div>
-          
+
           {/* Quick Specs Bar */}
           <div className="absolute bottom-0 left-0 right-0 bg-black/60 backdrop-blur-sm border-t border-white/10">
             <div className="container mx-auto px-4 py-4">
@@ -392,7 +393,7 @@ const CarDetailsPage = () => {
           </div>
         </section>
       )}
-      
+
       <main className={hasHeroVideo ? "pb-12" : "pt-24 pb-12"}>
         <div className="container mx-auto px-4">
           {/* Breadcrumb */}
@@ -414,8 +415,8 @@ const CarDetailsPage = () => {
                     <Camera className="w-4 h-4" />
                     {language === "ar" ? "معرض الصور" : "Gallery"}
                   </TabsTrigger>
-                  <TabsTrigger 
-                    value="360" 
+                  <TabsTrigger
+                    value="360"
                     disabled={!(car as any).video_360_url}
                     className="gap-2"
                   >
@@ -433,7 +434,7 @@ const CarDetailsPage = () => {
                       alt={language === "ar" ? car.name_ar : car.name}
                       className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
-                    
+
                     {/* Image Navigation */}
                     {allImages.length > 1 && (
                       <>
@@ -459,7 +460,7 @@ const CarDetailsPage = () => {
                     >
                       <ZoomIn className="h-5 w-5" />
                     </button>
-                    
+
                     {/* Badges */}
                     <div className="absolute top-4 right-4 flex flex-col gap-2">
                       {car.is_new && (
@@ -483,9 +484,8 @@ const CarDetailsPage = () => {
                       </button>
                       <button
                         onClick={() => setIsFavorite(!isFavorite)}
-                        className={`h-10 w-10 rounded-full backdrop-blur-sm flex items-center justify-center transition-all shadow-lg ${
-                          isFavorite ? "bg-primary text-primary-foreground" : "bg-background/90 hover:bg-primary hover:text-primary-foreground"
-                        }`}
+                        className={`h-10 w-10 rounded-full backdrop-blur-sm flex items-center justify-center transition-all shadow-lg ${isFavorite ? "bg-primary text-primary-foreground" : "bg-background/90 hover:bg-primary hover:text-primary-foreground"
+                          }`}
                       >
                         <Heart className={`h-5 w-5 ${isFavorite ? "fill-current" : ""}`} />
                       </button>
@@ -510,11 +510,10 @@ const CarDetailsPage = () => {
                         <button
                           key={idx}
                           onClick={() => setSelectedImageIndex(idx)}
-                          className={`flex-shrink-0 w-24 h-20 rounded-xl overflow-hidden border-3 transition-all duration-300 ${
-                            selectedImageIndex === idx
-                              ? "border-primary shadow-primary ring-2 ring-primary/30"
-                              : "border-transparent hover:border-primary/50"
-                          }`}
+                          className={`flex-shrink-0 w-24 h-20 rounded-xl overflow-hidden border-3 transition-all duration-300 ${selectedImageIndex === idx
+                            ? "border-primary shadow-primary ring-2 ring-primary/30"
+                            : "border-transparent hover:border-primary/50"
+                            }`}
                         >
                           <img src={img} alt="" className="h-full w-full object-cover" />
                         </button>
@@ -539,7 +538,7 @@ const CarDetailsPage = () => {
                       />
                     </Suspense>
                   )}
-                  
+
                   {/* 360 Info Card */}
                   <div className="mt-4 p-4 rounded-xl bg-gradient-to-r from-primary/10 to-secondary/50 border border-primary/20">
                     <div className="flex items-center gap-3">
@@ -551,8 +550,8 @@ const CarDetailsPage = () => {
                           {language === "ar" ? "عرض تفاعلي 360°" : "Interactive 360° View"}
                         </h4>
                         <p className="text-sm text-muted-foreground">
-                          {language === "ar" 
-                            ? "اسحب للتدوير وتكبير للاستكشاف" 
+                          {language === "ar"
+                            ? "اسحب للتدوير وتكبير للاستكشاف"
                             : "Drag to rotate and pinch to zoom"}
                         </p>
                       </div>
@@ -567,17 +566,17 @@ const CarDetailsPage = () => {
               {/* Title & Brand */}
               <div>
                 {car.brands && (
-                  <Link to={`/brands/${car.brands.id}`} className="inline-flex items-center gap-2 text-sm text-primary font-semibold hover:underline">
+                  <Link to={`/brands/${car.brands.id}`} className="inline-flex items-center gap-2 text-xs sm:text-sm text-primary font-semibold hover:underline">
                     {car.brands.logo_url && (
-                      <img src={car.brands.logo_url} alt={car.brands.name} className="h-6 w-auto object-contain" />
+                      <img src={car.brands.logo_url} alt={car.brands.name} className="h-5 w-auto sm:h-6 object-contain" />
                     )}
                     {language === "ar" ? car.brands.name_ar : car.brands.name}
                   </Link>
                 )}
-                <h1 className="text-4xl font-black text-foreground mt-2">
+                <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-foreground mt-2">
                   {language === "ar" ? car.name_ar : car.name}
                 </h1>
-                <p className="text-xl text-muted-foreground mt-1">{car.model} - {car.year}</p>
+                <p className="text-lg sm:text-xl text-muted-foreground mt-1">{car.model} - {car.year}</p>
               </div>
 
               {/* Price */}
@@ -624,18 +623,18 @@ const CarDetailsPage = () => {
 
               {/* Contact Buttons */}
               <div className="flex flex-col gap-3">
-                <Button variant="premium" size="xl" className="gap-3" onClick={handleOrderViaWhatsApp}>
-                  <ShoppingCart className="h-6 w-6" />
+                <Button variant="premium" size="xl" className="gap-3 text-sm sm:text-base" onClick={handleOrderViaWhatsApp}>
+                  <ShoppingCart className="h-5 w-5 sm:h-6 sm:w-6" />
                   {t.common.whatsappOrder}
                 </Button>
-                <div className="flex gap-3 flex-wrap">
-                  <Button variant="whatsapp" size="lg" className="flex-1 min-w-[140px] gap-2" onClick={handleWhatsApp}>
-                    <MessageCircle className="h-5 w-5" />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                  <Button variant="whatsapp" size="lg" className="gap-2 text-sm sm:text-base" onClick={handleWhatsApp}>
+                    <MessageCircle className="h-4 w-4 sm:h-5 sm:w-5" />
                     {language === "ar" ? "استفسار" : "Inquire"}
                   </Button>
-                  <Button variant="outline" size="lg" className="flex-1 min-w-[140px] gap-2" asChild>
+                  <Button variant="outline" size="lg" className="gap-2 text-sm sm:text-base" asChild>
                     <a href="tel:+966543389314">
-                      <Phone className="h-5 w-5" />
+                      <Phone className="h-4 w-4 sm:h-5 sm:w-5" />
                       {language === "ar" ? "اتصل" : "Call"}
                     </a>
                   </Button>
@@ -643,16 +642,35 @@ const CarDetailsPage = () => {
                   <Button
                     variant="default"
                     size="lg"
-                    className="flex-1 min-w-[160px] gap-2"
+                    className="gap-2 text-sm sm:text-base sm:col-span-2"
                     onClick={() => setIsQuickOrderOpen(true)}
                   >
-                    <ShoppingCart className="h-5 w-5" />
+                    <ShoppingCart className="h-4 w-4 sm:h-5 sm:w-5" />
                     {language === "ar" ? "طلب عبر الموقع" : "Order via website"}
                   </Button>
+                  {/* Download Catalog Button */}
+                  {(car as any).catalog_url && (
+                    <Button
+                      variant="outline"
+                      size="lg"
+                      className="gap-2 text-sm sm:text-base sm:col-span-2 border-primary/50 hover:bg-primary/10"
+                      asChild
+                    >
+                      <a
+                        href={(car as any).catalog_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        download
+                      >
+                        <Download className="h-4 w-4 sm:h-5 sm:w-5" />
+                        {language === "ar" ? "تحميل الكاتالوج" : "Download Catalog"}
+                      </a>
+                    </Button>
+                  )}
                 </div>
                 {/* Test Drive Booking Button */}
-                <TestDriveBookingDialog 
-                  carId={car.id} 
+                <TestDriveBookingDialog
+                  carId={car.id}
                   carName={language === "ar" ? `${car.name_ar} ${car.model} ${car.year}` : `${car.name} ${car.model} ${car.year}`}
                 />
               </div>
@@ -688,14 +706,14 @@ const CarDetailsPage = () => {
                   ))}
                 </div>
               </div>
-              
+
               {/* Compare Button */}
               <div className="pt-4 border-t border-border">
                 <CompareButton carId={car.id} variant="full" className="w-full" />
               </div>
             </div>
           </div>
-          
+
           {/* Reviews Section */}
           <div className="mt-12 pt-8 border-t border-border">
             <ReviewsList carId={car.id} />

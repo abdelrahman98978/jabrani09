@@ -78,22 +78,22 @@ const OrderConfirmationPage = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      <main className="container mx-auto px-4 pt-24 pb-12">
+      <main className="container mx-auto px-3 sm:px-4 pt-20 sm:pt-24 pb-8 sm:pb-12">
         <div className="mx-auto max-w-3xl text-center">
-          <div className="mb-6 flex justify-center">
-            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
-              <CheckCircle2 className="h-12 w-12 text-primary" />
+          <div className="mb-4 sm:mb-6 flex justify-center">
+            <div className="flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-full bg-primary/10">
+              <CheckCircle2 className="h-10 w-10 sm:h-12 sm:w-12 text-primary" />
             </div>
           </div>
-          <h1 className="text-4xl font-black text-foreground">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-foreground px-2">
             {t.order.confirmationTitle}
           </h1>
-          <p className="mt-4 text-lg text-muted-foreground">
+          <p className="mt-3 sm:mt-4 text-base sm:text-lg text-muted-foreground px-2">
             {t.order.confirmationSubtitle}
           </p>
         </div>
 
-        <div className="mt-12 grid gap-8 lg:grid-cols-3">
+        <div className="mt-8 sm:mt-12 grid gap-4 sm:gap-6 lg:gap-8 lg:grid-cols-3">
           {/* Order Info */}
           <div className="lg:col-span-2 space-y-6">
             <Card className="border-border/50 shadow-sm">
@@ -187,16 +187,16 @@ const OrderConfirmationPage = () => {
                   </p>
                 )}
 
-                <div className="flex flex-col sm:flex-row gap-3 pt-4">
-                  <Button asChild className="flex-1 gap-2 bg-[#25D366] hover:bg-[#128C7E] text-white">
+                <div className="flex flex-col gap-2 sm:gap-3 pt-3 sm:pt-4">
+                  <Button asChild className="w-full gap-2 bg-[#25D366] hover:bg-[#128C7E] text-white text-sm sm:text-base py-5 sm:py-6">
                     <a href={`https://wa.me/${settings?.whatsapp?.replace(/\D/g, "")}`} target="_blank" rel="noopener noreferrer">
-                      <MessageCircle className="h-4 w-4" />
+                      <MessageCircle className="h-4 w-4 sm:h-5 sm:w-5" />
                       {isRTL ? "إرسال الإيصال عبر واتساب" : "Send Receipt via WhatsApp"}
                     </a>
                   </Button>
-                  <Button variant="outline" asChild className="flex-1 gap-2">
+                  <Button variant="outline" asChild className="w-full gap-2 text-sm sm:text-base py-5 sm:py-6">
                     <Link to={`/orders/${order.id}`}>
-                      <FileText className="h-4 w-4" />
+                      <FileText className="h-4 w-4 sm:h-5 sm:w-5" />
                       {t.order.details}
                     </Link>
                   </Button>

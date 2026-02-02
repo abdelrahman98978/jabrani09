@@ -171,17 +171,17 @@ const CheckoutDialog = ({ open, onOpenChange }: CheckoutDialogProps) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>{isRTL ? "إتمام الطلب" : "Complete Your Order"}</DialogTitle>
-          <DialogDescription>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-4 sm:p-6">
+        <DialogHeader className="space-y-2 sm:space-y-3">
+          <DialogTitle className="text-lg sm:text-xl">{isRTL ? "إتمام الطلب" : "Complete Your Order"}</DialogTitle>
+          <DialogDescription className="text-sm">
             {isRTL
               ? "أدخل معلوماتك واختر طريقة الاستلام والدفع"
               : "Enter your information and select delivery and payment methods"}
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-6 py-4">
+        <div className="space-y-4 sm:space-y-6 py-3 sm:py-4">
           {/* Customer Info */}
           <div className="space-y-4">
             <h3 className="text-sm font-semibold">{isRTL ? "معلومات العميل" : "Customer Information"}</h3>
@@ -220,28 +220,28 @@ const CheckoutDialog = ({ open, onOpenChange }: CheckoutDialogProps) => {
           </div>
 
           {/* Delivery Method */}
-          <div className="space-y-3">
-            <h3 className="text-sm font-semibold">{isRTL ? "طريقة الاستلام" : "Delivery Method"}</h3>
+          <div className="space-y-2 sm:space-y-3">
+            <h3 className="text-xs sm:text-sm font-semibold">{isRTL ? "طريقة الاستلام" : "Delivery Method"}</h3>
             <RadioGroup value={deliveryMethod} onValueChange={(v) => setDeliveryMethod(v as any)}>
-              <div className="flex items-center space-x-2 space-x-reverse border rounded-lg p-3">
+              <div className="flex items-center space-x-2 space-x-reverse border rounded-lg p-2 sm:p-3">
                 <RadioGroupItem value="pickup" id="pickup" />
                 <Label htmlFor="pickup" className="flex items-center gap-2 cursor-pointer flex-1">
-                  <Package className="h-5 w-5 text-primary" />
-                  <div>
-                    <p className="font-medium">{isRTL ? "استلام من المعرض" : "Pickup from Showroom"}</p>
-                    <p className="text-xs text-muted-foreground">
+                  <Package className="h-4 w-4 sm:h-5 sm:w-5 text-primary flex-shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-sm sm:text-base">{isRTL ? "استلام من المعرض" : "Pickup from Showroom"}</p>
+                    <p className="text-[10px] sm:text-xs text-muted-foreground line-clamp-1">
                       {isRTL ? "احضر واستلم سيارتك مباشرة" : "Come and collect your car directly"}
                     </p>
                   </div>
                 </Label>
               </div>
-              <div className="flex items-center space-x-2 space-x-reverse border rounded-lg p-3">
+              <div className="flex items-center space-x-2 space-x-reverse border rounded-lg p-2 sm:p-3">
                 <RadioGroupItem value="delivery" id="delivery" />
                 <Label htmlFor="delivery" className="flex items-center gap-2 cursor-pointer flex-1">
-                  <Truck className="h-5 w-5 text-primary" />
-                  <div>
-                    <p className="font-medium">{t.order.delivery}</p>
-                    <p className="text-xs text-muted-foreground">
+                  <Truck className="h-4 w-4 sm:h-5 sm:w-5 text-primary flex-shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-sm sm:text-base">{t.order.delivery}</p>
+                    <p className="text-[10px] sm:text-xs text-muted-foreground line-clamp-1">
                       {isRTL ? "سنوصل السيارة إلى عنوانك" : "We will deliver the car to your address"}
                     </p>
                   </div>
@@ -278,28 +278,28 @@ const CheckoutDialog = ({ open, onOpenChange }: CheckoutDialogProps) => {
           )}
 
           {/* Payment Method */}
-          <div className="space-y-3">
-            <h3 className="text-sm font-semibold">{t.order.paymentMethod}</h3>
+          <div className="space-y-2 sm:space-y-3">
+            <h3 className="text-xs sm:text-sm font-semibold">{t.order.paymentMethod}</h3>
             <RadioGroup value={paymentMethod} onValueChange={(v) => setPaymentMethod(v as any)}>
-              <div className="flex items-center space-x-2 space-x-reverse border rounded-lg p-3 bg-blue-50/50 dark:bg-blue-950/20">
+              <div className="flex items-center space-x-2 space-x-reverse border rounded-lg p-2 sm:p-3 bg-blue-50/50 dark:bg-blue-950/20">
                 <RadioGroupItem value="bank_transfer" id="bank_transfer" />
                 <Label htmlFor="bank_transfer" className="flex items-center gap-2 cursor-pointer flex-1">
-                  <Building2 className="h-5 w-5 text-blue-600" />
-                  <div>
-                    <p className="font-medium">{t.order.bankTransfer}</p>
-                    <p className="text-xs text-muted-foreground">
+                  <Building2 className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600 flex-shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-sm sm:text-base">{t.order.bankTransfer}</p>
+                    <p className="text-[10px] sm:text-xs text-muted-foreground truncate">
                       {isRTL ? settings?.bank_name : settings?.bank_name_en || settings?.bank_name}: {settings?.bank_account_number}
                     </p>
                   </div>
                 </Label>
               </div>
-              <div className="flex items-center space-x-2 space-x-reverse border rounded-lg p-3">
+              <div className="flex items-center space-x-2 space-x-reverse border rounded-lg p-2 sm:p-3">
                 <RadioGroupItem value="cash_on_delivery" id="cash_on_delivery" />
                 <Label htmlFor="cash_on_delivery" className="flex items-center gap-2 cursor-pointer flex-1">
-                  <CreditCard className="h-5 w-5 text-primary" />
-                  <div>
-                    <p className="font-medium">{t.order.cashOnDelivery}</p>
-                    <p className="text-xs text-muted-foreground">
+                  <CreditCard className="h-4 w-4 sm:h-5 sm:w-5 text-primary flex-shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-sm sm:text-base">{t.order.cashOnDelivery}</p>
+                    <p className="text-[10px] sm:text-xs text-muted-foreground line-clamp-1">
                       {isRTL ? "ادفع عند استلام السيارة" : "Pay when you receive the car"}
                     </p>
                   </div>
@@ -321,11 +321,20 @@ const CheckoutDialog = ({ open, onOpenChange }: CheckoutDialogProps) => {
           </div>
         </div>
 
-        <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
+        <DialogFooter className="flex-col sm:flex-row gap-2 sm:gap-0">
+          <Button
+            variant="outline"
+            onClick={() => onOpenChange(false)}
+            disabled={isSubmitting}
+            className="w-full sm:w-auto order-2 sm:order-1"
+          >
             {t.common.cancel}
           </Button>
-          <Button onClick={handleSubmit} disabled={isSubmitting} className="gap-2">
+          <Button
+            onClick={handleSubmit}
+            disabled={isSubmitting}
+            className="gap-2 w-full sm:w-auto order-1 sm:order-2"
+          >
             {isSubmitting ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (

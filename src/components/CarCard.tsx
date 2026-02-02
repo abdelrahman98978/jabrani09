@@ -108,11 +108,12 @@ const CarCard = ({ car }: CarCardProps) => {
         <Link to={`/cars/${car.id}`} className="block h-full perspective-container">
           <Card className="car-card card-3d-tilt relative h-full flex flex-col overflow-hidden border-border/40 transition-all duration-500 bg-card/60 backdrop-blur-md group shadow-xl hover:shadow-primary/30">
             {/* Image Section */}
-            <div className="relative aspect-[16/10] overflow-hidden">
+            <div className="relative aspect-[4/3] sm:aspect-[16/10] overflow-hidden bg-secondary">
               <motion.img
                 src={car.main_image || "/placeholder.svg"}
                 alt={car.name_ar}
                 className="w-full h-full object-cover car-image transition-all duration-700"
+                loading="lazy"
               />
 
               {/* Overlays */}

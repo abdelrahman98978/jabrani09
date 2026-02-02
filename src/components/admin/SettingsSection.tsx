@@ -28,7 +28,7 @@ const SettingsSection = () => {
   const { data: settings, isLoading } = useQuery({
     queryKey: ["admin-settings"],
     queryFn: async () => {
-      const { data } = await supabase.from("showroom_settings").select("*").limit(1).maybeSingle();
+      const { data } = await supabase.from("settings").select("*").limit(1).maybeSingle();
       return data;
     },
   });
@@ -36,10 +36,10 @@ const SettingsSection = () => {
   const saveSettings = useMutation({
     mutationFn: async (settingsData: any) => {
       if (settings?.id) {
-        const { error } = await supabase.from("showroom_settings").update(settingsData).eq("id", settings.id);
+        const { error } = await supabase.from("settings").update(settingsData).eq("id", settings.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from("showroom_settings").insert(settingsData);
+        const { error } = await supabase.from("settings").insert(settingsData);
         if (error) throw error;
       }
     },
@@ -588,6 +588,102 @@ const SettingsSection = () => {
                   <div>
                     <Label>TikTok</Label>
                     <Input name="tiktok_url" defaultValue={settings?.tiktok_url || ""} placeholder="https://tiktok.com/@..." />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Theme Settings */}
+          <TabsContent value="theme" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Sparkles className="h-5 w-5" />
+                  {isRTL ? "ألوان الهوية" : "Brand Colors"}
+                </CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  {isRTL
+                    ? "اختر ألوان معرضك لتخصيص واجهة الموقع"
+                    : "Choose your showroom colors to customize the site interface"}
+                </p>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="space-y-2">
+                    <Label>{isRTL ? "اللون الأساسي" : "Primary Color"}</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        type="color"
+                        name="primary_color"
+                        defaultValue={settings?.primary_color || "#D4AF37"}
+                        className="h-10 w-20 p-1"
+                      />
+                      <Input
+                        type="text"
+                        defaultValue={settings?.primary_color || "#D4AF37"}
+                        className="flex-1"
+                        dir="ltr"
+                        onChange={(e) => {
+                          const color = e.target.value;
+                          if (/^#[0-9A-F]{6}$/i.test(color)) {
+                            // Update color input sibling if needed or just let form handle it
+                          }
+                        }}
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>{isRTL ? "اللون الثانوي" : "Secondary Color"}</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        type="color"
+                        name="secondary_color"
+                        defaultValue={settings?.secondary_color || "#1A1A1A"}
+                        className="h-10 w-20 p-1"
+                      />
+                      <Input
+                        type="text"
+                        defaultValue={settings?.secondary_color || "#1A1A1A"}
+                        className="flex-1"
+                        dir="ltr"
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>{isRTL ? "لون التمييز" : "Accent Color"}</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        type="color"
+                        name="accent_color"
+                        defaultValue={settings?.accent_color || "#FFFFFF"}
+                        className="h-10 w-20 p-1"
+                      />
+                      <Input
+                        type="text"
+                        defaultValue={settings?.accent_color || "#FFFFFF"}
+                        className="flex-1"
+                        dir="ltr"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-secondary/30 border border-border/50">
+                  <h4 className="text-sm font-bold mb-3">{isRTL ? "معاينة الألوان" : "Color Preview"}</h4>
+                  <div className="flex flex-wrap gap-4">
+                    <div className="flex items-center gap-2">
+                      <div className="h-4 w-4 rounded-full" style={{ backgroundColor: settings?.primary_color || "#D4AF37" }} />
+                      <span className="text-xs">{isRTL ? "أساسي" : "Primary"}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="h-4 w-4 rounded-full" style={{ backgroundColor: settings?.secondary_color || "#1A1A1A" }} />
+                      <span className="text-xs">{isRTL ? "ثانوي" : "Secondary"}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="h-4 w-4 rounded-full" style={{ backgroundColor: settings?.accent_color || "#FFFFFF" }} />
+                      <span className="text-xs">{isRTL ? "تمييز" : "Accent"}</span>
+                    </div>
                   </div>
                 </div>
               </CardContent>

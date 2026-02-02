@@ -33,15 +33,15 @@ const WishlistButton = ({ carId, variant = "icon", className }: WishlistButtonPr
         size="icon"
         onClick={handleClick}
         className={cn(
-          "h-9 w-9 transition-all",
+          "h-9 w-9 transition-all bg-background/20 backdrop-blur-sm border-white/10 hover:bg-white/10",
           inWishlist && "bg-red-50 border-red-200 hover:bg-red-100 dark:bg-red-950 dark:border-red-800",
           className
         )}
       >
         <Heart
           className={cn(
-            "h-4 w-4 transition-all",
-            inWishlist ? "fill-red-500 text-red-500" : "text-muted-foreground"
+            "h-4 w-4 transition-all drop-shadow-md",
+            inWishlist ? "fill-red-500 text-red-500" : "text-white/80 hover:text-white"
           )}
         />
       </Button>

@@ -20,11 +20,11 @@ const TopBar = () => {
           {/* Contact Info */}
           <div className="flex flex-wrap justify-center md:justify-start items-center gap-6">
             <a
-              href={`tel:${settings?.phone || "+966543389314"}`}
+              href={`tel:${settings?.phone || "+249123044745"}`}
               className="flex items-center gap-2 hover:text-primary transition-colors group"
             >
               <Phone className="h-4 w-4 text-primary group-hover:scale-110 transition-transform" />
-              <span dir="ltr" className="font-sans font-bold">{settings?.phone || "+966 54 338 9314"}</span>
+              <span dir="ltr" className="font-sans font-bold">{settings?.phone || "+249 12 304 4745"}</span>
             </a>
             <div className="hidden sm:flex items-center gap-2 opacity-80">
               <Clock className="h-4 w-4 text-primary" />

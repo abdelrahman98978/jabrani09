@@ -273,6 +273,10 @@
   .animate-glow {
     animation: glow 3s ease-in-out infinite alternate;
   }
+
+  .nav-icon-shadow {
+    filter: drop-shadow(0 0 10px rgba(0,0,0,0.5));
+  }
 }
 
 
@@ -381,6 +385,7 @@
   display: flex;
   overflow: hidden;
   width: 100%;
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
 }
 
 .marquee-content {

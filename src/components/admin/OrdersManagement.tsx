@@ -39,14 +39,14 @@ const OrdersManagement = () => {
       }
 
       const { data } = await query;
-      
+
       if (searchTerm) {
-        return data?.filter(order => 
+        return data?.filter(order =>
           order.order_number?.toLowerCase().includes(searchTerm.toLowerCase()) ||
           order.customers?.name?.toLowerCase().includes(searchTerm.toLowerCase())
         ) || [];
       }
-      
+
       return data || [];
     },
   });
@@ -87,7 +87,7 @@ const OrdersManagement = () => {
     },
   });
 
-const updateOrderStatus = useMutation({
+  const updateOrderStatus = useMutation({
     mutationFn: async ({ id, status, payment_status, payment_method, admin_notes, bank_transfer_proof }: { id: string; status?: string; payment_status?: string; payment_method?: string; admin_notes?: string; bank_transfer_proof?: string }) => {
       const updates: any = {};
       if (status) updates.status = status;
@@ -95,7 +95,7 @@ const updateOrderStatus = useMutation({
       if (payment_method) updates.payment_method = payment_method;
       if (admin_notes !== undefined) updates.admin_notes = admin_notes;
       if (bank_transfer_proof !== undefined) updates.bank_transfer_proof = bank_transfer_proof;
-      
+
       const { error } = await supabase.from("orders").update(updates).eq("id", id);
       if (error) throw error;
 
@@ -114,7 +114,7 @@ const updateOrderStatus = useMutation({
           const { data: whatsappData } = await supabase.functions.invoke("send-whatsapp-notification", {
             body: { order_id: id, new_status: status },
           });
-          
+
           if (whatsappData?.whatsapp_link) {
             // Open WhatsApp in new tab
             window.open(whatsappData.whatsapp_link, "_blank");
@@ -250,7 +250,7 @@ const updateOrderStatus = useMutation({
                 const status = getStatusBadge(order.status);
                 const payment = getPaymentBadge(order.payment_status);
                 const StatusIcon = status.icon;
-                
+
                 return (
                   <div
                     key={order.id}
@@ -514,18 +514,6 @@ const updateOrderStatus = useMutation({
                     }}
                   />
                 </div>
-              </div>
-              <div>
-                <Label>{isRTL ? "ملاحظات الإدارة" : "Admin Notes"}</Label>
-                <Textarea
-                  defaultValue={selectedOrder.admin_notes || ""}
-                  placeholder={isRTL ? "أضف ملاحظات..." : "Add notes..."}
-                  onBlur={(e) => {
-                    if (e.target.value !== selectedOrder.admin_notes) {
-                      updateOrderStatus.mutate({ id: selectedOrder.id, admin_notes: e.target.value });
-                    }
-                  }}
-                />
               </div>
             </div>
           )}

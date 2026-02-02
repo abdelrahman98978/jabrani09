@@ -159,7 +159,7 @@ const OrderConfirmationPage = () => {
                         </li>
                         <li className="flex justify-between">
                           <span className="text-muted-foreground">{t.order.accountName}:</span>
-                          <span className="font-medium">{settings?.bank_account_holder}</span>
+                          <span className="font-medium">{settings?.bank_account_name}</span>
                         </li>
                         <li className="flex justify-between">
                           <span className="text-muted-foreground">{t.order.accountNumber}:</span>

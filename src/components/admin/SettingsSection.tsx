@@ -157,6 +157,11 @@ const SettingsSection = () => {
       accent_color: formData.get("accent_color") || null,
       currency: formData.get("currency") || "SDG",
       currency_symbol: formData.get("currency_symbol") || "ج.س",
+      bank_name: formData.get("bank_name"),
+      bank_name_en: formData.get("bank_name_en"),
+      bank_account_name: formData.get("bank_account_name"),
+      bank_account_number: formData.get("bank_account_number"),
+      bank_iban: formData.get("bank_iban"),
     });
   };
 
@@ -200,6 +205,7 @@ const SettingsSection = () => {
           <TabsTrigger value="contact">{isRTL ? "التواصل" : "Contact"}</TabsTrigger>
           <TabsTrigger value="about">{isRTL ? "من نحن" : "About"}</TabsTrigger>
           <TabsTrigger value="social">{isRTL ? "اجتماعي" : "Social"}</TabsTrigger>
+          <TabsTrigger value="payment">{isRTL ? "الدفع" : "Payment"}</TabsTrigger>
           <TabsTrigger value="theme">{isRTL ? "الثيم" : "Theme"}</TabsTrigger>
         </TabsList>
 
@@ -626,6 +632,47 @@ const SettingsSection = () => {
                   <div>
                     <Label>TikTok</Label>
                     <Input name="tiktok_url" defaultValue={settings?.tiktok_url || ""} placeholder="https://tiktok.com/@..." />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Payment Settings */}
+          <TabsContent value="payment" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <span className="text-xl">💳</span>
+                  {isRTL ? "إعدادات الدفع" : "Payment Settings"}
+                </CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  {isRTL
+                    ? "أدخل تفاصيل الحساب البنكي لتظهر للعملاء عند اختيار الدفع بالتحويل البنكي"
+                    : "Enter bank account details to show to customers when selecting Bank Transfer"}
+                </p>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <Label>{isRTL ? "اسم البنك (عربي)" : "Bank Name (Arabic)"}</Label>
+                    <Input name="bank_name" defaultValue={settings?.bank_name || ""} placeholder={isRTL ? "بنك الخرطوم" : "Bank of Khartoum"} />
+                  </div>
+                  <div>
+                    <Label>{isRTL ? "اسم البنك (إنجليزي)" : "Bank Name (English)"}</Label>
+                    <Input name="bank_name_en" defaultValue={settings?.bank_name_en || ""} placeholder="Bank of Khartoum" />
+                  </div>
+                  <div>
+                    <Label>{isRTL ? "اسم صاحب الحساب" : "Account Holder Name"}</Label>
+                    <Input name="bank_account_name" defaultValue={settings?.bank_account_name || ""} />
+                  </div>
+                  <div>
+                    <Label>{isRTL ? "رقم الحساب" : "Account Number"}</Label>
+                    <Input name="bank_account_number" defaultValue={settings?.bank_account_number || ""} dir="ltr" />
+                  </div>
+                  <div className="md:col-span-2">
+                    <Label>{isRTL ? "رقم الآيبان (IBAN)" : "IBAN"}</Label>
+                    <Input name="bank_iban" defaultValue={settings?.bank_iban || ""} dir="ltr" placeholder="SDxx xxxx xxxx xxxx xxxx xxxx" />
                   </div>
                 </div>
               </CardContent>

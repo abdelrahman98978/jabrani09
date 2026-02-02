@@ -65,8 +65,8 @@ const HeroSection = () => {
 
   const heroImage = settings?.hero_image_url || heroBanner;
   const heroType = (settings as any)?.hero_type || "image";
-  // Default to a premium car video for the request
-  const defaultVideo = "https://cdn.pixabay.com/video/2024/02/13/200508-913076114_large.mp4";
+  // Default to a premium car video for the request (Mercedes Dashboard/Driving)
+  const defaultVideo = "https://videos.pexels.com/video-files/5309381/5309381-uhd_2560_1440_25fps.mp4";
   const heroVideoUrl = (settings as any)?.hero_video_url || defaultVideo;
 
   return (

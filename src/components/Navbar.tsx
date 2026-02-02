@@ -99,13 +99,13 @@ const Navbar = () => {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.6 }}
-      className={`fixed top-4 right-4 left-4 z-50 transition-all duration-500 rounded-2xl ${isTransparent
-        ? 'bg-transparent border-transparent py-4'
-        : 'glass-effect py-3 shadow-2xl border border-white/10'
+      className={`fixed top-2 sm:top-4 right-2 sm:right-4 left-2 sm:left-4 z-50 transition-all duration-500 rounded-xl sm:rounded-2xl ${isTransparent
+        ? 'bg-transparent border-transparent py-3 sm:py-4'
+        : 'glass-effect py-2 sm:py-3 shadow-2xl border border-white/10'
         }`}
     >
-      <div className="container mx-auto px-4 md:px-6">
-        <div className="flex items-center justify-between gap-4">
+      <div className="container mx-auto px-2 sm:px-4 md:px-6">
+        <div className="flex items-center justify-between gap-2 sm:gap-4">
           {/* Logo Section */}
           <Link to="/" className="flex items-center group relative">
             <div className="relative">
@@ -113,13 +113,13 @@ const Navbar = () => {
               <img
                 src={showroomLogo}
                 alt={siteName}
-                className={`h-10 w-10 md:h-12 md:w-12 rounded-xl object-cover shadow-2xl transition-all duration-500 ${isTransparent ? 'scale-110' : 'scale-100'}`}
+                className={`h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 rounded-lg sm:rounded-xl object-cover shadow-2xl transition-all duration-500 ${isTransparent ? 'scale-110' : 'scale-100'}`}
               />
             </div>
-            <div className={`ms-3 flex flex-col transition-all duration-500 ${isTransparent ? 'translate-x-1' : 'translate-x-0'}`}>
-              <span className={`text-lg md:text-xl font-black leading-tight tracking-tight ${isTransparent ? 'text-white' : 'text-foreground'}`}>
+            <div className={`ms-2 sm:ms-3 flex flex-col transition-all duration-500 ${isTransparent ? 'translate-x-1' : 'translate-x-0'}`}>
+              <span className={`text-sm sm:text-lg md:text-xl font-black leading-tight tracking-tight ${isTransparent ? 'text-white' : 'text-foreground'} line-clamp-1`}>
                 {siteName}
-                <Sparkles className="inline-block h-3 w-3 ms-1 text-primary animate-pulse" />
+                <Sparkles className="hidden sm:inline-block h-3 w-3 ms-1 text-primary animate-pulse" />
               </span>
               {/* Secondary name removed as requested */}
             </div>

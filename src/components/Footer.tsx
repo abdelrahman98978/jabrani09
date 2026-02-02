@@ -82,37 +82,37 @@ const Footer = () => {
       <div className="wp-section-wave-top" />
 
       {/* Main Footer */}
-      <div className="container mx-auto px-4 pt-20 pb-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8">
+      <div className="container mx-auto px-3 sm:px-4 pt-12 sm:pt-16 md:pt-20 pb-6 sm:pb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 lg:gap-8">
           {/* About Column */}
-          <div className="space-y-6">
-            <div className="flex items-center gap-3">
+          <div className="space-y-4 sm:space-y-6">
+            <div className="flex items-center gap-2 sm:gap-3">
               {settings?.logo_url ? (
                 <img
                   src={settings.logo_url}
                   alt={siteName}
-                  className="h-14 w-14 object-contain rounded-xl bg-white/10 p-2"
+                  className="h-10 w-10 sm:h-14 sm:w-14 object-contain rounded-lg sm:rounded-xl bg-white/10 p-1.5 sm:p-2"
                 />
               ) : (
                 <img
                   src={showroomLogo}
                   alt={siteName}
-                  className="h-14 w-14 object-contain rounded-xl bg-white/10 p-2"
+                  className="h-10 w-10 sm:h-14 sm:w-14 object-contain rounded-lg sm:rounded-xl bg-white/10 p-1.5 sm:p-2"
                 />
               )}
               <div>
-                <h3 className="text-xl font-bold text-gradient-gold">{siteName}</h3>
-                <p className="text-xs text-accent-foreground/60">{t.siteSlogan}</p>
+                <h3 className="text-base sm:text-xl font-bold text-gradient-gold">{siteName}</h3>
+                <p className="text-[10px] sm:text-xs text-accent-foreground/60">{t.siteSlogan}</p>
               </div>
             </div>
-            <p className="text-sm text-accent-foreground/80 leading-relaxed">
+            <p className="text-xs sm:text-sm text-accent-foreground/80 leading-relaxed">
               {language === "ar"
                 ? (settings?.about_text_ar || t.whyUs.qualityDesc)
                 : (settings?.about_text || t.whyUs.qualityDesc)
               }
             </p>
             {/* Social Links */}
-            <div className="flex gap-3">
+            <div className="flex gap-2 sm:gap-3">
               {socialLinks.map((link, idx) => link.url && (
                 <a
                   key={idx}
@@ -142,12 +142,12 @@ const Footer = () => {
           </div>
 
           {/* Quick Links Column */}
-          <div className="space-y-6">
-            <h4 className="text-lg font-bold text-foreground relative inline-block">
+          <div className="space-y-4 sm:space-y-6">
+            <h4 className="text-base sm:text-lg font-bold text-foreground relative inline-block">
               {t.footer.quickLinks}
-              <span className="absolute -bottom-2 start-0 w-12 h-0.5 bg-primary rounded" />
+              <span className="absolute -bottom-2 start-0 w-10 sm:w-12 h-0.5 bg-primary rounded" />
             </h4>
-            <ul className="space-y-3">
+            <ul className="space-y-2 sm:space-y-3">
               {quickLinks.map((link, idx) => (
                 <li key={idx}>
                   <Link
@@ -174,47 +174,47 @@ const Footer = () => {
           </div>
 
           {/* Contact Info Column */}
-          <div className="space-y-6">
-            <h4 className="text-lg font-bold text-foreground relative inline-block">
+          <div className="space-y-4 sm:space-y-6">
+            <h4 className="text-base sm:text-lg font-bold text-foreground relative inline-block">
               {t.footer.contactInfo}
-              <span className="absolute -bottom-2 start-0 w-12 h-0.5 bg-primary rounded" />
+              <span className="absolute -bottom-2 start-0 w-10 sm:w-12 h-0.5 bg-primary rounded" />
             </h4>
-            <ul className="space-y-4">
+            <ul className="space-y-3 sm:space-y-4">
               <li>
                 <a
                   href={`tel:${settings?.phone || "+249123044745"}`}
-                  className="flex items-start gap-3 text-sm text-accent-foreground/70 hover:text-primary transition-colors"
+                  className="flex items-start gap-2 sm:gap-3 text-xs sm:text-sm text-accent-foreground/70 hover:text-primary transition-colors"
                 >
-                  <div className="p-2 rounded-lg bg-primary/10 mt-0.5">
-                    <Phone className="h-4 w-4 text-primary" />
+                  <div className="p-1.5 sm:p-2 rounded-lg bg-primary/10 mt-0.5">
+                    <Phone className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
                   </div>
                   <div>
-                    <p className="text-xs text-accent-foreground/50 mb-1">{isRTL ? "اتصل بنا" : "Call Us"}</p>
-                    <span dir="ltr" className="font-medium">{settings?.phone || "+249 12 304 4745"}</span>
+                    <p className="text-[10px] sm:text-xs text-accent-foreground/50 mb-1">{isRTL ? "اتصل بنا" : "Call Us"}</p>
+                    <span dir="ltr" className="font-medium text-xs sm:text-sm">{settings?.phone || "+249 12 304 4745"}</span>
                   </div>
                 </a>
               </li>
               <li>
                 <a
                   href={`mailto:${settings?.email || "info@alfakhim.com"}`}
-                  className="flex items-start gap-3 text-sm text-accent-foreground/70 hover:text-primary transition-colors"
+                  className="flex items-start gap-2 sm:gap-3 text-xs sm:text-sm text-accent-foreground/70 hover:text-primary transition-colors"
                 >
-                  <div className="p-2 rounded-lg bg-primary/10 mt-0.5">
-                    <Mail className="h-4 w-4 text-primary" />
+                  <div className="p-1.5 sm:p-2 rounded-lg bg-primary/10 mt-0.5">
+                    <Mail className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
                   </div>
                   <div>
-                    <p className="text-xs text-accent-foreground/50 mb-1">{isRTL ? "البريد الإلكتروني" : "Email"}</p>
-                    <span className="font-medium">{settings?.email || "info@alfakhim.com"}</span>
+                    <p className="text-[10px] sm:text-xs text-accent-foreground/50 mb-1">{isRTL ? "البريد الإلكتروني" : "Email"}</p>
+                    <span className="font-medium text-xs sm:text-sm break-all">{settings?.email || "info@alfakhim.com"}</span>
                   </div>
                 </a>
               </li>
-              <li className="flex items-start gap-3 text-sm text-accent-foreground/70">
-                <div className="p-2 rounded-lg bg-primary/10 mt-0.5">
-                  <MapPin className="h-4 w-4 text-primary" />
+              <li className="flex items-start gap-2 sm:gap-3 text-xs sm:text-sm text-accent-foreground/70">
+                <div className="p-1.5 sm:p-2 rounded-lg bg-primary/10 mt-0.5">
+                  <MapPin className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
                 </div>
                 <div>
-                  <p className="text-xs text-accent-foreground/50 mb-1">{isRTL ? "العنوان" : "Address"}</p>
-                  <span className="font-medium">
+                  <p className="text-[10px] sm:text-xs text-accent-foreground/50 mb-1">{isRTL ? "العنوان" : "Address"}</p>
+                  <span className="font-medium text-xs sm:text-sm">
                     {language === "ar"
                       ? (settings?.address_ar || t.common.address)
                       : (settings?.address || t.common.address)
@@ -222,25 +222,25 @@ const Footer = () => {
                   </span>
                 </div>
               </li>
-              <li className="flex items-start gap-3 text-sm text-accent-foreground/70">
-                <div className="p-2 rounded-lg bg-primary/10 mt-0.5">
-                  <Clock className="h-4 w-4 text-primary" />
+              <li className="flex items-start gap-2 sm:gap-3 text-xs sm:text-sm text-accent-foreground/70">
+                <div className="p-1.5 sm:p-2 rounded-lg bg-primary/10 mt-0.5">
+                  <Clock className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
                 </div>
                 <div>
-                  <p className="text-xs text-accent-foreground/50 mb-1">{isRTL ? "ساعات العمل" : "Working Hours"}</p>
-                  <span className="font-medium">{workingHours}</span>
+                  <p className="text-[10px] sm:text-xs text-accent-foreground/50 mb-1">{isRTL ? "ساعات العمل" : "Working Hours"}</p>
+                  <span className="font-medium text-xs sm:text-sm">{workingHours}</span>
                 </div>
               </li>
             </ul>
           </div>
 
           {/* Newsletter Column */}
-          <div className="space-y-6">
-            <h4 className="text-lg font-bold text-foreground relative inline-block">
+          <div className="space-y-4 sm:space-y-6">
+            <h4 className="text-base sm:text-lg font-bold text-foreground relative inline-block">
               {isRTL ? "النشرة البريدية" : "Newsletter"}
-              <span className="absolute -bottom-2 start-0 w-12 h-0.5 bg-primary rounded" />
+              <span className="absolute -bottom-2 start-0 w-10 sm:w-12 h-0.5 bg-primary rounded" />
             </h4>
-            <p className="text-sm text-accent-foreground/70">
+            <p className="text-xs sm:text-sm text-accent-foreground/70">
               {isRTL
                 ? "اشترك للحصول على أحدث العروض والأخبار"
                 : "Subscribe to get the latest offers and news"}
@@ -277,13 +277,13 @@ const Footer = () => {
         </div>
 
         {/* Divider */}
-        <div className="border-t border-background/10 mt-12 pt-8">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <div className="flex flex-col items-center gap-2 md:items-start text-sm text-accent-foreground/60 text-center md:text-start">
+        <div className="border-t border-background/10 mt-8 sm:mt-10 md:mt-12 pt-6 sm:pt-8">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-3 sm:gap-4">
+            <div className="flex flex-col items-center gap-2 md:items-start text-xs sm:text-sm text-accent-foreground/60 text-center md:text-start">
               <p>© {new Date().getFullYear()} {siteName}. {t.footer.rights}.</p>
-              <div className="flex items-center gap-2 mt-2">
-                <img src="https://monshaat.gov.sa/sites/default/files/styles/logo_header/public/2022-09/logo.png" alt="Saudi Business Center" className="h-8 opacity-80 hover:opacity-100 transition-opacity bg-white/90 rounded px-1" />
-                <span className="text-xs">موثق لدى المركز السعودي للأعمال</span>
+              <div className="flex items-center gap-2 mt-1 sm:mt-2">
+                <img src="https://monshaat.gov.sa/sites/default/files/styles/logo_header/public/2022-09/logo.png" alt="Saudi Business Center" className="h-6 sm:h-8 opacity-80 hover:opacity-100 transition-opacity bg-white/90 rounded px-1" />
+                <span className="text-[10px] sm:text-xs">موثق لدى المركز السعودي للأعمال</span>
               </div>
             </div>
 
@@ -292,9 +292,9 @@ const Footer = () => {
               variant="outline"
               size="icon"
               onClick={scrollToTop}
-              className="h-10 w-10 rounded-full border-background/20 hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all"
+              className="h-9 w-9 sm:h-10 sm:w-10 rounded-full border-background/20 hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all"
             >
-              <ArrowUp className="h-4 w-4" />
+              <ArrowUp className="h-3 w-3 sm:h-4 sm:w-4" />
             </Button>
           </div>
         </div>

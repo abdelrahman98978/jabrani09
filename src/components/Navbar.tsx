@@ -122,7 +122,7 @@ const Navbar = () => {
                 <Sparkles className="inline-block h-3 w-3 ms-1 text-primary animate-pulse" />
               </span>
               <span className={`text-[10px] uppercase tracking-[0.3em] font-bold ${isTransparent ? 'text-white/60' : 'text-muted-foreground'}`}>
-                {isRTL ? "مجموعة سودكس" : "SUDEX GROUP"}
+                {isRTL ? "الفخيم للسيارات" : "Al-Fakhim Motors"}
               </span>
             </div>
           </Link>

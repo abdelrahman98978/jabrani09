@@ -65,43 +65,26 @@ const HeroSection = () => {
 
   const heroImage = settings?.hero_image_url || heroBanner;
   const heroType = (settings as any)?.hero_type || "image";
-  const heroVideoUrl = (settings as any)?.hero_video_url;
-  const overlayOpacity = (settings as any)?.hero_overlay_opacity || "medium";
-
-  const getOverlayClass = () => {
-    switch (overlayOpacity) {
-      case "light": return "hero-overlay-light";
-      case "dark": return "hero-overlay-dark";
-      default: return "hero-overlay";
-    }
-  };
+  // Default to a premium car video for the request
+  const defaultVideo = "https://cdn.pixabay.com/video/2024/02/13/200508-913076114_large.mp4";
+  const heroVideoUrl = (settings as any)?.hero_video_url || defaultVideo;
 
   return (
     <section className="relative min-h-[100vh] flex items-center justify-center overflow-hidden perspective-container bg-black">
       {/* Background Layer */}
       <div className="absolute inset-0 z-0">
-        {heroType === "video" && heroVideoUrl ? (
-          <video
-            autoPlay
-            muted
-            loop
-            playsInline
-            className="absolute inset-0 w-full h-full object-cover scale-105"
-          >
-            <source src={heroVideoUrl} type="video/mp4" />
-            <div
-              className="absolute inset-0 bg-cover bg-center no-repeat"
-              style={{ backgroundImage: `url(${heroImage})` }}
-            />
-          </video>
-        ) : (
-          <div
-            className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105"
-            style={{ backgroundImage: `url(${heroImage})` }}
-          />
-        )}
-        <div className={`absolute inset-0 ${getOverlayClass()}`} />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80" />
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          poster={heroImage}
+          className="absolute inset-0 w-full h-full object-cover scale-105"
+        >
+          <source src={heroVideoUrl} type="video/mp4" />
+        </video>
+        <div className="absolute inset-0 bg-black/40" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-90" />
       </div>
 
       {/* Premium Decorative Orbs */}

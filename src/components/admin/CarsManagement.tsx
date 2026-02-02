@@ -802,7 +802,7 @@ const CarsManagement = () => {
                       </p>
                     )}
                     <p className="font-bold text-primary">
-                      {car.price?.toLocaleString()} {isRTL ? "ر.س" : "SAR"}
+                      {car.price?.toLocaleString()} {isRTL ? "ج.س" : "SDG"}
                     </p>
                   </div>
                   <div className="flex gap-1">

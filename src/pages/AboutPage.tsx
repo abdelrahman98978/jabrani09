@@ -35,8 +35,8 @@ const AboutPage = () => {
       icon: Target,
       title: isRTL ? "رؤيتنا" : "Our Vision",
       description: isRTL
-        ? "أن نكون الوجهة الأولى للسيارات في المملكة العربية السعودية"
-        : "To be the leading car destination in Saudi Arabia",
+        ? "أن نكون الوجهة الأولى للسيارات في السودان"
+        : "To be the leading car destination in Sudan",
     },
     {
       icon: Heart,

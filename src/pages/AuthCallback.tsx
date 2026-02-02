@@ -1,10 +1,12 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Loader2 } from "lucide-react";
 
 const AuthCallback = () => {
     const navigate = useNavigate();
+    const { language } = useLanguage();
     const ALLOWED_ADMIN_EMAIL = "abdo12uk@gmail.com";
 
     useEffect(() => {
@@ -70,7 +72,7 @@ const AuthCallback = () => {
         <div className="min-h-screen flex items-center justify-center bg-background">
             <div className="flex flex-col items-center gap-4">
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                <p className="text-muted-foreground">Jabrani Cars...</p>
+                <p className="text-muted-foreground">{language === "ar" ? "معرض الفخيم للسيارات..." : "Al-Fakhim Car Showroom..."}</p>
             </div>
         </div>
     );

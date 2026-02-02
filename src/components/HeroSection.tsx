@@ -63,7 +63,7 @@ const HeroSection = () => {
     staleTime: 1000 * 60 * 5,
   });
 
-  const heroImage = settings?.hero_image_url || heroBanner;
+  const heroImage = settings?.hero_image_url || "https://images.unsplash.com/photo-1520031441872-265e4ff70366?q=80&w=2071";
 
   return (
     <section className="relative min-h-[100vh] flex items-center justify-center overflow-hidden perspective-container bg-black">
@@ -89,7 +89,7 @@ const HeroSection = () => {
             <div className="inline-flex items-center gap-3 px-6 py-2.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 shadow-2xl mb-12 group hover:bg-white/20 transition-all cursor-default">
               <Trophy className="h-5 w-5 text-gradient-gold animate-bounce" />
               <span className="text-sm font-black text-white uppercase tracking-[0.2em]">
-                {isRTL ? "المعرض الأول في المملكة" : "The #1 Showroom in KSA"}
+                {isRTL ? "المعرض الأول في السودان" : "The #1 Showroom in Sudan"}
               </span>
               <Sparkles className="h-4 w-4 text-primary animate-pulse" />
             </div>

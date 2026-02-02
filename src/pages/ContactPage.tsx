@@ -65,7 +65,7 @@ const ContactPage = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const whatsappNumber = settings?.whatsapp || settings?.phone?.replace(/\D/g, "") || "966543389314";
+  const whatsappNumber = settings?.whatsapp || settings?.phone?.replace(/\D/g, "") || "249123044745";
 
   const handleWhatsApp = () => {
     const message = encodeURIComponent(

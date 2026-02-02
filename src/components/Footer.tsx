@@ -216,8 +216,8 @@ const Footer = () => {
                   <p className="text-xs text-accent-foreground/50 mb-1">{isRTL ? "العنوان" : "Address"}</p>
                   <span className="font-medium">
                     {language === "ar"
-                      ? (settings?.address_ar || "المملكة العربية السعودية")
-                      : (settings?.address || "Saudi Arabia")
+                      ? (settings?.address_ar || t.common.address)
+                      : (settings?.address || t.common.address)
                     }
                   </span>
                 </div>

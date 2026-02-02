@@ -6,7 +6,7 @@ import LanguageSwitcher from "./LanguageSwitcher";
 
 const TopBar = () => {
   const { data: settings } = useSettings();
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
   const isRTL = language === "ar";
 
   const workingHours = isRTL
@@ -31,16 +31,17 @@ const TopBar = () => {
               <span>{workingHours}</span>
             </div>
             <a
-              href="mailto:contact@shathervan.com"
+              href={`mailto:${settings?.email || "info@alfakhim.com"}`}
               className="hidden sm:flex items-center gap-2 hover:text-primary transition-colors group"
             >
               <Mail className="h-4 w-4 text-primary group-hover:scale-110 transition-transform" />
-              <span>contact@shathervan.com</span>
+              <span>{settings?.email || "info@alfakhim.com"}</span>
             </a>
           </div>
 
           {/* Social Links */}
           <div className="flex items-center gap-4 mt-2 md:mt-0">
+
             <div className="flex items-center gap-4">
               {[
                 { url: settings?.facebook_url, icon: Facebook },

@@ -4,10 +4,11 @@ import { ShoppingCart, X, CheckCircle2 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const notifications = [
-    { en: "Someone just purchased a Mercedes AMG GT", ar: "قام شخص بشراء مرسيدس AMG GT للتو", time: "2m ago" },
-    { en: "New Offer: 10% Discount on BMW M4", ar: "عرض جديد: خصم 10% على BMW M4", time: "5m ago" },
-    { en: "Ali from Riyadh reserved a Porsche 911", ar: "علي من الرياض حجز بورش 911", time: "12m ago" },
-    { en: "Sarah viewed Range Rover Autobiography", ar: "سارة شاهدت رنج روفر أوتوبيوغرافي", time: "just now" },
+    { en: "Mohammed from Khartoum purchased a Toyota Hilux", ar: "محمد من الخرطوم اشترى تويوتا هايلكس", time: "2m ago" },
+    { en: "Fatima from Port Sudan reserved a Hyundai Tucson", ar: "فاطمة من بورتسودان حجزت هيونداي توسان", time: "5m ago" },
+    { en: "Omer from Omdurman viewed a Mitsubishi L200", ar: "عمر من أم درمان شاهد ميتسوبيشي L200", time: "just now" },
+    { en: "Khalid from Bahri purchased a Land Cruiser", ar: "خالد من بحري اشترى لاندكروزر", time: "10m ago" },
+    { en: "Sara from Kassala reserved a Kia Sportage", ar: "سارة من كسلا حجزت كيا سبورتاج", time: "15m ago" },
 ];
 
 const SalesNotification = () => {

@@ -282,8 +282,8 @@ const Footer = () => {
             <div className="flex flex-col items-center gap-2 md:items-start text-xs sm:text-sm text-accent-foreground/60 text-center md:text-start">
               <p>© {new Date().getFullYear()} {siteName}. {t.footer.rights}.</p>
               <div className="flex items-center gap-2 mt-1 sm:mt-2">
-                <img src="https://monshaat.gov.sa/sites/default/files/styles/logo_header/public/2022-09/logo.png" alt="Saudi Business Center" className="h-6 sm:h-8 opacity-80 hover:opacity-100 transition-opacity bg-white/90 rounded px-1" />
-                <span className="text-[10px] sm:text-xs">موثق لدى المركز السعودي للأعمال</span>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/Emblem_of_Sudan.svg/800px-Emblem_of_Sudan.svg.png" alt="Sudanese Ministry of Commerce" className="h-8 sm:h-10 opacity-90 hover:opacity-100 transition-opacity" />
+                <span className="text-[10px] sm:text-xs font-semibold text-foreground/80">{isRTL ? "مسجل لدى وزارة التجارة السودانية" : "Registered with Ministry of Commerce"}</span>
               </div>
             </div>
 

@@ -30,7 +30,6 @@ import EmailCampaignsManagement from "@/components/admin/EmailCampaignsManagemen
 import AccessoriesManagement from "@/components/admin/AccessoriesManagement";
 import MarketingAI from "@/components/admin/MarketingAI";
 import AdvancedAnalytics from "@/components/admin/AdvancedAnalytics";
-import BankSettings from "@/components/admin/BankSettings";
 import SubscribersManagement from "@/components/admin/SubscribersManagement";
 import ReviewsManagement from "@/components/admin/ReviewsManagement";
 import TestDriveManagement from "@/components/admin/TestDriveManagement";
@@ -158,7 +157,7 @@ const AdminPage = () => {
     {
       section: isRTL ? "الإعدادات" : "Settings", items: [
         { id: "moderators", label: isRTL ? "المشرفين" : "Moderators", icon: Shield },
-        { id: "bank_settings", label: isRTL ? "البنك" : "Bank", icon: Building2 },
+        // { id: "bank_settings", label: isRTL ? "البنك" : "Bank", icon: Building2 }, // Merged into Settings
         { id: "settings", label: isRTL ? "الإعدادات" : "Settings", icon: Settings },
       ]
     },
@@ -295,7 +294,7 @@ const AdminPage = () => {
                       {activeTab === "moderators" && <ModeratorsManagement />}
                       {activeTab === "messages" && <MessagesSection />}
                       {activeTab === "reports" && <ReportsSection />}
-                      {activeTab === "bank_settings" && <BankSettings />}
+                      {/* Bank Settings moved to Settings -> Payment */}
                       {activeTab === "settings" && <SettingsSection />}
                     </div>
                   </div>

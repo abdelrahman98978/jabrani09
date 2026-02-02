@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useWishlist } from "@/contexts/WishlistContext";
+import { useSettings } from "@/hooks/useSettings";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import InvoicePDF from "@/components/InvoicePDF";

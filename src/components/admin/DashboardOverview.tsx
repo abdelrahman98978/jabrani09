@@ -4,10 +4,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { Car, Users, ShoppingCart, DollarSign, Eye, TrendingUp, Clock, MessageSquare } from "lucide-react";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from "recharts";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useSettings } from "@/hooks/useSettings";
 
 const DashboardOverview = () => {
   const { language } = useLanguage();
   const isRTL = language === "ar";
+  const { data: settings } = useSettings();
 
   const { data: stats } = useQuery({
     queryKey: ["dashboard-stats"],
@@ -24,14 +26,14 @@ const DashboardOverview = () => {
       const soldCars = carsRes.data?.filter(c => c.status === "sold").length || 0;
       const reservedCars = carsRes.data?.filter(c => c.status === "reserved").length || 0;
       const totalViews = carsRes.data?.reduce((sum, car) => sum + (car.views_count || 0), 0) || 0;
-      
+
       const totalOrders = ordersRes.count || 0;
       const newOrders = ordersRes.data?.filter(o => o.status === "new").length || 0;
       const completedOrders = ordersRes.data?.filter(o => o.status === "completed").length || 0;
-      
+
       const totalRevenue = paymentsRes.data?.filter(p => p.status === "completed").reduce((sum, p) => sum + Number(p.amount || 0), 0) || 0;
       const pendingPayments = paymentsRes.data?.filter(p => p.status === "pending").reduce((sum, p) => sum + Number(p.amount || 0), 0) || 0;
-      
+
       const totalCustomers = customersRes.count || 0;
 
       return {
@@ -69,7 +71,7 @@ const DashboardOverview = () => {
         .from("orders")
         .select("created_at, total_amount")
         .order("created_at", { ascending: true });
-      
+
       const last7Days = [];
       for (let i = 6; i >= 0; i--) {
         const date = new Date();
@@ -99,7 +101,7 @@ const DashboardOverview = () => {
     { title: isRTL ? "إجمالي السيارات" : "Total Cars", value: stats?.totalCars || 0, icon: Car, color: "from-primary to-accent" },
     { title: isRTL ? "الطلبات الجديدة" : "New Orders", value: stats?.newOrders || 0, icon: ShoppingCart, color: "from-amber-500 to-orange-500" },
     { title: isRTL ? "العملاء" : "Customers", value: stats?.totalCustomers || 0, icon: Users, color: "from-blue-500 to-cyan-500" },
-    { title: isRTL ? "الإيرادات" : "Revenue", value: `${(stats?.totalRevenue || 0).toLocaleString()} ${isRTL ? "ر.س" : "SAR"}`, icon: DollarSign, color: "from-green-500 to-emerald-500" },
+    { title: isRTL ? "الإيرادات" : "Revenue", value: `${(stats?.totalRevenue || 0).toLocaleString()} ${settings?.currency_symbol || (isRTL ? "ج.س" : "SDG")}`, icon: DollarSign, color: "from-green-500 to-emerald-500" },
     { title: isRTL ? "المشاهدات" : "Views", value: stats?.totalViews || 0, icon: Eye, color: "from-purple-500 to-pink-500" },
     { title: isRTL ? "معدل التحويل" : "Conversion Rate", value: stats?.totalViews ? `${((stats?.completedOrders || 0) / stats.totalViews * 100).toFixed(1)}%` : "0%", icon: TrendingUp, color: "from-rose-500 to-red-500" },
   ];
@@ -255,7 +257,7 @@ const DashboardOverview = () => {
                       {status.label}
                     </span>
                     <span className="font-bold text-primary">
-                      {Number(order.total_amount).toLocaleString()} {isRTL ? "ر.س" : "SAR"}
+                      {Number(order.total_amount).toLocaleString()} {settings?.currency_symbol || (isRTL ? "ج.س" : "SDG")}
                     </span>
                   </div>
                 </div>

@@ -57,11 +57,9 @@ const HeroMarquee = () => {
   latestCars?.forEach((car) => {
     const carName = isRTL ? car.name_ar : car.name;
     const brandName = isRTL ? (car.brand as any)?.name_ar : (car.brand as any)?.name;
-    const priceFormatted = new Intl.NumberFormat(isRTL ? "ar-SA" : "en-SA", {
-      style: "currency",
-      currency: "SAR",
+    const priceFormatted = new Intl.NumberFormat(isRTL ? "ar-SD" : "en-US", {
       maximumFractionDigits: 0,
-    }).format(car.price);
+    }).format(car.price) + " " + (settings?.currency_symbol || (isRTL ? "ج.س" : "SDG"));
 
     let label = "";
     if (car.is_new) {
@@ -84,7 +82,7 @@ const HeroMarquee = () => {
     const promoName = isRTL ? promo.name_ar : promo.name;
     const discount = promo.discount_type === "percentage"
       ? `${promo.discount_value}%`
-      : `${promo.discount_value} ${isRTL ? "ريال" : "SAR"}`;
+      : `${promo.discount_value} ${settings?.currency_symbol || (isRTL ? "ج.س" : "SDG")}`;
 
     marqueeItems.push({
       icon: Tag,

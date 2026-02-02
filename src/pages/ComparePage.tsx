@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useCompare } from "@/contexts/CompareContext";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useSettings } from "@/hooks/useSettings"; // Add this line
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -14,6 +15,7 @@ const ComparePage = () => {
   const { compareItems, removeFromCompare, clearCompare } = useCompare();
   const { language } = useLanguage();
   const isRTL = language === "ar";
+  const { data: settings } = useSettings();
 
   const { data: cars, isLoading } = useQuery({
     queryKey: ["compare-cars-full", compareItems],
@@ -29,11 +31,11 @@ const ComparePage = () => {
   });
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat(isRTL ? "ar-SA" : "en-SA", {
-      style: "currency",
-      currency: "SAR",
+    const formatted = new Intl.NumberFormat(isRTL ? "ar-SD" : "en-US", {
       maximumFractionDigits: 0,
     }).format(price);
+    const symbol = settings?.currency_symbol || (isRTL ? "ج.س" : "SDG");
+    return `${formatted} ${symbol}`;
   };
 
   const fuelTypeAr: Record<string, string> = {
@@ -82,7 +84,7 @@ const ComparePage = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      
+
       <main className="pt-24 pb-12">
         <div className="container mx-auto px-4">
           {/* Header */}
@@ -185,7 +187,7 @@ const ComparePage = () => {
                         const value = (car as Record<string, unknown>)[spec.key];
                         const displayValue = spec.format ? spec.format(value as never, car) : value;
                         const isBest = isBestValue(spec.key, value);
-                        
+
                         return (
                           <td key={car.id} className="p-4 text-center">
                             <span className={isBest ? "text-primary font-bold" : ""}>

@@ -36,6 +36,7 @@ const OrderConfirmationPage = () => {
     queryKey: ["order-confirmation", id],
     enabled: !!id,
     queryFn: async () => {
+      // Attempt standard select first
       const { data, error } = await supabase
         .from("orders")
         .select(`
@@ -46,8 +47,19 @@ const OrderConfirmationPage = () => {
         .eq("id", id)
         .maybeSingle();
 
-      if (error) throw error;
-      return data;
+      if (data) return data;
+
+      // Fallback to RPC for guest users (bypassing RLS safely)
+      console.log('Fetching via RPC for guest...');
+      const { data: rpcData, error: rpcError } = await supabase
+        .rpc('get_order_details', { p_order_id: id });
+
+      if (rpcError) {
+        console.error('RPC Error:', rpcError);
+        throw rpcError;
+      }
+
+      return rpcData;
     },
   });
 

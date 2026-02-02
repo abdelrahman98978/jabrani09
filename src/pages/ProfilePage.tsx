@@ -100,7 +100,12 @@ interface Notification {
 const UserOrdersSection = ({ user, isRTL }: { user: SupabaseUser | null; isRTL: boolean }) => {
   const { toast } = useToast();
 
+  /* Add useSettings hook inside UserOrdersSection */
+  const { data: settings } = useSettings();
+
   const { data: orders, isLoading } = useQuery({
+    /* ... existing query ... */
+
     queryKey: ["my-orders", user?.id],
     enabled: !!user?.id,
     queryFn: async () => {
@@ -242,7 +247,7 @@ const UserOrdersSection = ({ user, isRTL }: { user: SupabaseUser | null; isRTL: 
                       {order.cars.model} - {order.cars.year}
                     </p>
                     <p className="text-sm font-bold text-primary mt-1">
-                      {Number(order.total_amount).toLocaleString()} {isRTL ? "ر.س" : "SAR"}
+                      {Number(order.total_amount).toLocaleString()} {settings?.currency_symbol || (isRTL ? "ج.س" : "SDG")}
                     </p>
                   </div>
                   <div className="flex flex-col gap-2 items-end">

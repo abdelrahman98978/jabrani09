@@ -200,7 +200,7 @@ export const CarQuickOrderDialog = ({ open, onOpenChange, car }: CarQuickOrderDi
                   {car.model} - {car.year}
                 </p>
                 <p className="text-sm font-bold text-primary">
-                  {Number(car.price || 0).toLocaleString()} {isRTL ? "ر.س" : "SAR"}
+                  {Number(car.price || 0).toLocaleString()} {settings?.currency_symbol || (isRTL ? "ج.س" : "SDG")}
                 </p>
               </div>
             </div>

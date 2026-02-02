@@ -65,8 +65,14 @@ const OrderDetailsPage = () => {
         .eq("id", orderId)
         .maybeSingle();
 
-      if (error) throw error;
-      return data;
+      if (data) return data;
+
+      // Fallback to RPC for guest users
+      const { data: rpcData, error: rpcError } = await supabase
+        .rpc('get_order_details', { p_order_id: orderId });
+
+      if (rpcError) throw rpcError;
+      return rpcData;
     },
   });
 
@@ -210,8 +216,8 @@ const OrderDetailsPage = () => {
                         )}
                         <div
                           className={`z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 transition-colors duration-300 ${isCompleted || isCurrent
-                              ? "border-primary bg-primary text-primary-foreground"
-                              : "border-border bg-background text-muted-foreground"
+                            ? "border-primary bg-primary text-primary-foreground"
+                            : "border-border bg-background text-muted-foreground"
                             }`}
                         >
                           {isCompleted && !isCurrent ? (
@@ -263,7 +269,7 @@ const OrderDetailsPage = () => {
                     </div>
                     <div className="text-right">
                       <p className="text-xl font-black text-primary">
-                        {Number(order.total_amount).toLocaleString()} {isRTL ? "ر.س" : "SAR"}
+                        {Number(order.total_amount).toLocaleString()} {settings?.currency_symbol || (isRTL ? "ج.س" : "SDG")}
                       </p>
                     </div>
                   </div>
@@ -324,12 +330,12 @@ const OrderDetailsPage = () => {
               <CardContent className="space-y-4">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">{t.common.price}</span>
-                  <span className="font-medium">{Number(order.total_amount).toLocaleString()} {isRTL ? "ر.س" : "SAR"}</span>
+                  <span className="font-medium">{Number(order.total_amount).toLocaleString()} {settings?.currency_symbol || (isRTL ? "ج.س" : "SDG")}</span>
                 </div>
                 <div className="flex justify-between border-t border-primary/10 pt-4">
                   <span className="font-bold">{t.order.total}</span>
                   <span className="text-xl font-black text-primary">
-                    {Number(order.total_amount).toLocaleString()} {isRTL ? "ر.س" : "SAR"}
+                    {Number(order.total_amount).toLocaleString()} {settings?.currency_symbol || (isRTL ? "ج.س" : "SDG")}
                   </span>
                 </div>
 
@@ -370,7 +376,7 @@ const OrderDetailsPage = () => {
                       </div>
                       <div className="flex justify-between">
                         <span className="text-muted-foreground text-xs">{t.order.accountName}</span>
-                        <span className="font-medium">{settings?.bank_account_holder}</span>
+                        <span className="font-medium">{settings?.bank_account_name}</span>
                       </div>
                       <div className="flex flex-col gap-1">
                         <span className="text-muted-foreground text-xs">{t.order.accountNumber}</span>

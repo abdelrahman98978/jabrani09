@@ -6,6 +6,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { useCart } from "@/contexts/CartContext";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useSettings } from "@/hooks/useSettings";
 import { ShoppingCart, Trash2, Plus, Minus, Loader2, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import CheckoutDialog from "./CheckoutDialog";
@@ -20,33 +21,33 @@ const CartSheet = ({ isTransparent = false }: CartSheetProps) => {
   const isRTL = language === "ar";
   const [checkoutOpen, setCheckoutOpen] = useState(false);
 
+  const { data: settings } = useSettings();
+
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("ar-SA", {
-      style: "currency",
-      currency: "SAR",
+    const formatted = new Intl.NumberFormat(isRTL ? "ar-SD" : "en-US", {
       maximumFractionDigits: 0,
     }).format(price);
+    const symbol = settings?.currency_symbol || (isRTL ? "ج.س" : "SDG");
+    return `${formatted} ${symbol}`;
   };
 
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          className={`relative ${
-            isTransparent 
-              ? 'text-white hover:bg-white/10 hover:text-white nav-icon-shadow' 
-              : ''
-          }`}
+        <Button
+          variant="ghost"
+          size="icon"
+          className={`relative ${isTransparent
+            ? 'text-white hover:bg-white/10 hover:text-white nav-icon-shadow'
+            : ''
+            }`}
         >
           <ShoppingCart className="h-5 w-5" />
           {itemCount > 0 && (
-            <Badge className={`absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center text-xs ${
-              isTransparent 
-                ? 'bg-white text-primary' 
-                : 'bg-primary text-primary-foreground'
-            }`}>
+            <Badge className={`absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center text-xs ${isTransparent
+              ? 'bg-white text-primary'
+              : 'bg-primary text-primary-foreground'
+              }`}>
               {itemCount}
             </Badge>
           )}
@@ -143,7 +144,7 @@ const CartSheet = ({ isTransparent = false }: CartSheetProps) => {
                 <span>{isRTL ? "المجموع" : "Total"}</span>
                 <span className="text-primary">{formatPrice(totalPrice)}</span>
               </div>
-              
+
               <div className="grid gap-2">
                 <Button className="w-full" size="lg" onClick={() => setCheckoutOpen(true)}>
                   {isRTL ? "إتمام الطلب" : "Checkout"}

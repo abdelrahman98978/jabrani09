@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useSettings } from "@/hooks/useSettings";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -28,6 +29,7 @@ const pages = [
 const GlobalSearch = ({ open, onOpenChange }: GlobalSearchProps) => {
   const { language } = useLanguage();
   const isRTL = language === "ar";
+  const { data: settings } = useSettings();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -92,7 +94,7 @@ const GlobalSearch = ({ open, onOpenChange }: GlobalSearchProps) => {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!open) return;
-      
+
       if (e.key === "ArrowDown") {
         e.preventDefault();
         setSelectedIndex(i => Math.min(i + 1, allResults.length - 1));
@@ -110,11 +112,11 @@ const GlobalSearch = ({ open, onOpenChange }: GlobalSearchProps) => {
   }, [open, allResults, selectedIndex, handleSelect]);
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("ar-SA", {
-      style: "currency",
-      currency: "SAR",
+    const formatted = new Intl.NumberFormat(isRTL ? "ar-SD" : "en-US", {
       maximumFractionDigits: 0,
     }).format(price);
+    const symbol = settings?.currency_symbol || (isRTL ? "ج.س" : "SDG");
+    return `${formatted} ${symbol}`;
   };
 
   return (

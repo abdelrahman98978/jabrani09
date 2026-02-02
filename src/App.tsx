@@ -133,7 +133,6 @@ const AppInner = () => {
           <CompareProvider>
             <WishlistProvider>
               <TooltipProvider>
-                <AnnouncementBar />
                 <ReadingProgress />
                 <Toaster />
                 <Sonner />

@@ -69,8 +69,8 @@ const ContactPage = () => {
 
   const handleWhatsApp = () => {
     const message = encodeURIComponent(
-      isRTL 
-        ? "مرحباً، أرغب في الاستفسار عن السيارات المتوفرة لديكم" 
+      isRTL
+        ? "مرحباً، أرغب في الاستفسار عن السيارات المتوفرة لديكم"
         : "Hello, I would like to inquire about your available cars"
     );
     window.open(`https://wa.me/${whatsappNumber}?text=${message}`, "_blank");
@@ -80,28 +80,28 @@ const ContactPage = () => {
     {
       icon: Phone,
       title: isRTL ? "الهاتف" : "Phone",
-      value: settings?.phone || "+966 54 338 9314",
-      href: `tel:${settings?.phone || "+966543389314"}`,
+      value: settings?.phone || "+249 12 304 4745",
+      href: `tel:${settings?.phone || "+249123044745"}`,
     },
     {
       icon: Mail,
       title: isRTL ? "البريد الإلكتروني" : "Email",
-      value: settings?.email || "info@example.com",
-      href: `mailto:${settings?.email || "info@example.com"}`,
+      value: settings?.email || "info@alfakhim.com",
+      href: `mailto:${settings?.email || "info@alfakhim.com"}`,
     },
     {
       icon: MapPin,
       title: isRTL ? "العنوان" : "Address",
-      value: isRTL 
-        ? (settings?.address_ar || "المملكة العربية السعودية") 
-        : (settings?.address || "Saudi Arabia"),
+      value: isRTL
+        ? (settings?.address_ar || "بورتسودان، السودان")
+        : (settings?.address || "Port Sudan, Sudan"),
       href: "#",
     },
     {
       icon: Clock,
       title: isRTL ? "ساعات العمل" : "Working Hours",
-      value: isRTL 
-        ? (settings?.working_hours_ar || "السبت - الخميس: 9 صباحاً - 10 مساءً") 
+      value: isRTL
+        ? (settings?.working_hours_ar || "السبت - الخميس: 9 صباحاً - 10 مساءً")
         : (settings?.working_hours || "Sat - Thu: 9 AM - 10 PM"),
       href: "#",
     },
@@ -110,12 +110,12 @@ const ContactPage = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      
+
       <main className="pt-24 pb-12 relative overflow-hidden">
         {/* Background decorations */}
         <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-accent/5 rounded-full blur-3xl" />
-        
+
         <div className="container mx-auto px-4 relative z-10">
           {/* Page Header */}
           <div className="text-center mb-12 animate-fade-in">
@@ -123,8 +123,8 @@ const ContactPage = () => {
               {isRTL ? "اتصل" : "Contact"} <span className="text-gradient-gold">{isRTL ? "بنا" : "Us"}</span>
             </h1>
             <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">
-              {isRTL 
-                ? "نحن هنا لمساعدتك. تواصل معنا بأي طريقة تفضلها" 
+              {isRTL
+                ? "نحن هنا لمساعدتك. تواصل معنا بأي طريقة تفضلها"
                 : "We're here to help. Contact us in any way you prefer"}
             </p>
           </div>
@@ -135,8 +135,8 @@ const ContactPage = () => {
               {/* Contact Cards */}
               <div className="grid sm:grid-cols-2 gap-4 stagger-3d-entrance">
                 {contactInfo.map((item, index) => (
-                  <a 
-                    key={index} 
+                  <a
+                    key={index}
                     href={item.href}
                     style={{ animationDelay: `${index * 0.1}s` }}
                   >

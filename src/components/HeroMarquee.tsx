@@ -41,10 +41,10 @@ const HeroMarquee = () => {
   const marqueeItems = [];
 
   // Add custom marquee text if available
-  const customText = isRTL 
-    ? (settings as any)?.marquee_text_ar 
+  const customText = isRTL
+    ? (settings as any)?.marquee_text_ar
     : (settings as any)?.marquee_text;
-  
+
   if (customText) {
     marqueeItems.push({
       icon: Sparkles,
@@ -82,10 +82,10 @@ const HeroMarquee = () => {
   // Add promotions
   activePromotions?.forEach((promo) => {
     const promoName = isRTL ? promo.name_ar : promo.name;
-    const discount = promo.discount_type === "percentage" 
-      ? `${promo.discount_value}%` 
+    const discount = promo.discount_type === "percentage"
+      ? `${promo.discount_value}%`
       : `${promo.discount_value} ${isRTL ? "ريال" : "SAR"}`;
-    
+
     marqueeItems.push({
       icon: Tag,
       text: `🎉 ${promoName} - ${isRTL ? "خصم" : "Discount"} ${discount}`,
@@ -98,7 +98,7 @@ const HeroMarquee = () => {
     marqueeItems.push(
       {
         icon: Star,
-        text: isRTL ? "⭐ أفضل الأسعار على السيارات الفاخرة" : "⭐ Best Prices on Luxury Cars",
+        text: isRTL ? "⭐ أفضل الأسعار في معرض الفخيم للسيارات" : "⭐ Best Prices at Al-Fakhim Car Showroom",
         type: "default",
       },
       {

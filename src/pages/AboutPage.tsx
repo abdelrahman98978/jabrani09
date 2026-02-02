@@ -15,9 +15,9 @@ const AboutPage = () => {
     : settings?.showroom_name_en || "Car Showroom";
 
   const defaultAboutAr =
-    "معرض السيارات الفاخرة هو وجهتكم المثالية لشراء السيارات في المملكة العربية السعودية. نقدم لكم مجموعة واسعة من السيارات الجديدة والمستعملة من أشهر الماركات العالمية بأسعار تنافسية.";
+    "معرض الفخيم للسيارات هو وجهتكم المثالية لشراء السيارات. نقدم لكم مجموعة واسعة من السيارات الجديدة والمستعملة من أشهر الماركات العالمية بأسعار تنافسية.";
   const defaultAboutEn =
-    "Our luxury car showroom is your ideal destination for buying cars in Saudi Arabia. We offer a wide selection of new and used vehicles from top global brands at competitive prices.";
+    "Al-Fakhim Car Showroom is your ideal destination for buying cars. We offer a wide selection of new and used vehicles from top global brands at competitive prices.";
 
   const aboutText = isRTL
     ? settings?.about_text_ar || defaultAboutAr
@@ -34,21 +34,21 @@ const AboutPage = () => {
     {
       icon: Target,
       title: isRTL ? "رؤيتنا" : "Our Vision",
-      description: isRTL 
+      description: isRTL
         ? "أن نكون الوجهة الأولى للسيارات في المملكة العربية السعودية"
         : "To be the leading car destination in Saudi Arabia",
     },
     {
       icon: Heart,
       title: isRTL ? "رسالتنا" : "Our Mission",
-      description: isRTL 
+      description: isRTL
         ? "تقديم أفضل تجربة شراء سيارات مع الالتزام بالجودة والشفافية"
         : "Delivering the best car buying experience with quality and transparency",
     },
     {
       icon: Shield,
       title: isRTL ? "التزامنا" : "Our Commitment",
-      description: isRTL 
+      description: isRTL
         ? "ضمان رضا العملاء من خلال خدمات متميزة وأسعار منافسة"
         : "Ensuring customer satisfaction through excellent service and competitive prices",
     },
@@ -58,21 +58,21 @@ const AboutPage = () => {
     {
       icon: Award,
       title: isRTL ? "موزع معتمد" : "Authorized Dealer",
-      description: isRTL 
+      description: isRTL
         ? "نوفر لكم سيارات أصلية من أشهر الماركات العالمية"
         : "We provide genuine cars from top global brands",
     },
     {
       icon: Users,
       title: isRTL ? "فريق متخصص" : "Expert Team",
-      description: isRTL 
+      description: isRTL
         ? "فريق من الخبراء جاهز لمساعدتكم في اختيار السيارة المناسبة"
         : "A team of experts ready to help you choose the right car",
     },
     {
       icon: Clock,
       title: isRTL ? "خدمة سريعة" : "Fast Service",
-      description: isRTL 
+      description: isRTL
         ? "إتمام جميع إجراءات الشراء والتمويل في وقت قياسي"
         : "Complete all purchase and financing procedures in record time",
     },
@@ -81,14 +81,14 @@ const AboutPage = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      
+
       <main className="pt-24 pb-12">
         {/* Hero Section */}
         <section className="py-16 bg-gradient-to-b from-card/50 to-background relative overflow-hidden">
           {/* Background decorations */}
           <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
           <div className="absolute bottom-0 left-0 w-96 h-96 bg-accent/5 rounded-full blur-3xl" />
-          
+
           <div className="container mx-auto px-4 text-center relative z-10">
             <h1 className="text-4xl md:text-5xl font-black text-foreground mb-4 animate-fade-in">
               {isRTL ? "من" : "About"} <span className="text-gradient-gold">{isRTL ? "نحن" : "Us"}</span>
@@ -104,8 +104,8 @@ const AboutPage = () => {
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 stagger-3d-entrance">
               {stats.map((stat, index) => (
-                <div 
-                  key={index} 
+                <div
+                  key={index}
                   className="text-center p-6 rounded-xl bg-card border border-border card-3d-tilt glow-3d"
                   style={{ animationDelay: `${index * 0.1}s` }}
                 >
@@ -120,15 +120,15 @@ const AboutPage = () => {
         {/* Values Section */}
         <section className="py-16 bg-card/30 relative overflow-hidden">
           <div className="absolute inset-0 pattern-overlay opacity-20" />
-          
+
           <div className="container mx-auto px-4 relative z-10">
             <h2 className="text-3xl font-black text-center text-foreground mb-12 animate-fade-in">
               {isRTL ? "قيمنا" : "Our Values"} <span className="text-gradient-gold">{isRTL ? "ومبادئنا" : "& Principles"}</span>
             </h2>
             <div className="grid md:grid-cols-3 gap-8 stagger-3d-entrance">
               {values.map((value, index) => (
-                <div 
-                  key={index} 
+                <div
+                  key={index}
                   className="text-center p-8 rounded-xl bg-card border border-border card-3d-tilt glow-3d"
                   style={{ animationDelay: `${index * 0.15}s` }}
                 >
@@ -146,7 +146,7 @@ const AboutPage = () => {
         {/* Why Choose Us */}
         <section className="py-16 relative overflow-hidden">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl" />
-          
+
           <div className="container mx-auto px-4 relative z-10">
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               <div className="animate-fade-in">
@@ -155,7 +155,7 @@ const AboutPage = () => {
                 </h2>
                 <div className="space-y-4 stagger-3d-entrance">
                   {whyChooseUs.map((item, index) => (
-                    <div 
+                    <div
                       key={index}
                       className="flex gap-4 p-4 rounded-xl bg-card/50 border border-border/50 hover:border-primary/30 transition-all hover-lift-3d"
                       style={{ animationDelay: `${index * 0.15}s` }}

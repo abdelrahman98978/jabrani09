@@ -19,7 +19,7 @@ const HeroSection = () => {
 
   // Typewriter text
   const firstLineText = isRTL ? "اكتشف عالم" : "Discover the World of";
-  const secondLineText = isRTL ? "السيارات الفاخرة" : "Luxury Excellence";
+  const secondLineText = isRTL ? "معرض الفخيم للسيارات" : "Al-Fakhim Car Showroom";
 
   const handleFirstComplete = useCallback(() => {
     setShowSecondLine(true);
@@ -64,26 +64,16 @@ const HeroSection = () => {
   });
 
   const heroImage = settings?.hero_image_url || heroBanner;
-  const heroType = (settings as any)?.hero_type || "image";
-  // Default to a premium car video for the request (Mercedes Dashboard/Driving)
-  const defaultVideo = "https://videos.pexels.com/video-files/5309381/5309381-uhd_2560_1440_25fps.mp4";
-  const heroVideoUrl = (settings as any)?.hero_video_url || defaultVideo;
 
   return (
     <section className="relative min-h-[100vh] flex items-center justify-center overflow-hidden perspective-container bg-black">
       {/* Background Layer */}
       <div className="absolute inset-0 z-0">
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
-          poster={heroImage}
-          className="absolute inset-0 w-full h-full object-cover scale-105"
-        >
-          <source src={heroVideoUrl} type="video/mp4" />
-        </video>
-        <div className="absolute inset-0 bg-black/40" />
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105"
+          style={{ backgroundImage: `url(${heroImage})` }}
+        />
+        <div className="absolute inset-0 bg-black/60" />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-90" />
       </div>
 

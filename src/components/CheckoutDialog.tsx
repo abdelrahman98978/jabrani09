@@ -201,7 +201,7 @@ const CheckoutDialog = ({ open, onOpenChange }: CheckoutDialogProps) => {
                   id="phone"
                   value={formData.customerPhone}
                   onChange={(e) => setFormData({ ...formData, customerPhone: e.target.value })}
-                  placeholder={isRTL ? "05xxxxxxxx" : "05xxxxxxxx"}
+                  placeholder={isRTL ? "09xxxxxxxx / 01xxxxxxxx" : "09xxxxxxxx / 01xxxxxxxx"}
                   dir="ltr"
                 />
               </div>

@@ -237,11 +237,15 @@ const OrderConfirmationPage = () => {
               <CardContent className="space-y-4">
                 <div className="flex justify-between items-center">
                   <span className="text-muted-foreground text-sm">{t.common.price}</span>
-                  <span className="font-medium">{Number(order.total_amount).toLocaleString()} {isRTL ? "ر.س" : "SAR"}</span>
+                  <span className="font-medium">
+                    {Number(order.total_amount).toLocaleString()} {settings?.currency_symbol || (isRTL ? "ج.س" : "SDG")}
+                  </span>
                 </div>
                 <div className="border-t pt-4 flex justify-between items-center">
                   <span className="font-bold">{t.order.total}</span>
-                  <span className="text-xl font-black text-primary">{Number(order.total_amount).toLocaleString()} {isRTL ? "ر.س" : "SAR"}</span>
+                  <span className="text-xl font-black text-primary">
+                    {Number(order.total_amount).toLocaleString()} {settings?.currency_symbol || (isRTL ? "ج.س" : "SDG")}
+                  </span>
                 </div>
               </CardContent>
             </Card>

@@ -155,6 +155,8 @@ const SettingsSection = () => {
       primary_color: formData.get("primary_color") || null,
       secondary_color: formData.get("secondary_color") || null,
       accent_color: formData.get("accent_color") || null,
+      currency: formData.get("currency") || "SDG",
+      currency_symbol: formData.get("currency_symbol") || "ج.س",
     });
   };
 
@@ -192,12 +194,13 @@ const SettingsSection = () => {
       )}
 
       <Tabs defaultValue="general" className="space-y-6">
-        <TabsList className="grid w-full max-w-md grid-cols-5">
+        <TabsList className="grid w-full max-w-md grid-cols-6 mb-4 overflow-x-auto">
           <TabsTrigger value="general">{isRTL ? "عام" : "General"}</TabsTrigger>
+          <TabsTrigger value="localization">{isRTL ? "المنطقة" : "Region"}</TabsTrigger>
           <TabsTrigger value="contact">{isRTL ? "التواصل" : "Contact"}</TabsTrigger>
           <TabsTrigger value="about">{isRTL ? "من نحن" : "About"}</TabsTrigger>
-          <TabsTrigger value="social">{isRTL ? "التواصل الاجتماعي" : "Social"}</TabsTrigger>
-          <TabsTrigger value="theme">{isRTL ? "ألوان الثيم" : "Theme"}</TabsTrigger>
+          <TabsTrigger value="social">{isRTL ? "اجتماعي" : "Social"}</TabsTrigger>
+          <TabsTrigger value="theme">{isRTL ? "الثيم" : "Theme"}</TabsTrigger>
         </TabsList>
 
         <form onSubmit={handleSubmit}>
@@ -209,11 +212,6 @@ const SettingsSection = () => {
                   <Globe className="h-5 w-5" />
                   {isRTL ? "معلومات المعرض" : "Showroom Info"}
                 </CardTitle>
-                <p className="text-sm text-muted-foreground">
-                  {isRTL
-                    ? "هذه البيانات تُستخدم تلقائياً في الفواتير، الحملات التسويقية، والتوليد بالذكاء الاصطناعي"
-                    : "This data is automatically used in invoices, marketing campaigns, and AI generation"}
-                </p>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="p-3 rounded-lg bg-primary/10 border border-primary/20 mb-4">
@@ -478,6 +476,46 @@ const SettingsSection = () => {
             </Card>
           </TabsContent>
 
+          {/* Localization Settings */}
+          <TabsContent value="localization" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <MapPin className="h-5 w-5" />
+                  {isRTL ? "إعدادات المنطقة والعملة" : "Region & Currency"}
+                </CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  {isRTL
+                    ? "تخصيص العملة وعرض الأسعار"
+                    : "Customize currency and price display"}
+                </p>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <Label>{isRTL ? "رمز العملة (ISO)" : "Currency Code (ISO)"}</Label>
+                    <Input
+                      name="currency"
+                      defaultValue={(settings as any)?.currency || "SDG"}
+                      placeholder="e.g. SDG, SAR, USD"
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {isRTL ? "مثال: SDG للجنيه السوداني" : "e.g., SDG for Sudanese Pound"}
+                    </p>
+                  </div>
+                  <div>
+                    <Label>{isRTL ? "رمز العملة (للعرض)" : "Currency Symbol"}</Label>
+                    <Input
+                      name="currency_symbol"
+                      defaultValue={(settings as any)?.currency_symbol || "ج.س"}
+                      placeholder="e.g. ج.س, $, SAR"
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
           {/* Contact Settings */}
           <TabsContent value="contact" className="space-y-6">
             <Card>
@@ -499,11 +537,11 @@ const SettingsSection = () => {
                       <Phone className="h-4 w-4" />
                       {isRTL ? "رقم الهاتف *" : "Phone *"}
                     </Label>
-                    <Input name="phone" defaultValue={settings?.phone || ""} placeholder="+966500000000" dir="ltr" />
+                    <Input name="phone" defaultValue={settings?.phone || ""} placeholder="+249912345678" dir="ltr" />
                   </div>
                   <div>
                     <Label>{isRTL ? "واتساب *" : "WhatsApp *"}</Label>
-                    <Input name="whatsapp" defaultValue={settings?.whatsapp || ""} placeholder="+966500000000" dir="ltr" />
+                    <Input name="whatsapp" defaultValue={settings?.whatsapp || ""} placeholder="+249912345678" dir="ltr" />
                   </div>
                 </div>
                 <div>

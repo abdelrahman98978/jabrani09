@@ -8,6 +8,7 @@ import { useCart } from "@/contexts/CartContext";
 import CompareButton from "@/components/CompareButton";
 import WishlistButton from "@/components/WishlistButton";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useSettings } from "@/hooks/useSettings";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Dialog,
@@ -61,12 +62,14 @@ const CarCard = ({ car }: CarCardProps) => {
   const [quickViewOpen, setQuickViewOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
+  const { data: settings } = useSettings();
+
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat(isRTL ? "ar-SA" : "en-US", {
-      style: "currency",
-      currency: "SAR",
+    const formatted = new Intl.NumberFormat(isRTL ? "ar-SD" : "en-US", {
       maximumFractionDigits: 0,
     }).format(price);
+    const symbol = settings?.currency_symbol || (isRTL ? "ج.س" : "SDG");
+    return `${formatted} ${symbol}`;
   };
 
   const fuelTypeAr: Record<string, string> = {

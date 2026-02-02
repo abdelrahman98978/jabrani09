@@ -32,6 +32,7 @@ import {
 } from "lucide-react";
 import { useState, lazy, Suspense, useRef } from "react";
 import HeroVideoControls from "@/components/HeroVideoControls";
+import { useSettings } from "@/hooks/useSettings";
 import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { CarQuickOrderDialog } from "@/components/CarQuickOrderDialog";
@@ -140,12 +141,14 @@ const CarDetailsPage = () => {
     enabled: !!id,
   });
 
+  const { data: settings } = useSettings();
+
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat(language === "ar" ? "ar-SA" : "en-SA", {
-      style: "currency",
-      currency: "SAR",
+    const formatted = new Intl.NumberFormat(language === "ar" ? "ar-SD" : "en-US", {
       maximumFractionDigits: 0,
     }).format(price);
+    const symbol = settings?.currency_symbol || (language === "ar" ? "ج.س" : "SDG");
+    return `${formatted} ${symbol}`;
   };
 
   const fuelTypes: Record<string, Record<string, string>> = {

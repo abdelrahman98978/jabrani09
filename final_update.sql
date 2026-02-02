@@ -9,6 +9,29 @@ SET
   address_ar = 'بورتسودان، السودان'
 WHERE id = (SELECT id FROM public.settings LIMIT 1);
 
+-- 0. Ensure Arabic columns exist
+DO $$
+BEGIN
+    -- Add columns to 'brands' if they don't exist
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'brands' AND column_name = 'name_ar') THEN
+        ALTER TABLE public.brands ADD COLUMN name_ar TEXT;
+    END IF;
+
+    -- Add columns to 'cars' if they don't exist
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'cars' AND column_name = 'model_ar') THEN
+        ALTER TABLE public.cars ADD COLUMN model_ar TEXT;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'cars' AND column_name = 'description_ar') THEN
+        ALTER TABLE public.cars ADD COLUMN description_ar TEXT;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'cars' AND column_name = 'features_ar') THEN
+        ALTER TABLE public.cars ADD COLUMN features_ar TEXT[];
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'cars' AND column_name = 'color_ar') THEN
+        ALTER TABLE public.cars ADD COLUMN color_ar TEXT;
+    END IF;
+END $$;
+
 -- 2. Insert Brands (Lexus, Toyota) if they don't exist
 INSERT INTO public.brands (name, name_ar, logo_url, is_active)
 SELECT 'Lexus', 'لكزس', 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Lexus_logo_2023.svg/1200px-Lexus_logo_2023.svg.png', true

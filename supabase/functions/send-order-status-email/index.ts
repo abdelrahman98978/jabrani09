@@ -71,7 +71,7 @@ export const handler = async (req: Request): Promise<Response> => {
     // Fetch showroom settings
     const { data: settings } = await supabaseAdmin
       .from("settings")
-      .select("showroom_name, showroom_name_en, phone, whatsapp, email, address_ar, logo_url")
+      .select("showroom_name, showroom_name_en, phone, whatsapp, email, address_ar, logo_url, currency, currency_symbol")
       .limit(1)
       .maybeSingle();
 
@@ -81,6 +81,7 @@ export const handler = async (req: Request): Promise<Response> => {
     const showroomWhatsapp = settings?.whatsapp || "";
     const showroomEmail = settings?.email || "";
     const logoUrl = settings?.logo_url || "";
+    const currencySymbol = settings?.currency_symbol || "ج.س";
 
     const status = new_status || order.status || "new";
     const config = statusConfig[status] || statusConfig.new;
@@ -211,8 +212,8 @@ export const handler = async (req: Request): Promise<Response> => {
                           </div>
                         </td>
                         <td style="padding: 15px 12px; border-bottom: 1px solid #e5e5e5; text-align: center; color: #1a1a1a; font-size: 15px;">1</td>
-                        <td style="padding: 15px 12px; border-bottom: 1px solid #e5e5e5; text-align: center; color: #1a1a1a; font-size: 15px;">${carPrice.toLocaleString()} ر.س</td>
-                        <td style="padding: 15px 12px; border-bottom: 1px solid #e5e5e5; text-align: left; color: #1a1a1a; font-size: 15px; font-weight: 600;">${carPrice.toLocaleString()} ر.س</td>
+                        <td style="padding: 15px 12px; border-bottom: 1px solid #e5e5e5; text-align: center; color: #1a1a1a; font-size: 15px;">${carPrice.toLocaleString()} ${currencySymbol}</td>
+                        <td style="padding: 15px 12px; border-bottom: 1px solid #e5e5e5; text-align: left; color: #1a1a1a; font-size: 15px; font-weight: 600;">${carPrice.toLocaleString()} ${currencySymbol}</td>
                       </tr>
                     </table>
                   </td>
@@ -227,7 +228,7 @@ export const handler = async (req: Request): Promise<Response> => {
                           <span style="color: rgba(255,255,255,0.9); font-size: 14px;">الإجمالي الكلي</span>
                         </td>
                         <td style="padding: 18px 20px; text-align: left;">
-                          <span style="color: #ffffff; font-size: 22px; font-weight: bold;">${Number(order.total_amount).toLocaleString()} ر.س</span>
+                          <span style="color: #ffffff; font-size: 22px; font-weight: bold;">${Number(order.total_amount).toLocaleString()} ${currencySymbol}</span>
                         </td>
                       </tr>
                     </table>

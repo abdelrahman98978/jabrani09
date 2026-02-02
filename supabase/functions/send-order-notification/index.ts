@@ -56,12 +56,13 @@ const handler = async (req: Request): Promise<Response> => {
       : (settings?.showroom_name_en || "Car Showroom");
     const phone = settings?.phone || "";
 
+    const currencySymbol = settings?.currency_symbol || (isArabic ? "ج.س" : "SDG");
+
     const formatPrice = (price: number) => {
-      return new Intl.NumberFormat(isArabic ? "ar-SA" : "en-SA", {
-        style: "currency",
-        currency: "SAR",
+      const formatted = new Intl.NumberFormat(isArabic ? "ar-SD" : "en-US", {
         maximumFractionDigits: 0,
       }).format(price);
+      return `${formatted} ${currencySymbol}`;
     };
 
     const paymentLabels: Record<string, Record<string, string>> = {

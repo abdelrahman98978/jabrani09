@@ -72,18 +72,19 @@ serve(async (req: Request): Promise<Response> => {
       .limit(1)
       .single();
 
-    const showroomName = isRTL 
+    const showroomName = isRTL
       ? (settings?.showroom_name || "معرض السيارات")
       : (settings?.showroom_name_en || "Car Showroom");
     const showroomPhone = settings?.phone || "";
     const showroomEmail = settings?.email || "";
+    const currencySymbol = settings?.currency_symbol || (isRTL ? "ج.س" : "SDG");
 
     // Format amounts
     const amount = Number(invoice.amount || 0);
     const taxAmount = Number(invoice.tax_amount || 0);
     const totalAmount = Number(invoice.total_amount || 0);
 
-    const carName = isRTL 
+    const carName = isRTL
       ? (invoice.orders?.cars?.name_ar || invoice.orders?.cars?.name || "سيارة")
       : (invoice.orders?.cars?.name || "Car");
 
@@ -95,7 +96,7 @@ serve(async (req: Request): Promise<Response> => {
     };
 
     const paymentMethod = invoice.orders?.payment_method || "cash";
-    const paymentMethodLabel = isRTL 
+    const paymentMethodLabel = isRTL
       ? paymentMethodLabels[paymentMethod]?.ar || paymentMethod
       : paymentMethodLabels[paymentMethod]?.en || paymentMethod;
 
@@ -141,9 +142,9 @@ serve(async (req: Request): Promise<Response> => {
         ${isRTL ? `مرحباً ${invoice.customers?.name || 'عميلنا العزيز'}،` : `Hello ${invoice.customers?.name || 'Valued Customer'},`}
       </p>
       <p style="color: #6b7280;">
-        ${isRTL 
-          ? 'نشكركم على ثقتكم بنا. يرجى الاطلاع على تفاصيل فاتورتكم أدناه.'
-          : 'Thank you for your trust. Please find your invoice details below.'}
+        ${isRTL
+        ? 'نشكركم على ثقتكم بنا. يرجى الاطلاع على تفاصيل فاتورتكم أدناه.'
+        : 'Thank you for your trust. Please find your invoice details below.'}
       </p>
       
       <div class="invoice-info">
@@ -177,15 +178,15 @@ serve(async (req: Request): Promise<Response> => {
       <div class="totals">
         <div class="total-row">
           <span>${isRTL ? 'المبلغ' : 'Amount'}</span>
-          <span>${amount.toLocaleString()} ${isRTL ? 'ر.س' : 'SAR'}</span>
+          <span>${amount.toLocaleString()} ${currencySymbol}</span>
         </div>
         <div class="total-row">
           <span>${isRTL ? 'ضريبة القيمة المضافة (15%)' : 'VAT (15%)'}</span>
-          <span>${taxAmount.toLocaleString()} ${isRTL ? 'ر.س' : 'SAR'}</span>
+          <span>${taxAmount.toLocaleString()} ${currencySymbol}</span>
         </div>
         <div class="total-row grand">
           <span>${isRTL ? 'الإجمالي' : 'Total'}</span>
-          <span>${totalAmount.toLocaleString()} ${isRTL ? 'ر.س' : 'SAR'}</span>
+          <span>${totalAmount.toLocaleString()} ${currencySymbol}</span>
         </div>
       </div>
       
@@ -206,9 +207,9 @@ serve(async (req: Request): Promise<Response> => {
       ${showroomPhone ? `<p>📞 ${showroomPhone}</p>` : ''}
       ${showroomEmail ? `<p>✉️ ${showroomEmail}</p>` : ''}
       <p style="margin-top: 15px;">
-        ${isRTL 
-          ? 'شكراً لتعاملكم معنا. نتطلع لخدمتكم دائماً.'
-          : 'Thank you for your business. We look forward to serving you again.'}
+        ${isRTL
+        ? 'شكراً لتعاملكم معنا. نتطلع لخدمتكم دائماً.'
+        : 'Thank you for your business. We look forward to serving you again.'}
       </p>
     </div>
   </div>
@@ -220,7 +221,7 @@ serve(async (req: Request): Promise<Response> => {
     const emailResponse = await resend.emails.send({
       from: `${showroomName} <onboarding@resend.dev>`,
       to: [customerEmail],
-      subject: isRTL 
+      subject: isRTL
         ? `فاتورة رقم ${invoice.invoice_number} - ${showroomName}`
         : `Invoice ${invoice.invoice_number} - ${showroomName}`,
       html: emailHtml,
@@ -235,10 +236,10 @@ serve(async (req: Request): Promise<Response> => {
       .eq("id", invoice_id);
 
     return new Response(
-      JSON.stringify({ 
-        success: true, 
+      JSON.stringify({
+        success: true,
         message: isRTL ? "تم إرسال الفاتورة بنجاح" : "Invoice sent successfully",
-        email_id: emailResponse.data?.id 
+        email_id: emailResponse.data?.id
       }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );

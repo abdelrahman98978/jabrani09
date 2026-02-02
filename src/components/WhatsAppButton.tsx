@@ -3,8 +3,8 @@ import { useSettings } from "@/hooks/useSettings";
 
 const WhatsAppButton = () => {
   const { data: settings } = useSettings();
-  
-  const phoneNumber = settings?.whatsapp || settings?.phone?.replace(/\D/g, '') || "966543389314";
+
+  const phoneNumber = settings?.whatsapp || settings?.phone?.replace(/\D/g, '') || "249123044745";
 
   const handleClick = () => {
     const message = encodeURIComponent("مرحباً، أرغب في الاستفسار عن السيارات المتوفرة لديكم");

@@ -152,7 +152,7 @@ const FeaturedCars = () => {
             {cars.map((car, index) => (
               <div
                 key={car.id}
-                className="stagger-item opacity-0 animate-in fade-in slide-in-from-bottom-10"
+                className="stagger-item animate-in fade-in slide-in-from-bottom-10"
                 style={{ animationDelay: `${index * 100}ms`, animationFillMode: 'forwards' }}
               >
                 <CarCard car={mapCarToCardData(car)} />

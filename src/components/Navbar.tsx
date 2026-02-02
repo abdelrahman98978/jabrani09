@@ -117,13 +117,11 @@ const Navbar = () => {
               />
             </div>
             <div className={`ms-3 flex flex-col transition-all duration-500 ${isTransparent ? 'translate-x-1' : 'translate-x-0'}`}>
-              <span className={`text-lg md:text-xl font-black leading-none tracking-tight ${isTransparent ? 'text-white' : 'text-foreground'}`}>
+              <span className={`text-lg md:text-xl font-black leading-tight tracking-tight ${isTransparent ? 'text-white' : 'text-foreground'}`}>
                 {siteName}
                 <Sparkles className="inline-block h-3 w-3 ms-1 text-primary animate-pulse" />
               </span>
-              <span className={`text-[10px] uppercase tracking-[0.3em] font-bold ${isTransparent ? 'text-white/60' : 'text-muted-foreground'}`}>
-                {isRTL ? "معرض الفخيم للسيارات" : "Al-Fakhim Car Showroom"}
-              </span>
+              {/* Secondary name removed as requested */}
             </div>
           </Link>
 

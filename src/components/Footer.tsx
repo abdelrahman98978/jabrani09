@@ -182,7 +182,7 @@ const Footer = () => {
             <ul className="space-y-4">
               <li>
                 <a
-                  href={`tel:${settings?.phone || "+966543389314"}`}
+                  href={`tel:${settings?.phone || "+249123044745"}`}
                   className="flex items-start gap-3 text-sm text-accent-foreground/70 hover:text-primary transition-colors"
                 >
                   <div className="p-2 rounded-lg bg-primary/10 mt-0.5">
@@ -190,13 +190,13 @@ const Footer = () => {
                   </div>
                   <div>
                     <p className="text-xs text-accent-foreground/50 mb-1">{isRTL ? "اتصل بنا" : "Call Us"}</p>
-                    <span dir="ltr" className="font-medium">{settings?.phone || "+966 54 338 9314"}</span>
+                    <span dir="ltr" className="font-medium">{settings?.phone || "+249 12 304 4745"}</span>
                   </div>
                 </a>
               </li>
               <li>
                 <a
-                  href={`mailto:${settings?.email || "info@aljabrani.com"}`}
+                  href={`mailto:${settings?.email || "info@alfakhim.com"}`}
                   className="flex items-start gap-3 text-sm text-accent-foreground/70 hover:text-primary transition-colors"
                 >
                   <div className="p-2 rounded-lg bg-primary/10 mt-0.5">
@@ -204,7 +204,7 @@ const Footer = () => {
                   </div>
                   <div>
                     <p className="text-xs text-accent-foreground/50 mb-1">{isRTL ? "البريد الإلكتروني" : "Email"}</p>
-                    <span className="font-medium">{settings?.email || "info@aljabrani.com"}</span>
+                    <span className="font-medium">{settings?.email || "info@alfakhim.com"}</span>
                   </div>
                 </a>
               </li>

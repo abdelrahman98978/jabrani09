@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, Car, Phone, User, LogIn, LogOut, Settings, Search, Sparkles } from "lucide-react";
+import { Menu, X, Car, Phone, User, LogIn, LogOut, Settings, Search, Sparkles, Heart, Package } from "lucide-react";
 import showroomLogo from "@/assets/sudex-logo.jpg";
 import ThemeToggle from "@/components/ThemeToggle";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
@@ -152,6 +152,21 @@ const Navbar = () => {
           <div className="flex items-center gap-2 md:gap-4">
             <div className="hidden sm:flex items-center gap-2">
               <GlobalSearch />
+
+              <Link to="/wishlist">
+                <Button variant="ghost" size="icon" className={isTransparent ? "text-white hover:bg-white/10" : "text-foreground hover:bg-secondary"}>
+                  <Heart className="h-5 w-5" />
+                  <span className="sr-only">{t.nav?.wishlist || (isRTL ? "المفضلة" : "Wishlist")}</span>
+                </Button>
+              </Link>
+
+              <Link to="/profile?tab=orders">
+                <Button variant="ghost" size="icon" className={isTransparent ? "text-white hover:bg-white/10" : "text-foreground hover:bg-secondary"}>
+                  <Package className="h-5 w-5" />
+                  <span className="sr-only">{t.nav?.myOrders || (isRTL ? "طلباتي" : "My Orders")}</span>
+                </Button>
+              </Link>
+
               <NotificationCenter />
               <ThemeToggle isTransparent={isTransparent} />
               <LanguageSwitcher isTransparent={isTransparent} />
@@ -159,6 +174,7 @@ const Navbar = () => {
 
             <CartSheet />
 
+            {/* ... user dropdown ... */}
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -181,6 +197,17 @@ const Navbar = () => {
                     <Settings className="me-2 h-4 w-4" />
                     <span>{isRTL ? "لوحة التحكم" : "Dashboard"}</span>
                   </DropdownMenuItem>
+
+                  <DropdownMenuItem onClick={() => navigate("/profile?tab=orders")} className="py-3 px-4 rounded-xl cursor-pointer">
+                    <Package className="me-2 h-4 w-4" />
+                    <span>{isRTL ? "طلباتي" : "My Orders"}</span>
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem onClick={() => navigate("/wishlist")} className="py-3 px-4 rounded-xl cursor-pointer">
+                    <Heart className="me-2 h-4 w-4" />
+                    <span>{isRTL ? "المفضلة" : "Wishlist"}</span>
+                  </DropdownMenuItem>
+
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleLogout} className="py-3 px-4 rounded-xl cursor-pointer text-destructive focus:bg-destructive/10">
                     <LogOut className="me-2 h-4 w-4" />
@@ -235,6 +262,31 @@ const Navbar = () => {
                   {link.label}
                 </Link>
               ))}
+
+              <Link
+                to="/wishlist"
+                onClick={() => setIsOpen(false)}
+                className={`px-4 py-4 rounded-2xl text-lg font-black uppercase tracking-widest transition-all flex items-center gap-2 ${isActive("/wishlist")
+                  ? 'bg-primary text-white shadow-lg'
+                  : 'hover:bg-secondary text-muted-foreground hover:text-foreground'
+                  }`}
+              >
+                <Heart className="h-5 w-5" />
+                {isRTL ? "المفضلة" : "Wishlist"}
+              </Link>
+
+              <Link
+                to="/profile?tab=orders"
+                onClick={() => setIsOpen(false)}
+                className={`px-4 py-4 rounded-2xl text-lg font-black uppercase tracking-widest transition-all flex items-center gap-2 ${isActive("/profile")
+                  ? 'bg-primary text-white shadow-lg'
+                  : 'hover:bg-secondary text-muted-foreground hover:text-foreground'
+                  }`}
+              >
+                <Package className="h-5 w-5" />
+                {isRTL ? "طلباتي" : "My Orders"}
+              </Link>
+
               <div className="grid grid-cols-2 gap-2 mt-4">
                 <div className="flex items-center justify-between p-4 rounded-2xl bg-secondary/50">
                   <span className="text-sm font-bold">{isRTL ? "الوضع المظلم" : "Dark Mode"}</span>
@@ -245,6 +297,7 @@ const Navbar = () => {
                   <LanguageSwitcher />
                 </div>
               </div>
+
 
               {/* Mobile Auth Actions */}
               <div className="mt-4 pt-4 border-t border-border/10">

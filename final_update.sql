@@ -11,10 +11,12 @@ WHERE id = (SELECT id FROM public.settings LIMIT 1);
 
 -- 2. Insert Brands (Lexus, Toyota) if they don't exist
 INSERT INTO public.brands (name, name_ar, logo_url, is_active)
-VALUES 
-  ('Lexus', 'لكزس', 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Lexus_logo_2023.svg/1200px-Lexus_logo_2023.svg.png', true),
-  ('Toyota', 'تويوتا', 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Toyota_carlogo.svg/1024px-Toyota_carlogo.svg.png', true)
-ON CONFLICT (name) DO NOTHING;
+SELECT 'Lexus', 'لكزس', 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Lexus_logo_2023.svg/1200px-Lexus_logo_2023.svg.png', true
+WHERE NOT EXISTS (SELECT 1 FROM public.brands WHERE name = 'Lexus');
+
+INSERT INTO public.brands (name, name_ar, logo_url, is_active)
+SELECT 'Toyota', 'تويوتا', 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Toyota_carlogo.svg/1024px-Toyota_carlogo.svg.png', true
+WHERE NOT EXISTS (SELECT 1 FROM public.brands WHERE name = 'Toyota');
 
 -- 3. Insert Cars / Update Existing (Mark Featured)
 WITH lexus_brand AS (SELECT id FROM public.brands WHERE name = 'Lexus' LIMIT 1),

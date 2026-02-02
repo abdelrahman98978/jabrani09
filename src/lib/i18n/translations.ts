@@ -1,6 +1,6 @@
 export const translations = {
   ar: {
-    siteName: "الجبراني",
+    siteName: "الفخيم للسيارات",
     siteSlogan: "الفخامة والجودة",
     nav: {
       home: "الرئيسية",
@@ -145,7 +145,7 @@ export const translations = {
     },
   },
   en: {
-    siteName: "Al-Jabrani",
+    siteName: "Al-Fakhim Motors",
     siteSlogan: "Luxury & Quality",
     nav: {
       home: "Home",
@@ -290,7 +290,7 @@ export const translations = {
     },
   },
   fr: {
-    siteName: "Al-Jabrani",
+    siteName: "Al-Fakhim Motors",
     siteSlogan: "Luxe et Qualité",
     nav: {
       home: "Accueil",
@@ -435,7 +435,7 @@ export const translations = {
     },
   },
   de: {
-    siteName: "Al-Jabrani",
+    siteName: "Al-Fakhim Motors",
     siteSlogan: "Luxus und Qualität",
     nav: {
       home: "Startseite",

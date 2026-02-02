@@ -23,7 +23,7 @@ import {
   Car,
   CheckCircle2
 } from "lucide-react";
-import alJabraniLogo from "@/assets/al-jabrani-logo.jpg";
+import alJabraniLogo from "@/assets/sudex-logo.jpg";
 import { Separator } from "@/components/ui/separator";
 
 const AuthPage = () => {
@@ -249,7 +249,7 @@ const AuthPage = () => {
                 <div className="absolute -inset-1 bg-gradient-to-r from-primary to-accent rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
                 <img
                   src={alJabraniLogo}
-                  alt="AL FAKHIM MOTORS"
+                  alt="SUDEX GROUP"
                   className="relative h-20 w-20 rounded-2xl object-cover shadow-2xl transition-transform duration-500 group-hover:scale-105"
                 />
               </div>

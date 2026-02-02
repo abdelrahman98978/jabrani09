@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X, Car, Phone, User, LogIn, LogOut, Settings, Search, Sparkles } from "lucide-react";
-import showroomLogo from "@/assets/al-jabrani-logo.jpg";
+import showroomLogo from "@/assets/sudex-logo.jpg";
 import ThemeToggle from "@/components/ThemeToggle";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import CartSheet from "@/components/CartSheet";
@@ -122,7 +122,7 @@ const Navbar = () => {
                 <Sparkles className="inline-block h-3 w-3 ms-1 text-primary animate-pulse" />
               </span>
               <span className={`text-[10px] uppercase tracking-[0.3em] font-bold ${isTransparent ? 'text-white/60' : 'text-muted-foreground'}`}>
-                {isRTL ? "الفخيم للسيارات" : "Al-Fakhim Motors"}
+                {isRTL ? "مجموعة سودكس" : "SUDEX GROUP"}
               </span>
             </div>
           </Link>

@@ -53,14 +53,14 @@ const CarsManagement = () => {
       }
 
       const { data } = await query;
-      
+
       if (searchTerm) {
-        return data?.filter(car => 
+        return data?.filter(car =>
           car.name_ar?.toLowerCase().includes(searchTerm.toLowerCase()) ||
           car.model?.toLowerCase().includes(searchTerm.toLowerCase())
         ) || [];
       }
-      
+
       return data || [];
     },
   });
@@ -197,7 +197,7 @@ const CarsManagement = () => {
     e.preventDefault();
     const form = e.currentTarget;
     const formData = new FormData(form);
-    
+
     saveCar.mutate({
       brand_id: formData.get("brand_id") || null,
       name_ar: formData.get("name_ar"),
@@ -221,6 +221,7 @@ const CarsManagement = () => {
       is_featured: formData.get("is_featured") === "true",
       has_discount: formData.get("has_discount") === "true",
       has_test_drive: formData.get("has_test_drive") === "true",
+      view_360_url: formData.get("view_360_url") || null,
       video_360_url: video360Url || null,
       video_360_type: video360Type,
       video_url: heroVideoUrl || null,
@@ -524,12 +525,12 @@ const CarsManagement = () => {
                     <RotateCw className="h-5 w-5 text-primary" />
                     {isRTL ? "فيديو 360 درجة" : "360° Video"}
                   </Label>
-                  
+
                   {/* Video Preview */}
                   {video360Url && (
                     <div className="relative aspect-video rounded-lg overflow-hidden bg-secondary">
-                      <video 
-                        src={video360Url} 
+                      <video
+                        src={video360Url}
                         className="w-full h-full object-cover"
                         controls
                         muted
@@ -548,7 +549,7 @@ const CarsManagement = () => {
                       </div>
                     </div>
                   )}
-                  
+
                   <div className="grid md:grid-cols-2 gap-4">
                     {/* Upload Video */}
                     <div className="space-y-2">
@@ -575,18 +576,18 @@ const CarsManagement = () => {
                         </label>
                       </div>
                     </div>
-                    
+
                     {/* Video URL Input */}
                     <div className="space-y-2">
                       <p className="text-sm text-muted-foreground">
                         {isRTL ? "أو أدخل رابط فيديو" : "Or enter video URL"}
                       </p>
-                      <Input 
+                      <Input
                         placeholder="https://example.com/360-video.mp4"
                         value={video360Url}
                         onChange={(e) => setVideo360Url(e.target.value)}
                       />
-                      
+
                       {/* Projection Type */}
                       <div className="pt-2">
                         <Label className="text-sm">{isRTL ? "نوع الإسقاط" : "Projection Type"}</Label>
@@ -604,12 +605,25 @@ const CarsManagement = () => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <p className="text-xs text-muted-foreground">
-                    {isRTL 
-                      ? "💡 نصيحة: يُفضل استخدام فيديو بدقة 4K للحصول على أفضل تجربة 360°" 
+                    {isRTL
+                      ? "💡 نصيحة: يُفضل استخدام فيديو بدقة 4K للحصول على أفضل تجربة 360°"
                       : "💡 Tip: Use 4K resolution video for the best 360° experience"}
                   </p>
+
+                  {/* External 360 View URL */}
+                  <div className="pt-4 mt-4 border-t border-border/50">
+                    <Label className="mb-2 block">{isRTL ? "رابط عرض 360° خارجي (وكالة أو مشغل ويب)" : "External 360° View URL (Agency or Web Player)"}</Label>
+                    <Input
+                      name="view_360_url"
+                      defaultValue={editingCar?.view_360_url || ""}
+                      placeholder="https://example.com/360-view-iframe"
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {isRTL ? "سيتم استخدام هذا الرابط لعرض مشغل 360 درجة عبر iframe إذا تم توفيره." : "This URL will be used to display a 360 player via iframe if provided."}
+                    </p>
+                  </div>
                 </div>
 
                 {/* Hero Video Section */}
@@ -618,18 +632,18 @@ const CarsManagement = () => {
                     <Video className="h-5 w-5 text-amber-500" />
                     {isRTL ? "فيديو Hero (صفحة التفاصيل)" : "Hero Video (Details Page)"}
                   </Label>
-                  
+
                   <p className="text-sm text-muted-foreground">
-                    {isRTL 
-                      ? "هذا الفيديو سيظهر كخلفية سينمائية في أعلى صفحة تفاصيل السيارة مع نصوص متحركة" 
+                    {isRTL
+                      ? "هذا الفيديو سيظهر كخلفية سينمائية في أعلى صفحة تفاصيل السيارة مع نصوص متحركة"
                       : "This video will appear as a cinematic background at the top of the car details page with animated text"}
                   </p>
-                  
+
                   {/* Video Preview */}
                   {heroVideoUrl && (
                     <div className="relative aspect-video rounded-lg overflow-hidden bg-secondary">
-                      <video 
-                        src={heroVideoUrl} 
+                      <video
+                        src={heroVideoUrl}
                         className="w-full h-full object-cover"
                         controls
                         muted
@@ -648,7 +662,7 @@ const CarsManagement = () => {
                       </div>
                     </div>
                   )}
-                  
+
                   <div className="grid md:grid-cols-2 gap-4">
                     {/* Upload Video */}
                     <div className="space-y-2">
@@ -675,18 +689,18 @@ const CarsManagement = () => {
                         </label>
                       </div>
                     </div>
-                    
+
                     {/* Video URL Input */}
                     <div className="space-y-2">
                       <p className="text-sm text-muted-foreground">
                         {isRTL ? "أو أدخل رابط فيديو" : "Or enter video URL"}
                       </p>
-                      <Input 
+                      <Input
                         placeholder="https://example.com/hero-video.mp4"
                         value={heroVideoUrl}
                         onChange={(e) => setHeroVideoUrl(e.target.value)}
                       />
-                      
+
                       {/* Overlay Opacity */}
                       <div className="pt-2">
                         <Label className="text-sm">{isRTL ? "شفافية الغلاف" : "Overlay Opacity"}</Label>
@@ -709,10 +723,10 @@ const CarsManagement = () => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <p className="text-xs text-muted-foreground">
-                    {isRTL 
-                      ? "🎬 نصيحة: استخدم فيديو قصير (5-15 ثانية) مع حلقة تكرار للحصول على أفضل تجربة" 
+                    {isRTL
+                      ? "🎬 نصيحة: استخدم فيديو قصير (5-15 ثانية) مع حلقة تكرار للحصول على أفضل تجربة"
                       : "🎬 Tip: Use a short looping video (5-15 seconds) for the best experience"}
                   </p>
                 </div>

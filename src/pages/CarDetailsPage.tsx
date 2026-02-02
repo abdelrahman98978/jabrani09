@@ -420,7 +420,7 @@ const CarDetailsPage = () => {
                   </TabsTrigger>
                   <TabsTrigger
                     value="360"
-                    disabled={!(car as any).video_360_url}
+                    disabled={!((car as any).video_360_url || (car as any).view_360_url)}
                     className="gap-2"
                   >
                     <RotateCw className="w-4 h-4" />
@@ -527,7 +527,17 @@ const CarDetailsPage = () => {
 
                 {/* 360 View Tab */}
                 <TabsContent value="360" className="mt-0">
-                  {(car as any).video_360_url && (
+                  {(car as any).view_360_url ? (
+                    <div className="aspect-[16/10] rounded-2xl overflow-hidden bg-secondary border border-border">
+                      <iframe
+                        src={(car as any).view_360_url}
+                        className="w-full h-full border-0"
+                        title="360 View"
+                        allowFullScreen
+                        loading="lazy"
+                      />
+                    </div>
+                  ) : (car as any).video_360_url && (
                     <Suspense fallback={
                       <div className="aspect-[16/10] rounded-2xl bg-secondary flex items-center justify-center">
                         <Loader2 className="h-12 w-12 animate-spin text-primary" />

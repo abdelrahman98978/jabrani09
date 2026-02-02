@@ -122,7 +122,7 @@ const Navbar = () => {
                 <Sparkles className="inline-block h-3 w-3 ms-1 text-primary animate-pulse" />
               </span>
               <span className={`text-[10px] uppercase tracking-[0.3em] font-bold ${isTransparent ? 'text-white/60' : 'text-muted-foreground'}`}>
-                {isRTL ? "الفخيم للسيارات" : "Al-Fakhim Motors"}
+                {isRTL ? "معرض الفخيم للسيارات" : "Al-Fakhim Car Showroom"}
               </span>
             </div>
           </Link>
@@ -155,8 +155,8 @@ const Navbar = () => {
             <div className="hidden sm:flex items-center gap-2">
               <GlobalSearch />
               <NotificationCenter />
-              <ThemeToggle />
-              <LanguageSwitcher />
+              <ThemeToggle isTransparent={isTransparent} />
+              <LanguageSwitcher isTransparent={isTransparent} />
             </div>
 
             <CartSheet />

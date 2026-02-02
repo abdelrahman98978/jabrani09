@@ -112,10 +112,10 @@ const UserOrdersSection = ({ user, isRTL }: { user: SupabaseUser | null; isRTL: 
     queryFn: async () => {
       if (!user?.id) return [];
       const { data, error } = await supabase
-        .from("orders")
-        .select("*, cars(name_ar, main_image, price, model, year), customers(name, phone, email, city)")
-        .eq("user_id", user.id)
-        .order("created_at", { ascending: false });
+        .rpc("get_my_orders");
+
+      if (error) throw error;
+      return data;
 
       if (error) {
         console.error("Error fetching user orders", error);

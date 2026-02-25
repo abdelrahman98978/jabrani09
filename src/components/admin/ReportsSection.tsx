@@ -35,14 +35,14 @@ const ReportsSection = () => {
 
       // Group by period
       let chartData: { name: string; revenue: number; orders: number }[] = [];
-      
+
       if (period === "week") {
         const days = eachDayOfInterval({
           start: subDays(new Date(), 6),
           end: new Date(),
         });
         chartData = days.map(day => {
-          const dayOrders = orders?.filter(o => 
+          const dayOrders = orders?.filter(o =>
             format(new Date(o.created_at), "yyyy-MM-dd") === format(day, "yyyy-MM-dd")
           ) || [];
           return {
@@ -57,7 +57,7 @@ const ReportsSection = () => {
           end: endOfMonth(new Date()),
         });
         chartData = days.map(day => {
-          const dayOrders = orders?.filter(o => 
+          const dayOrders = orders?.filter(o =>
             format(new Date(o.created_at), "yyyy-MM-dd") === format(day, "yyyy-MM-dd")
           ) || [];
           return {
@@ -72,7 +72,7 @@ const ReportsSection = () => {
           end: new Date(),
         });
         chartData = months.map(month => {
-          const monthOrders = orders?.filter(o => 
+          const monthOrders = orders?.filter(o =>
             format(new Date(o.created_at), "yyyy-MM") === format(month, "yyyy-MM")
           ) || [];
           return {
@@ -102,11 +102,11 @@ const ReportsSection = () => {
         .order("views_count", { ascending: false });
 
       const topViewed = cars?.slice(0, 5) || [];
-      
+
       const statusBreakdown = [
         { name: isRTL ? "متاحة" : "Available", value: cars?.filter(c => c.status === "available").length || 0, color: "hsl(var(--primary))" },
-        { name: isRTL ? "محجوزة" : "Reserved", value: cars?.filter(c => c.status === "reserved").length || 0, color: "hsl(45 80% 60%)" },
-        { name: isRTL ? "مباعة" : "Sold", value: cars?.filter(c => c.status === "sold").length || 0, color: "hsl(142 76% 36%)" },
+        { name: isRTL ? "محجوزة" : "Reserved", value: cars?.filter(c => c.status === "reserved").length || 0, color: "hsl(43 72% 51%)" },
+        { name: isRTL ? "مباعة" : "Sold", value: cars?.filter(c => c.status === "sold").length || 0, color: "hsl(210 20% 80%)" },
       ];
 
       const brandBreakdown = cars?.reduce((acc: any, car) => {
@@ -135,10 +135,10 @@ const ReportsSection = () => {
         .order("total_purchases", { ascending: false });
 
       const typeBreakdown = [
-        { name: isRTL ? "جديد" : "New", value: customers?.filter(c => c.customer_type === "new").length || 0, color: "hsl(217 91% 60%)" },
-        { name: isRTL ? "محتمل" : "Potential", value: customers?.filter(c => c.customer_type === "potential").length || 0, color: "hsl(45 93% 47%)" },
-        { name: isRTL ? "دائم" : "Regular", value: customers?.filter(c => c.customer_type === "regular").length || 0, color: "hsl(142 76% 36%)" },
-        { name: "VIP", value: customers?.filter(c => c.customer_type === "vip").length || 0, color: "hsl(280 65% 60%)" },
+        { name: isRTL ? "جديد" : "New", value: customers?.filter(c => c.customer_type === "new").length || 0, color: "hsl(210 20% 80%)" },
+        { name: isRTL ? "محتمل" : "Potential", value: customers?.filter(c => c.customer_type === "potential").length || 0, color: "hsl(43 72% 51% / 0.7)" },
+        { name: isRTL ? "دائم" : "Regular", value: customers?.filter(c => c.customer_type === "regular").length || 0, color: "hsl(43 72% 51%)" },
+        { name: "VIP", value: customers?.filter(c => c.customer_type === "vip").length || 0, color: "hsl(0 0% 10%)" },
       ];
 
       const topCustomers = customers?.filter(c => Number(c.total_purchases) > 0).slice(0, 5) || [];
@@ -267,7 +267,7 @@ const ReportsSection = () => {
       const headers = Object.keys(data[0]).join(",");
       const rows = data.map(row => Object.values(row).join(",")).join("\n");
       const csv = `${headers}\n${rows}`;
-      
+
       const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
@@ -412,10 +412,10 @@ const ReportsSection = () => {
                 <XAxis dataKey="label" stroke="hsl(var(--muted-foreground))" />
                 <YAxis stroke="hsl(var(--muted-foreground))" />
                 <Tooltip />
-                <Line type="monotone" dataKey="open" stroke="#f97316" name={isRTL ? "مفتوحة" : "Open"} />
-                <Line type="monotone" dataKey="in_progress" stroke="#eab308" name={isRTL ? "قيد المتابعة" : "In progress"} />
-                <Line type="monotone" dataKey="closed" stroke="#22c55e" name={isRTL ? "مغلقة" : "Closed"} />
-                <Line type="monotone" dataKey="converted" stroke="#3b82f6" name={isRTL ? "مرتبطة بعميل" : "Linked to customer"} />
+                <Line type="monotone" dataKey="open" stroke="hsl(210 20% 80%)" name={isRTL ? "مفتوحة" : "Open"} />
+                <Line type="monotone" dataKey="in_progress" stroke="hsl(43 72% 51%)" name={isRTL ? "قيد المتابعة" : "In progress"} />
+                <Line type="monotone" dataKey="closed" stroke="hsl(0 0% 20%)" name={isRTL ? "مغلقة" : "Closed"} />
+                <Line type="monotone" dataKey="converted" stroke="hsl(43 90% 70%)" name={isRTL ? "مرتبطة بعميل" : "Linked to customer"} />
               </LineChart>
             </ResponsiveContainer>
           </CardContent>

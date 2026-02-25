@@ -103,16 +103,16 @@ const DashboardOverview = () => {
     { title: isRTL ? "العملاء" : "Customers", value: stats?.totalCustomers || 0, icon: Users, color: "from-blue-500 to-cyan-500" },
     { title: isRTL ? "الإيرادات" : "Revenue", value: `${(stats?.totalRevenue || 0).toLocaleString()} ${settings?.currency_symbol || (isRTL ? "ج.س" : "SDG")}`, icon: DollarSign, color: "from-green-500 to-emerald-500" },
     { title: isRTL ? "المشاهدات" : "Views", value: stats?.totalViews || 0, icon: Eye, color: "from-amber-400 to-amber-600" },
-    { title: isRTL ? "معدل التحويل" : "Conversion Rate", value: stats?.totalViews ? `${((stats?.completedOrders || 0) / stats.totalViews * 100).toFixed(1)}%` : "0%", icon: TrendingUp, color: "from-rose-500 to-red-500" },
+    { title: isRTL ? "معدل التحويل" : "Conversion Rate", value: stats?.totalViews ? `${((stats?.completedOrders || 0) / stats.totalViews * 100).toFixed(1)}%` : "0%", icon: TrendingUp, color: "from-primary to-accent" },
   ];
 
   const getStatusBadge = (status: string) => {
     const statusMap: Record<string, { label: string; class: string }> = {
       new: { label: isRTL ? "جديد" : "New", class: "bg-blue-500/20 text-blue-400" },
       processing: { label: isRTL ? "قيد المعالجة" : "Processing", class: "bg-amber-500/20 text-amber-400" },
-      reserved: { label: isRTL ? "محجوز" : "Reserved", class: "bg-purple-500/20 text-purple-400" },
+      reserved: { label: isRTL ? "محجوز" : "Reserved", class: "bg-accent/20 text-accent" },
       completed: { label: isRTL ? "مكتمل" : "Completed", class: "bg-green-500/20 text-green-400" },
-      cancelled: { label: isRTL ? "ملغى" : "Cancelled", class: "bg-red-500/20 text-red-400" },
+      cancelled: { label: isRTL ? "ملغى" : "Cancelled", class: "bg-muted text-muted-foreground" },
     };
     return statusMap[status] || { label: status, class: "bg-muted text-muted-foreground" };
   };

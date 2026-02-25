@@ -62,15 +62,6 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
-        ruby: {
-          DEFAULT: "hsl(var(--ruby))",
-          light: "hsl(var(--ruby-light))",
-          dark: "hsl(var(--ruby-dark))",
-        },
-        charcoal: {
-          DEFAULT: "hsl(var(--charcoal))",
-          light: "hsl(var(--charcoal-light))",
-        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -171,8 +162,8 @@ export default {
         "pulse-scale": "pulse-scale 2s ease-in-out infinite",
       },
       boxShadow: {
-        "premium": "0 25px 50px -12px hsl(0 80% 55% / 0.25)",
-        "premium-lg": "0 35px 60px -15px hsl(0 80% 55% / 0.3)",
+        "premium": "0 25px 50px -12px hsl(43 72% 51% / 0.25)",
+        "premium-lg": "0 35px 60px -15px hsl(43 72% 51% / 0.3)",
         "card-hover": "0 20px 40px -8px hsl(0 0% 0% / 0.15)",
       },
     },

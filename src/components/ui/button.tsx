@@ -22,7 +22,7 @@ const buttonVariants = cva(
         gold: "bg-gradient-to-r from-primary via-accent to-primary text-primary-foreground shadow-lg hover:shadow-premium hover:scale-[1.02] active:scale-[0.98] font-black",
         dark: "bg-card text-foreground border-2 border-border hover:border-primary/50 hover:bg-card/80 hover:shadow-md",
         whatsapp: "bg-[#25D366] text-white hover:bg-[#128C7E] shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]",
-        premium: "bg-gradient-to-r from-primary to-ruby-dark text-primary-foreground shadow-premium hover:shadow-premium-lg hover:scale-[1.02] active:scale-[0.98] font-black",
+        premium: "bg-gradient-to-r from-primary to-accent text-primary-foreground shadow-premium hover:shadow-premium-lg hover:scale-[1.02] active:scale-[0.98] font-black",
       },
       size: {
         default: "h-11 px-6 py-2",
@@ -41,7 +41,7 @@ const buttonVariants = cva(
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {
+  VariantProps<typeof buttonVariants> {
   asChild?: boolean;
 }
 

@@ -199,17 +199,17 @@ const Navbar = () => {
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleLogout} className="py-2.5 px-4 cursor-pointer text-destructive text-xs">
                     <LogOut className="me-2 h-3.5 w-3.5" />
-                    <span>{t.nav.logout}</span>
+                    <span>{t.nav?.logout || (isRTL ? "تسجيل الخروج" : "Logout")}</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
               <Link to="/auth">
                 <Button
-                  variant={isTransparent ? "outline" : "default"}
-                  className={`rounded-none px-8 font-medium uppercase tracking-[0.2em] text-[11px] h-10 transition-all ${isTransparent ? 'border-white/20 text-white hover:bg-white hover:text-black' : 'bg-foreground text-background hover:bg-foreground/90'}`}
+                  variant="gold"
+                  className="px-8 h-10 transition-all"
                 >
-                  {t.nav.login}
+                  {t.nav?.login || (isRTL ? "تسجيل الدخول" : "Login")}
                 </Button>
               </Link>
             )}

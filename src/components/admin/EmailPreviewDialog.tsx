@@ -251,10 +251,10 @@ const EmailPreviewDialog = ({
     const formattedContent = isHtml
       ? content
       : content
-          .split("\n")
-          .filter((p) => p.trim())
-          .map((p) => `<p style="margin: 0 0 16px; color: #444444; font-size: 16px; line-height: 1.8;">${p}</p>`)
-          .join("");
+        .split("\n")
+        .filter((p) => p.trim())
+        .map((p) => `<p style="margin: 0 0 16px; color: #444444; font-size: 16px; line-height: 1.8;">${p}</p>`)
+        .join("");
 
     // Custom images section
     const customImagesHTML = customImages.length > 0 ? `
@@ -284,27 +284,26 @@ const EmailPreviewDialog = ({
           <table width="100%" cellpadding="0" cellspacing="0">
             <tr>
               ${selectedCarData
-                .map(
-                  (car) => `
+          .map(
+            (car) => `
                 <td width="33%" style="padding: 8px; vertical-align: top;">
                   <div style="background: #f8f8f8; border-radius: 12px; overflow: hidden; border: 1px solid #eee;">
-                    ${
-                      car.main_image
-                        ? `<img src="${car.main_image}" alt="${car.name}" style="width: 100%; height: 120px; object-fit: cover;">`
-                        : `<div style="width: 100%; height: 120px; background: linear-gradient(135deg, #8B0000, #5c0000); display: flex; align-items: center; justify-content: center;">
+                    ${car.main_image
+                ? `<img src="${car.main_image}" alt="${car.name}" style="width: 100%; height: 120px; object-fit: cover;">`
+                : `<div style="width: 100%; height: 120px; background: linear-gradient(135deg, #1a1a1a, #333); display: flex; align-items: center; justify-content: center;">
                         <span style="font-size: 40px;">🚗</span>
                       </div>`
-                    }
+              }
                     <div style="padding: 12px;">
                       <h4 style="margin: 0 0 5px; font-size: 14px; font-weight: 700; color: #1a1a1a;">${isRTL ? car.name_ar : car.name}</h4>
                       <p style="margin: 0 0 8px; font-size: 12px; color: #666;">${car.model} ${car.year}</p>
-                      <p style="margin: 0; font-size: 16px; font-weight: 700; color: #8B0000;">${car.price.toLocaleString()} ${isRTL ? "ر.س" : "SAR"}</p>
+                      <p style="margin: 0; font-size: 16px; font-weight: 700; color: #D4AF37;">${car.price.toLocaleString()} ${isRTL ? "ر.س" : "SAR"}</p>
                     </div>
                   </div>
                 </td>
               `
-                )
-                .join("")}
+          )
+          .join("")}
             </tr>
           </table>
         </td>
@@ -321,19 +320,18 @@ const EmailPreviewDialog = ({
   <title>${subject}</title>
 </head>
 <body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Arial, sans-serif; background-color: #f5f5f5; direction: rtl;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background: linear-gradient(180deg, #1a1a1a 0%, #2d1f1f 50%, #f5f5f5 50%); padding: 40px 20px;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background: linear-gradient(180deg, #1a1a1a 0%, #000000 50%, #f5f5f5 50%); padding: 40px 20px;">
     <tr>
       <td align="center">
         <table width="600" cellpadding="0" cellspacing="0" style="max-width: 600px; background-color: #ffffff; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.2);">
           
           <!-- Header with Logo -->
           <tr>
-            <td style="background: linear-gradient(135deg, #8B0000 0%, #5c0000 100%); padding: 40px; text-align: center;">
-              ${
-                logoUrl
-                  ? `<img src="${logoUrl}" alt="${showroomName}" style="height: 70px; max-width: 200px; margin-bottom: 15px;">`
-                  : `<div style="font-size: 36px; margin-bottom: 10px;">🚗</div>`
-              }
+            <td style="background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%); padding: 40px; text-align: center;">
+              ${logoUrl
+        ? `<img src="${logoUrl}" alt="${showroomName}" style="height: 70px; max-width: 200px; margin-bottom: 15px;">`
+        : `<div style="font-size: 36px; margin-bottom: 10px;">🚗</div>`
+      }
               <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 800;">${showroomName}</h1>
               <p style="margin: 8px 0 0; color: #D4AF37; font-size: 14px; letter-spacing: 2px;">${showroomNameEn}</p>
             </td>
@@ -382,28 +380,26 @@ const EmailPreviewDialog = ({
                   <td align="center">
                     <table cellpadding="0" cellspacing="0">
                       <tr>
-                        ${
-                          phone
-                            ? `
+                        ${phone
+        ? `
                         <td style="padding: 0 12px;">
-                          <a href="tel:${phone}" style="display: inline-block; background-color: #ffffff; color: #8B0000; text-decoration: none; padding: 12px 20px; border-radius: 8px; font-size: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                          <a href="tel:${phone}" style="display: inline-block; background-color: #ffffff; color: #1a1a1a; text-decoration: none; padding: 12px 20px; border-radius: 8px; font-size: 14px; border: 1px solid #D4AF37; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
                             📞 ${phone}
                           </a>
                         </td>
                         `
-                            : ""
-                        }
-                        ${
-                          whatsapp
-                            ? `
+        : ""
+      }
+                        ${whatsapp
+        ? `
                         <td style="padding: 0 12px;">
                           <a href="https://wa.me/${whatsapp.replace(/[^0-9]/g, "")}" style="display: inline-block; background-color: #25D366; color: #ffffff; text-decoration: none; padding: 12px 20px; border-radius: 8px; font-size: 14px; box-shadow: 0 2px 8px rgba(37,211,102,0.3);">
                             💬 ${isRTL ? "واتساب" : "WhatsApp"}
                           </a>
                         </td>
                         `
-                            : ""
-                        }
+        : ""
+      }
                       </tr>
                     </table>
                   </td>
@@ -482,9 +478,8 @@ const EmailPreviewDialog = ({
                     {cars.map((car) => (
                       <div
                         key={car.id}
-                        className={`flex items-center gap-2 p-2 rounded-lg border cursor-pointer transition-colors ${
-                          selectedCars.includes(car.id) ? "border-primary bg-primary/5" : "hover:bg-muted/50"
-                        }`}
+                        className={`flex items-center gap-2 p-2 rounded-lg border cursor-pointer transition-colors ${selectedCars.includes(car.id) ? "border-primary bg-primary/5" : "hover:bg-muted/50"
+                          }`}
                         onClick={() => toggleCarSelection(car.id)}
                       >
                         <Checkbox checked={selectedCars.includes(car.id)} />
@@ -545,7 +540,7 @@ const EmailPreviewDialog = ({
                 <p className="text-xs text-muted-foreground">
                   {isRTL ? "رفع حتى 3 صور (الحد الأقصى 5MB لكل صورة)" : "Upload up to 3 images (max 5MB each)"}
                 </p>
-                
+
                 {customImages.length > 0 && (
                   <div className="grid grid-cols-3 gap-2">
                     {customImages.map((img, index) => (
@@ -640,9 +635,8 @@ const EmailPreviewDialog = ({
             {/* Preview Frame */}
             <div className={`flex-1 p-4 overflow-auto flex items-start justify-center transition-colors ${darkMode ? 'bg-gray-900' : 'bg-gray-100'}`}>
               <div
-                className={`bg-white shadow-xl rounded-lg overflow-hidden transition-all ${
-                  previewMode === "mobile" ? "w-[375px]" : "w-full max-w-[620px]"
-                }`}
+                className={`bg-white shadow-xl rounded-lg overflow-hidden transition-all ${previewMode === "mobile" ? "w-[375px]" : "w-full max-w-[620px]"
+                  }`}
               >
                 <iframe
                   key={previewKey}

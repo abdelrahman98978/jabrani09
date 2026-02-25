@@ -395,7 +395,8 @@ const AuthPage = () => {
 
                 <Button
                   type="submit"
-                  className="w-full h-12 text-sm font-bold bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20 transition-all"
+                  variant="gold"
+                  className="w-full h-12 text-sm"
                   disabled={loading}
                 >
                   {loading ? (

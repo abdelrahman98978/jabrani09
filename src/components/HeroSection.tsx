@@ -7,6 +7,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import HeroMarquee from "./HeroMarquee";
+import heroVideo from "@/assets/hero-video.mp4";
 
 const HeroSection = () => {
   const { data: settings } = useSettings();
@@ -32,18 +33,32 @@ const HeroSection = () => {
     staleTime: 1000 * 60 * 5,
   });
 
-  const heroImage = settings?.hero_image_url || "https://images.unsplash.com/photo-1520031441872-265e4ff70366?q=80&w=2071";
+  const heroImage = settings?.hero_image_url || "https://images.unsplash.com/photo-1621007947382-bb34aa031024?q=80&w=2070";
 
   return (
     <section className="relative min-h-[100vh] flex items-center justify-center overflow-hidden perspective-container bg-black">
-      {/* Background Layer */}
+      {/* Background Layer with Video */}
       <div className="absolute inset-0 z-0 overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat ken-burns"
-          style={{ backgroundImage: `url(${heroImage})` }}
-        />
-        <div className="absolute inset-0 bg-black/40" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80" />
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          poster={heroImage}
+          className="absolute inset-0 w-full h-full object-cover scale-105"
+        >
+          <source src={heroVideo} type="video/mp4" />
+          {/* Fallback to image if video not supported */}
+          <div
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat ken-burns"
+            style={{ backgroundImage: `url(${heroImage})` }}
+          />
+        </video>
+
+        {/* Refined Overlays */}
+        <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px]" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/20" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.4)_100%)]" />
       </div>
 
       {/* Content Container */}

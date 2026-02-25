@@ -14,59 +14,50 @@ const CTABanner = () => {
   const whatsappLink = `https://wa.me/${cleanNumber}`;
 
   return (
-    <section className="wp-cta-banner py-16 bg-gradient-to-r from-primary to-primary/80 relative overflow-hidden">
-      {/* Decorative Elements */}
-      <div className="absolute inset-0 opacity-50" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L60 30L30 60L0 30z' fill='rgba(255,255,255,0.03)'/%3E%3C/svg%3E\")" }} />
-      <div className="absolute top-0 start-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
-      <div className="absolute bottom-0 end-0 w-64 h-64 bg-black/10 rounded-full blur-3xl translate-x-1/2 translate-y-1/2" />
-
+  return (
+    <section className="py-24 bg-background border-t border-foreground/5 relative overflow-hidden">
       <div className="container mx-auto px-4 relative z-10">
-        <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
+        <div className="flex flex-col lg:flex-row items-center justify-between gap-16 p-12 md:p-24 bg-foreground relative overflow-hidden group shadow-luxury">
+          {/* Subtle Background Pattern */}
+          <div className="absolute inset-0 opacity-10 group-hover:opacity-20 transition-opacity duration-1000"
+            style={{ backgroundImage: "linear-gradient(45deg, #ffffff 1px, transparent 1px), linear-gradient(-45deg, #ffffff 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
+
           {/* Text Content */}
-          <div className="text-center lg:text-start">
-            <h2 className="text-2xl md:text-3xl lg:text-4xl font-black text-white mb-4">
-              {isRTL 
-                ? "هل تبحث عن سيارة أحلامك؟" 
-                : "Looking for Your Dream Car?"}
+          <div className="text-center lg:text-start relative z-10 space-y-6">
+            <span className="text-[10px] uppercase font-bold tracking-[0.4em] text-background/40">
+              {isRTL ? "مستقبلك يبدأ هنا" : "Next Chapter / 04"}
+            </span>
+            <h2 className="text-4xl md:text-6xl font-light text-background leading-tight tracking-tight">
+              {isRTL
+                ? "ابدأ رحلة"
+                : "Own the"} <span className="font-bold">{isRTL ? "الفخامة اليوم" : "Experience"}</span>
             </h2>
-            <p className="text-white/90 text-lg max-w-xl">
-              {isRTL 
-                ? "فريقنا جاهز لمساعدتك في اختيار السيارة المثالية. تواصل معنا الآن!"
-                : "Our team is ready to help you choose the perfect car. Contact us now!"}
+            <p className="text-background/50 text-base md:text-lg max-w-xl uppercase tracking-widest leading-relaxed">
+              {isRTL
+                ? "فريقنا المتخصص في انتظارك لتقديم استشارة تليق بطلعاتك."
+                : "A world of performance and elegance awaits. Reach out to our specialist team."}
             </p>
           </div>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex flex-col sm:flex-row gap-6 relative z-10">
             <a href={`tel:${settings?.phone || "+966543389314"}`}>
-              <Button 
-                size="lg" 
-                className="bg-white text-primary hover:bg-white/90 gap-2 text-base font-bold hover-lift-3d"
+              <Button
+                className="h-16 px-10 bg-background text-foreground rounded-none uppercase text-[10px] tracking-[0.3em] font-bold hover:bg-background/90 transition-all shadow-luxury"
               >
-                <Phone className="h-5 w-5" />
-                {isRTL ? "اتصل الآن" : "Call Now"}
+                <Phone className="h-4 w-4 me-3" />
+                {isRTL ? "اتصل بنا" : "Telephone"}
               </Button>
             </a>
             <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
-              <Button 
-                size="lg" 
+              <Button
                 variant="outline"
-                className="border-white text-white hover:bg-white/10 gap-2 text-base font-bold hover-lift-3d"
+                className="h-16 px-10 border-background/20 text-background rounded-none uppercase text-[10px] tracking-[0.3em] font-bold hover:bg-background/10 hover:border-background transition-all"
               >
-                <MessageCircle className="h-5 w-5" />
+                <MessageCircle className="h-4 w-4 me-3" />
                 {isRTL ? "واتساب" : "WhatsApp"}
               </Button>
             </a>
-            <Link to="/cars">
-              <Button 
-                size="lg" 
-                variant="outline"
-                className="border-white text-white hover:bg-white/10 gap-2 text-base font-bold hover-lift-3d"
-              >
-                {isRTL ? "تصفح السيارات" : "Browse Cars"}
-                <ArrowLeft className="h-5 w-5" />
-              </Button>
-            </Link>
           </div>
         </div>
       </div>

@@ -88,104 +88,75 @@ const TestimonialsSection = () => {
   const currentTestimonial = testimonials[currentIndex];
 
   return (
-    <section className="wp-testimonials py-20 bg-gradient-to-b from-background to-card/50 relative overflow-hidden">
-      {/* Background Decorations */}
-      <div className="absolute top-0 start-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
-      <div className="absolute bottom-0 end-0 w-96 h-96 bg-accent/5 rounded-full blur-3xl" />
-      
-      {/* Large Quote Icons */}
-      <div className="absolute top-20 start-10 opacity-5">
-        <Quote className="h-48 w-48 text-primary" />
-      </div>
-      <div className="absolute bottom-20 end-10 opacity-5 rotate-180">
-        <Quote className="h-48 w-48 text-primary" />
-      </div>
-
+  return (
+    <section className="py-32 bg-background border-t border-foreground/5 relative overflow-hidden">
       <div className="container mx-auto px-4 relative z-10">
         {/* Section Header */}
-        <div className="text-center mb-16 animate-fade-in">
-          <span className="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
-            {isRTL ? "آراء عملائنا" : "Customer Reviews"}
-          </span>
-          <h2 className="text-3xl md:text-4xl font-black text-foreground">
-            {isRTL ? (
-              <>
-                ماذا يقول <span className="text-gradient-gold">عملاؤنا</span>
-              </>
-            ) : (
-              <>
-                What Our <span className="text-gradient-gold">Customers Say</span>
-              </>
-            )}
-          </h2>
-          <p className="text-muted-foreground mt-2 max-w-xl mx-auto">
-            {isRTL 
-              ? "نفخر بثقة عملائنا الكرام ورضاهم عن خدماتنا" 
-              : "We are proud of our valued customers' trust and satisfaction with our services"}
-          </p>
+        <div className="flex flex-col md:flex-row justify-between items-end gap-12 mb-24">
+          <div className="max-w-2xl space-y-6">
+            <div className="inline-flex items-center gap-2 px-0 py-0 text-foreground/40 text-[10px] font-bold uppercase tracking-[0.4em]">
+              {isRTL ? "قالوا عنا" : "Voices / 03"}
+            </div>
+            <h2 className="text-4xl md:text-6xl font-light text-foreground leading-[1.1] tracking-tight">
+              {isRTL ? "آراء" : "Client"} <span className="font-bold">{isRTL ? "عملائنا" : "Sentiments"}</span>
+            </h2>
+            <div className="w-20 h-[1px] bg-foreground/10" />
+            <p className="text-muted-foreground/60 text-sm md:text-base uppercase tracking-widest leading-relaxed">
+              {isRTL
+                ? "قراءات في تجارب من اختاروا التميز معنا"
+                : "A collection of experiences from those who chose excellence."}
+            </p>
+          </div>
         </div>
 
         {/* Testimonial Card */}
-        <div className="max-w-4xl mx-auto">
-          <div className={`testimonial-card bg-card rounded-2xl p-8 md:p-12 shadow-xl border border-border/50 transition-all duration-500 ${isAnimating ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}`}>
-            {/* Quote Icon */}
-            <div className="flex justify-center mb-6">
-              <div className="p-4 rounded-full bg-primary/10">
-                <Quote className="h-8 w-8 text-primary" />
-              </div>
-            </div>
+        <div className="max-w-5xl mx-auto">
+          <div className={`relative min-h-[400px] flex flex-col items-center justify-center text-center transition-all duration-1000 ${isAnimating ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
+            <Quote className="h-12 w-12 text-foreground/5 mb-12" />
 
-            {/* Content */}
-            <blockquote className="text-center text-lg md:text-xl text-foreground/90 leading-relaxed mb-8">
+            <blockquote className="text-2xl md:text-4xl font-light leading-relaxed tracking-tight text-foreground mb-12 italic">
               "{isRTL ? currentTestimonial.content : currentTestimonial.contentEn}"
             </blockquote>
 
-            {/* Rating */}
-            <div className="flex justify-center gap-1 mb-6">
-              {[...Array(5)].map((_, i) => (
-                <Star
-                  key={i}
-                  className={`h-5 w-5 ${
-                    i < currentTestimonial.rating 
-                      ? "fill-yellow-400 text-yellow-400" 
-                      : "text-muted-foreground"
-                  }`}
-                />
-              ))}
-            </div>
+            <div className="space-y-4">
+              <div className="flex justify-center gap-1 opacity-20">
+                {[...Array(5)].map((_, i) => (
+                  <Star
+                    key={i}
+                    className={`h-3 w-3 ${i < currentTestimonial.rating ? "fill-foreground text-foreground" : "text-foreground"}`}
+                  />
+                ))}
+              </div>
 
-            {/* Author */}
-            <div className="flex items-center justify-center gap-4">
-              <Avatar className="h-14 w-14 border-2 border-primary/20">
-                <AvatarImage src={currentTestimonial.avatar} />
-                <AvatarFallback className="bg-primary/10 text-primary font-bold">
-                  {(isRTL ? currentTestimonial.name : currentTestimonial.nameEn).charAt(0)}
-                </AvatarFallback>
-              </Avatar>
-              <div className="text-center">
-                <h4 className="font-bold text-foreground">
+              <div className="space-y-1">
+                <h4 className="text-xs uppercase font-bold tracking-[0.3em] text-foreground">
                   {isRTL ? currentTestimonial.name : currentTestimonial.nameEn}
                 </h4>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-[10px] uppercase tracking-widest text-foreground/30">
                   {isRTL ? currentTestimonial.role : currentTestimonial.roleEn}
                 </p>
               </div>
             </div>
           </div>
 
-          {/* Navigation */}
-          <div className="flex items-center justify-center gap-4 mt-8">
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={prev}
-              className="h-12 w-12 rounded-full hover-lift-3d"
-            >
-              <ChevronRight className="h-5 w-5" />
-            </Button>
+          {/* New Navigation Design */}
+          <div className="flex flex-col md:flex-row items-center justify-between gap-8 mt-24 pt-12 border-t border-foreground/5">
+            <div className="flex gap-4">
+              <button
+                onClick={prev}
+                className="w-12 h-12 flex items-center justify-center border border-foreground/10 hover:border-foreground/40 transition-all opacity-40 hover:opacity-100"
+              >
+                {isRTL ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+              </button>
+              <button
+                onClick={next}
+                className="w-12 h-12 flex items-center justify-center border border-foreground/10 hover:border-foreground/40 transition-all opacity-40 hover:opacity-100"
+              >
+                {isRTL ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+              </button>
+            </div>
 
-            {/* Dots */}
-            <div className="flex gap-2">
+            <div className="flex gap-3">
               {testimonials.map((_, idx) => (
                 <button
                   key={idx}
@@ -194,23 +165,17 @@ const TestimonialsSection = () => {
                     setCurrentIndex(idx);
                     setTimeout(() => setIsAnimating(false), 500);
                   }}
-                  className={`w-3 h-3 rounded-full transition-all ${
-                    idx === currentIndex 
-                      ? "bg-primary w-8" 
-                      : "bg-muted-foreground/30 hover:bg-muted-foreground/50"
-                  }`}
+                  className={`h-[2px] transition-all duration-700 ${idx === currentIndex
+                    ? "w-12 bg-foreground"
+                    : "w-4 bg-foreground/10 hover:bg-foreground/30"
+                    }`}
                 />
               ))}
             </div>
 
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={next}
-              className="h-12 w-12 rounded-full hover-lift-3d"
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </Button>
+            <div className="hidden md:block text-[10px] uppercase font-bold tracking-[0.4em] opacity-20">
+              {currentIndex + 1} / {testimonials.length}
+            </div>
           </div>
         </div>
       </div>

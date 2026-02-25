@@ -72,64 +72,52 @@ const InventorySearch = () => {
   };
 
   return (
-    <div className="wp-inventory-search relative z-20 mb-12">
+    <div className="relative z-20 mb-12">
       <div className="container mx-auto px-4">
-        <div className="bg-card rounded-2xl shadow-2xl border border-border/50 overflow-hidden">
-          {/* Header */}
-          <div className="bg-gradient-to-r from-primary to-primary/80 px-6 py-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-white/20 rounded-lg">
-                  <Search className="h-5 w-5 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-white">
-                    {isRTL ? "ابحث عن سيارتك المثالية" : "Find Your Perfect Car"}
-                  </h3>
-                  <p className="text-sm text-white/80">
-                    {isRTL ? "اختر من بين مئات السيارات المتاحة" : "Choose from hundreds of available cars"}
-                  </p>
-                </div>
+        <div className="bg-background border border-foreground/5 shadow-luxury rounded-none p-8">
+          <div className="flex flex-col gap-8">
+            <div className="flex flex-col md:flex-row justify-between items-end gap-6">
+              <div className="space-y-2">
+                <span className="text-[10px] uppercase font-bold tracking-[0.4em] opacity-40">
+                  {isRTL ? "البحث المتقدم" : "Inventory Search"}
+                </span>
+                <h3 className="text-2xl font-light tracking-tight">
+                  {isRTL ? "اعثر على" : "Find Your"} <span className="font-bold">{isRTL ? "سيارتك" : "Drive"}</span>
+                </h3>
               </div>
-              <Button
-                variant="ghost"
-                size="sm"
+              <button
                 onClick={() => setShowAdvanced(!showAdvanced)}
-                className="text-white hover:bg-white/20"
+                className="text-[10px] uppercase tracking-widest font-bold opacity-40 hover:opacity-100 transition-opacity flex items-center gap-2 mb-1"
               >
-                <SlidersHorizontal className="h-4 w-4 me-2" />
-                {isRTL ? "فلاتر متقدمة" : "Advanced Filters"}
-              </Button>
+                <SlidersHorizontal className="h-3 w-3" />
+                {isRTL ? "الفلاتر" : "Filters"}
+              </button>
             </div>
-          </div>
 
-          {/* Main Search Bar */}
-          <div className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
               {/* Keyword Search */}
               <div className="lg:col-span-2">
-                <div className="relative">
-                  <Search className="absolute top-1/2 -translate-y-1/2 start-4 h-5 w-5 text-muted-foreground" />
+                <div className="relative group">
+                  <Search className="absolute top-1/2 -translate-y-1/2 start-0 h-4 w-4 opacity-20" />
                   <Input
-                    placeholder={isRTL ? "ابحث بالاسم، الموديل..." : "Search by name, model..."}
+                    placeholder={isRTL ? "البحث بالكلمة..." : "BY KEYWORD..."}
                     value={keyword}
                     onChange={(e) => setKeyword(e.target.value)}
-                    className="ps-12 h-12 bg-secondary/50 border-border/50"
+                    className="ps-8 h-12 bg-transparent border-0 border-b border-foreground/10 rounded-none focus-visible:ring-0 focus-visible:border-foreground transition-all uppercase text-[10px] tracking-widest"
                   />
                 </div>
               </div>
 
               {/* Brand Select */}
-              <div>
+              <div className="relative group">
                 <Select value={brand} onValueChange={setBrand}>
-                  <SelectTrigger className="h-12 bg-secondary/50 border-border/50">
-                    <Car className="h-4 w-4 me-2 text-muted-foreground" />
-                    <SelectValue placeholder={isRTL ? "الماركة" : "Brand"} />
+                  <SelectTrigger className="h-12 bg-transparent border-0 border-b border-foreground/10 rounded-none px-0 focus:ring-0 focus:border-foreground transition-all">
+                    <SelectValue placeholder={isRTL ? "الماركة" : "BRAND"} className="uppercase text-[10px] tracking-widest" />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">{isRTL ? "جميع الماركات" : "All Brands"}</SelectItem>
+                  <SelectContent className="rounded-none border-foreground/10">
+                    <SelectItem value="all" className="uppercase text-[10px] tracking-widest">{isRTL ? "جميع الماركات" : "All Brands"}</SelectItem>
                     {brands?.map((b) => (
-                      <SelectItem key={b.id} value={b.id}>
+                      <SelectItem key={b.id} value={b.id} className="uppercase text-[10px] tracking-widest">
                         {isRTL ? b.name_ar : b.name}
                       </SelectItem>
                     ))}
@@ -138,16 +126,15 @@ const InventorySearch = () => {
               </div>
 
               {/* Fuel Type */}
-              <div>
+              <div className="relative group">
                 <Select value={fuelType} onValueChange={setFuelType}>
-                  <SelectTrigger className="h-12 bg-secondary/50 border-border/50">
-                    <Fuel className="h-4 w-4 me-2 text-muted-foreground" />
-                    <SelectValue placeholder={isRTL ? "نوع الوقود" : "Fuel Type"} />
+                  <SelectTrigger className="h-12 bg-transparent border-0 border-b border-foreground/10 rounded-none px-0 focus:ring-0 focus:border-foreground transition-all">
+                    <SelectValue placeholder={isRTL ? "المحرك" : "DRIVETRAIN"} className="uppercase text-[10px] tracking-widest" />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">{isRTL ? "جميع الأنواع" : "All Types"}</SelectItem>
+                  <SelectContent className="rounded-none border-foreground/10">
+                    <SelectItem value="all" className="uppercase text-[10px] tracking-widest">{isRTL ? "جميع الأنواع" : "All Types"}</SelectItem>
                     {fuelTypes.map((fuel) => (
-                      <SelectItem key={fuel.value} value={fuel.value}>
+                      <SelectItem key={fuel.value} value={fuel.value} className="uppercase text-[10px] tracking-widest">
                         {isRTL ? fuel.labelAr : fuel.labelEn}
                       </SelectItem>
                     ))}
@@ -156,36 +143,33 @@ const InventorySearch = () => {
               </div>
 
               {/* Search Button */}
-              <div>
+              <div className="flex items-end">
                 <Button
-                  variant="gold"
-                  className="w-full h-12 gap-2 text-base font-bold"
                   onClick={handleSearch}
+                  className="w-full h-12 bg-foreground text-background rounded-none uppercase text-[10px] tracking-[0.3em] font-bold hover:bg-foreground/90 transition-all"
                 >
-                  <Search className="h-5 w-5" />
-                  {isRTL ? "بحث" : "Search"}
+                  {isRTL ? "بحث" : "Launch Search"}
                 </Button>
               </div>
             </div>
 
             {/* Advanced Filters */}
             {showAdvanced && (
-              <div className="mt-6 pt-6 border-t border-border/50 animate-fade-in">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="pt-8 border-t border-foreground/5 animate-lux-fade-up">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                   {/* Year */}
-                  <div>
-                    <label className="block text-sm font-medium text-foreground mb-2">
-                      <Calendar className="h-4 w-4 inline me-2" />
-                      {isRTL ? "سنة الصنع" : "Year"}
+                  <div className="space-y-4">
+                    <label className="text-[10px] font-bold uppercase tracking-widest opacity-40">
+                      {isRTL ? "سنة الصنع" : "Production Year"}
                     </label>
                     <Select value={year} onValueChange={setYear}>
-                      <SelectTrigger className="h-11 bg-secondary/50 border-border/50">
-                        <SelectValue placeholder={isRTL ? "اختر السنة" : "Select Year"} />
+                      <SelectTrigger className="h-10 bg-transparent border-0 border-b border-foreground/10 rounded-none px-0 focus:ring-0 focus:border-foreground transition-all">
+                        <SelectValue placeholder={isRTL ? "اختر السنة" : "SELECT YEAR"} className="uppercase text-[9px] tracking-widest" />
                       </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">{isRTL ? "جميع السنوات" : "All Years"}</SelectItem>
+                      <SelectContent className="rounded-none border-foreground/10">
+                        <SelectItem value="all" className="uppercase text-[9px] tracking-widest">{isRTL ? "جميع السنوات" : "All Years"}</SelectItem>
                         {years.map((y) => (
-                          <SelectItem key={y} value={y.toString()}>
+                          <SelectItem key={y} value={y.toString()} className="uppercase text-[9px] tracking-widest">
                             {y}
                           </SelectItem>
                         ))}
@@ -194,32 +178,35 @@ const InventorySearch = () => {
                   </div>
 
                   {/* Price Range */}
-                  <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-foreground mb-2">
-                      <DollarSign className="h-4 w-4 inline me-2" />
-                      {isRTL ? "نطاق السعر" : "Price Range"}: {formatPrice(priceRange[0])} - {formatPrice(priceRange[1])} {isRTL ? "ر.س" : "SAR"}
-                    </label>
+                  <div className="md:col-span-2 space-y-4">
+                    <div className="flex justify-between items-center">
+                      <label className="text-[10px] font-bold uppercase tracking-widest opacity-40">
+                        {isRTL ? "نطاق السعر" : "Price Range"}
+                      </label>
+                      <span className="text-[10px] font-medium opacity-60">
+                        {formatPrice(priceRange[0])} - {formatPrice(priceRange[1])} {isRTL ? "ج.س" : "SDG"}
+                      </span>
+                    </div>
                     <Slider
                       value={priceRange}
                       onValueChange={setPriceRange}
                       min={0}
                       max={1000000}
                       step={10000}
-                      className="mt-4"
+                      className="mt-6"
                     />
-                    <div className="flex justify-between text-xs text-muted-foreground mt-2">
-                      <span>0</span>
-                      <span>1,000,000</span>
-                    </div>
                   </div>
                 </div>
 
                 {/* Clear Filters */}
-                <div className="flex justify-end mt-4">
-                  <Button variant="ghost" size="sm" onClick={clearFilters} className="text-muted-foreground">
-                    <X className="h-4 w-4 me-2" />
-                    {isRTL ? "مسح الفلاتر" : "Clear Filters"}
-                  </Button>
+                <div className="flex justify-end mt-8">
+                  <button
+                    onClick={clearFilters}
+                    className="text-[9px] uppercase tracking-widest font-bold opacity-30 hover:opacity-100 transition-opacity flex items-center gap-2"
+                  >
+                    <X className="h-3 w-3" />
+                    {isRTL ? "إعادة تعيين" : "Reset Filters"}
+                  </button>
                 </div>
               </div>
             )}

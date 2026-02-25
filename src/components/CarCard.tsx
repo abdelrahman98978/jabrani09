@@ -108,8 +108,8 @@ const CarCard = ({ car }: CarCardProps) => {
         onHoverEnd={() => setIsHovered(false)}
         className="h-full"
       >
-        <Link to={`/cars/${car.id}`} className="block h-full perspective-container">
-          <Card className="car-card card-3d-tilt relative h-full flex flex-col overflow-hidden border-border/40 transition-all duration-500 bg-card/60 backdrop-blur-md group shadow-xl hover:shadow-primary/30">
+        <Link to={`/cars/${car.id}`} className="block h-full group">
+          <Card className="relative h-full flex flex-col overflow-hidden border-border/40 transition-all duration-700 bg-background hover:shadow-luxury border-none rounded-none">
             {/* Image Section */}
             <div className="relative aspect-[4/3] sm:aspect-[16/10] overflow-hidden bg-secondary">
               <motion.img
@@ -123,17 +123,16 @@ const CarCard = ({ car }: CarCardProps) => {
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
 
               {/* Status Badges */}
-              <div className="absolute top-4 start-4 flex flex-col gap-2">
+              <div className="absolute top-4 start-4 flex flex-col gap-2 z-10">
                 {car.is_new && (
-                  <Badge className="bg-primary hover:bg-primary text-white font-bold px-3 py-1 rounded-full shadow-lg border-none">
-                    <Sparkles className="h-3 w-3 me-1" />
+                  <div className="bg-foreground text-background text-[10px] font-medium px-3 py-1 uppercase tracking-widest">
                     {isRTL ? "جديدة" : "New"}
-                  </Badge>
+                  </div>
                 )}
                 {car.has_discount && (
-                  <Badge className="bg-white text-black hover:bg-white font-bold px-3 py-1 rounded-full shadow-lg border-none animate-pulse">
-                    {isRTL ? "عرض خاص" : "Special Offer"}
-                  </Badge>
+                  <div className="bg-accent text-white text-[10px] font-medium px-3 py-1 uppercase tracking-widest">
+                    {isRTL ? "عرض خاص" : "Special"}
+                  </div>
                 )}
               </div>
 
@@ -172,64 +171,56 @@ const CarCard = ({ car }: CarCardProps) => {
             </div>
 
             {/* Content Section */}
-            <CardContent className="p-6 flex-1 flex flex-col">
-              <div className="flex justify-between items-start mb-4">
+            <CardContent className="p-6 flex-1 flex flex-col bg-background">
+              <div className="flex justify-between items-start mb-6">
                 <div>
-                  <h3 className="text-xl font-black text-foreground mb-1 group-hover:text-primary transition-colors">
+                  <h3 className="text-lg font-bold text-foreground mb-1 group-hover:tracking-wider transition-all duration-500">
                     {car.name_ar}
                   </h3>
-                  <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest">
-                    {car.model} • {car.year}
-                  </p>
-                </div>
-                <div className="flex items-center gap-1 text-primary">
-                  <Star className="h-4 w-4 fill-current" />
-                  <span className="text-sm font-black">4.9</span>
+                  <div className="flex gap-2 items-center opacity-40">
+                    <span className="text-[10px] uppercase tracking-[0.2em] font-medium">{car.model}</span>
+                    <span className="w-1 h-1 rounded-full bg-foreground" />
+                    <span className="text-[10px] uppercase tracking-[0.2em] font-medium">{car.year}</span>
+                  </div>
                 </div>
               </div>
 
-              {/* Specs Grid */}
-              <div className="grid grid-cols-3 gap-2 mb-6">
-                <div className="flex flex-col items-center p-2 rounded-xl bg-secondary/30 border border-border/50">
-                  <Calendar className="h-4 w-4 text-primary mb-1" />
-                  <span className="text-[10px] font-black uppercase text-muted-foreground">{car.year}</span>
-                </div>
-                <div className="flex flex-col items-center p-2 rounded-xl bg-secondary/30 border border-border/50">
-                  <Gauge className="h-4 w-4 text-primary mb-1" />
-                  <span className="text-[10px] font-black uppercase text-muted-foreground">
-                    {isRTL ? transmissionAr[car.transmission] : car.transmission}
+              {/* Specs Line */}
+              <div className="flex gap-4 mb-8 opacity-60">
+                <div className="flex items-center gap-1.5">
+                  <Gauge className="h-3 w-3" />
+                  <span className="text-[10px] uppercase tracking-widest font-medium">
+                    {car.mileage.toLocaleString()} KM
                   </span>
                 </div>
-                <div className="flex flex-col items-center p-2 rounded-xl bg-secondary/30 border border-border/50">
-                  <Fuel className="h-4 w-4 text-primary mb-1" />
-                  <span className="text-[10px] font-black uppercase text-muted-foreground">
+                <div className="flex items-center gap-1.5">
+                  <Fuel className="h-3 w-3" />
+                  <span className="text-[10px] uppercase tracking-widest font-medium">
                     {isRTL ? fuelTypeAr[car.fuel_type] : car.fuel_type}
                   </span>
                 </div>
               </div>
 
               {/* Price & Cart */}
-              <div className="mt-auto flex items-center justify-between pt-4 border-t border-border/40">
+              <div className="mt-auto flex items-end justify-between pt-6 border-t border-border/10">
                 <div className="flex flex-col">
                   {car.original_price && car.original_price > car.price && (
-                    <span className="text-xs text-muted-foreground line-through font-bold">
+                    <span className="text-[10px] text-muted-foreground line-through font-medium mb-1">
                       {formatPrice(car.original_price)}
                     </span>
                   )}
-                  <span className="text-2xl font-black text-gradient-gold">
+                  <span className="text-xl font-bold tracking-tight">
                     {formatPrice(car.price)}
                   </span>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-4">
                   <CompareButton carId={car.id} variant="icon" />
-                  <Button
-                    variant="gold"
-                    size="icon"
+                  <button
                     onClick={handleAddToCart}
-                    className="h-12 w-12 rounded-xl shadow-lg shadow-primary/20 hover:scale-110 active:scale-95 transition-all"
+                    className="text-[10px] uppercase tracking-[0.2em] font-medium border-b border-foreground/20 hover:border-foreground transition-all pb-0.5"
                   >
-                    <ShoppingCart className="h-5 w-5" />
-                  </Button>
+                    {isRTL ? "أضف للسلة" : "Add to Cart"}
+                  </button>
                 </div>
               </div>
             </CardContent>

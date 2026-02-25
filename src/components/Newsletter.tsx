@@ -10,14 +10,15 @@ import { z } from "zod";
 const emailSchema = z.string().email().max(255);
 
 const Newsletter = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const isRTL = language === "ar";
   const { toast } = useToast();
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const result = emailSchema.safeParse(email.trim());
     if (!result.success) {
       toast({
@@ -60,36 +61,37 @@ const Newsletter = () => {
   };
 
   return (
-    <section className="py-16 animated-gradient-bg relative overflow-hidden">
-      {/* Decorative Elements */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5" />
-      <div className="absolute top-0 left-0 w-72 h-72 bg-primary/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
-      <div className="absolute bottom-0 right-0 w-72 h-72 bg-accent/10 rounded-full blur-3xl translate-x-1/2 translate-y-1/2" />
-      
+    <section className="py-32 bg-background border-t border-foreground/5 relative overflow-hidden">
       <div className="container mx-auto px-4 relative z-10">
-        <div className="max-w-2xl mx-auto text-center animate-fade-in">
-          <div className="flex justify-center mb-4">
-            <div className="h-14 w-14 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center icon-float-3d pulse-scale">
-              <Mail className="h-7 w-7 text-primary-foreground" />
+        <div className="max-w-4xl mx-auto text-center space-y-12">
+          <div className="space-y-6">
+            <div className="inline-flex items-center gap-2 px-0 py-0 text-foreground/40 text-[10px] font-bold uppercase tracking-[0.4em]">
+              {isRTL ? "النشرة البريدية" : "Connect / 05"}
             </div>
+            <h2 className="text-4xl md:text-6xl font-light text-foreground leading-tight tracking-tight">
+              {isRTL ? "ابق" : "Stay"} <span className="font-bold">{isRTL ? "على اطلاع" : "Informed"}</span>
+            </h2>
+            <div className="w-20 h-[1px] bg-foreground/10 mx-auto" />
+            <p className="text-muted-foreground/60 text-sm md:text-base uppercase tracking-widest leading-relaxed max-w-xl mx-auto">
+              {t.newsletter.subtitle}
+            </p>
           </div>
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
-            {t.newsletter.title}
-          </h2>
-          <p className="text-muted-foreground mb-6">
-            {t.newsletter.subtitle}
-          </p>
-          <form onSubmit={handleSubmit} className="flex gap-3 max-w-md mx-auto">
+
+          <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-0 max-w-xl mx-auto border border-foreground/10 shadow-luxury group focus-within:border-foreground/30 transition-all duration-500">
             <Input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder={t.newsletter.placeholder}
-              className="flex-1 input-focus-3d transition-all duration-300"
+              className="h-16 bg-transparent border-0 rounded-none text-foreground placeholder:text-foreground/20 focus-visible:ring-0 focus-visible:ring-offset-0 px-8 text-xs uppercase tracking-widest flex-1"
               required
               disabled={isLoading}
             />
-            <Button type="submit" variant="gold" disabled={isLoading} className="btn-glow btn-ripple">
+            <Button
+              type="submit"
+              disabled={isLoading}
+              className="h-16 px-12 bg-foreground text-background rounded-none uppercase text-[10px] tracking-[0.4em] font-bold hover:bg-foreground/90 transition-all min-w-[180px]"
+            >
               {isLoading ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
@@ -97,6 +99,10 @@ const Newsletter = () => {
               )}
             </Button>
           </form>
+
+          <p className="text-[10px] uppercase tracking-[0.3em] text-foreground/20 italic">
+            {isRTL ? "انضم إلى نخبة مشتركينا" : "Join our elite circle."}
+          </p>
         </div>
       </div>
     </section>

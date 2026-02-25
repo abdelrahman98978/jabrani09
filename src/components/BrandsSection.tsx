@@ -37,7 +37,7 @@ const BrandsSection = () => {
         .eq("status", "available");
 
       if (error) throw error;
-      
+
       const counts: Record<string, number> = {};
       data?.forEach((car) => {
         if (car.brand_id) {
@@ -68,32 +68,24 @@ const BrandsSection = () => {
   };
 
   return (
-    <section className="py-20 bg-card/30 relative overflow-hidden">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 pattern-overlay opacity-20" />
-      
+    <section className="py-32 bg-background border-t border-foreground/5 relative overflow-hidden">
       <div className="container mx-auto px-4 relative z-10">
         {/* Section Header */}
-        <div className="text-center mb-12 animate-fade-in">
-          <span className="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
-            {isRTL ? "شركاؤنا" : "Our Partners"}
-          </span>
-          <h2 className="text-3xl md:text-4xl font-black text-foreground">
-            {isRTL ? (
-              <>
-                موزع معتمد <span className="text-gradient-gold">للماركات العالمية</span>
-              </>
-            ) : (
-              <>
-                Authorized Dealer for <span className="text-gradient-gold">Global Brands</span>
-              </>
-            )}
-          </h2>
-          <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">
-            {isRTL 
-              ? "نوفر لكم أشهر الماركات العالمية مع ضمان الجودة والأصالة"
-              : "We offer the most famous global brands with guaranteed quality and authenticity"}
-          </p>
+        <div className="flex flex-col md:flex-row justify-between items-end gap-12 mb-24">
+          <div className="max-w-2xl space-y-6">
+            <div className="inline-flex items-center gap-2 px-0 py-0 text-foreground/40 text-[10px] font-bold uppercase tracking-[0.4em]">
+              {isRTL ? "شركاء النجاح" : "Partners / 01"}
+            </div>
+            <h2 className="text-4xl md:text-6xl font-light text-foreground leading-[1.1] tracking-tight">
+              {isRTL ? "موزع" : "Authorized"} <span className="font-bold">{isRTL ? "معتمد" : "Dealer"}</span>
+            </h2>
+            <div className="w-20 h-[1px] bg-foreground/10" />
+            <p className="text-muted-foreground/60 text-sm md:text-base uppercase tracking-widest leading-relaxed">
+              {isRTL
+                ? "نوفر لكم أشهر الماركات العالمية مع ضمان الجودة والأصالة"
+                : "A curated collection of the world's most prestigious automotive makers."}
+            </p>
+          </div>
         </div>
 
         {/* Brands Carousel */}
@@ -133,9 +125,9 @@ const BrandsSection = () => {
               style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
             >
               {brands.map((brand, index) => (
-                <div 
-                  key={brand.id} 
-                  className="flex-shrink-0 w-[160px] md:w-[200px] snap-start brand-logo-float wp-brand-card" 
+                <div
+                  key={brand.id}
+                  className="flex-shrink-0 w-[160px] md:w-[200px] snap-start brand-logo-float wp-brand-card"
                   style={{ animationDelay: `${index * 0.15}s` }}
                 >
                   <BrandCard brand={brand} carCount={carCounts?.[brand.id] || 0} />

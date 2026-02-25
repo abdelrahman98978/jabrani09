@@ -6,57 +6,45 @@ import { useLanguage } from "@/contexts/LanguageContext";
 const features = [
   {
     icon: Wallet,
-    titleAr: "أفضل الأسعار",
-    titleEn: "Best Prices",
-    descriptionAr: "نقدم لكم أسعاراً تنافسية لا تُضاهى مع خيارات تمويل متعددة",
-    descriptionEn: "We offer unbeatable competitive prices with multiple financing options",
-    color: "from-emerald-500/20 to-emerald-600/10",
-    iconColor: "text-emerald-500",
+    titleAr: "قيمة استثنائية",
+    titleEn: "Exceptional Value",
+    descriptionAr: "نجمع بين الأسعار التنافسية وأعلى مستويات الجودة والحرفية",
+    descriptionEn: "We combine competitive pricing with the highest levels of quality and craftsmanship",
   },
   {
     icon: Shield,
-    titleAr: "ضمان شامل",
-    titleEn: "Comprehensive Warranty",
-    descriptionAr: "ضمان ممتد يصل إلى 5 سنوات على جميع سياراتنا",
-    descriptionEn: "Extended warranty up to 5 years on all our cars",
-    color: "from-blue-500/20 to-blue-600/10",
-    iconColor: "text-blue-500",
+    titleAr: "ثقة مطلقة",
+    titleEn: "Absolute Trust",
+    descriptionAr: "ضمان شامل وراحة بال تامة مع كل عملية شراء",
+    descriptionEn: "Comprehensive warranty and total peace of mind with every purchase",
   },
   {
     icon: Headphones,
-    titleAr: "خدمة 24/7",
-    titleEn: "24/7 Support",
-    descriptionAr: "فريق دعم متخصص جاهز لمساعدتكم على مدار الساعة",
-    descriptionEn: "A dedicated support team ready to assist you around the clock",
-    color: "from-purple-500/20 to-purple-600/10",
-    iconColor: "text-purple-500",
+    titleAr: "خدمة شخصية",
+    titleEn: "Personalized Service",
+    descriptionAr: "فريقنا المتخصص معك في كل خطوة لضمان رضاك التام",
+    descriptionEn: "Our dedicated team is with you every step of the way to ensure complete satisfaction",
   },
   {
     icon: Award,
-    titleAr: "جودة مضمونة",
-    titleEn: "Guaranteed Quality",
-    descriptionAr: "جميع سياراتنا تخضع لفحص شامل ودقيق قبل العرض",
-    descriptionEn: "All our cars undergo thorough inspection before display",
-    color: "from-amber-500/20 to-amber-600/10",
-    iconColor: "text-amber-500",
+    titleAr: "معايير النخبة",
+    titleEn: "Elite Standards",
+    descriptionAr: "تخضع كل مركبة لفحص دقيق وصارم يتجاوز كل التوقعات",
+    descriptionEn: "Every vehicle undergoes a rigorous inspection exceeding all expectations",
   },
   {
     icon: Clock,
-    titleAr: "إجراءات سريعة",
-    titleEn: "Fast Processing",
-    descriptionAr: "إتمام جميع معاملات الشراء والتمويل في وقت قياسي",
-    descriptionEn: "Complete all purchase and finance procedures in record time",
-    color: "from-cyan-500/20 to-cyan-600/10",
-    iconColor: "text-cyan-500",
+    titleAr: "كفاءة زمنية",
+    titleEn: "Time Efficiency",
+    descriptionAr: "نقدر وقتك، لذا نضمن سرعة وسلاسة كافة الإجراءات",
+    descriptionEn: "We value your time, ensuring all procedures are swift and seamless",
   },
   {
     icon: ThumbsUp,
-    titleAr: "رضا العملاء",
-    titleEn: "Customer Satisfaction",
-    descriptionAr: "أكثر من 1000 عميل سعيد يثقون بخدماتنا",
-    descriptionEn: "Over 1000 happy customers trust our services",
-    color: "from-rose-500/20 to-rose-600/10",
-    iconColor: "text-rose-500",
+    titleAr: "إرث من الرضا",
+    titleEn: "Legacy of Satisfaction",
+    descriptionAr: "نفخر بخدمة نخبة من العملاء الذين يثقون في تميزنا",
+    descriptionEn: "We take pride in serving an elite clientele who trust our excellence",
   },
 ];
 
@@ -73,62 +61,48 @@ const WhyUsSection = () => {
     : settings?.about_text || defaultSubtitleEn;
 
   return (
-    <section className="py-20 bg-background relative overflow-hidden">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 pattern-overlay opacity-30" />
-      
-      {/* Decorative Elements */}
-      <div className="absolute top-20 start-20 w-72 h-72 bg-primary/5 rounded-full blur-3xl" />
-      <div className="absolute bottom-20 end-20 w-72 h-72 bg-accent/5 rounded-full blur-3xl" />
-      
+    <section className="py-32 bg-background relative overflow-hidden">
       <div className="container mx-auto px-4 relative z-10">
         {/* Section Header */}
-        <div className="text-center mb-16 animate-fade-in">
-          <span className="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
-            {isRTL ? "مميزاتنا" : "Our Features"}
-          </span>
-          <h2 className="text-3xl md:text-4xl font-black text-foreground">
-            {isRTL ? (
-              <>
-                لماذا <span className="text-gradient-gold">تختارنا؟</span>
-              </>
-            ) : (
-              <>
-                Why <span className="text-gradient-gold">Choose Us?</span>
-              </>
-            )}
-          </h2>
-          <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">
-            {subtitle}
-          </p>
+        <div className="flex flex-col md:flex-row justify-between items-end gap-12 mb-24">
+          <div className="max-w-2xl space-y-6">
+            <div className="inline-flex items-center gap-2 px-0 py-0 text-foreground/40 text-[10px] font-bold uppercase tracking-[0.4em]">
+              {isRTL ? "لماذا نحن" : "Philosophy / 02"}
+            </div>
+            <h2 className="text-4xl md:text-6xl font-light text-foreground leading-[1.1] tracking-tight">
+              {isRTL ? "لماذا" : "Why"} <span className="font-bold">{isRTL ? "تختار تميزنا؟" : "Select Us?"}</span>
+            </h2>
+            <div className="w-20 h-[1px] bg-foreground/10" />
+            <p className="text-muted-foreground/60 text-sm md:text-base uppercase tracking-widest leading-relaxed">
+              {subtitle}
+            </p>
+          </div>
         </div>
 
-        {/* Features Grid with Stagger Animation */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 stagger-3d-entrance">
+        {/* Features Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0 border border-foreground/5 shadow-luxury">
           {features.map((feature, index) => (
-            <Card
+            <div
               key={index}
-              className="group border-border/50 hover:border-primary/30 transition-all duration-300 wp-card-hover bg-card/80 backdrop-blur-sm overflow-hidden"
-              style={{ animationDelay: `${index * 0.1}s` }}
+              className="group p-12 border-b border-e border-foreground/5 last:border-b-0 lg:[&:nth-child(3)]:border-e-0 lg:[&:nth-child(6)]:border-e-0 lg:last:border-b-0 last:border-e-0 transition-all duration-500 hover:bg-foreground/[0.02]"
             >
-              <CardContent className="p-6 relative z-10">
+              <div className="flex flex-col space-y-8">
                 {/* Icon */}
-                <div className={`h-16 w-16 rounded-2xl bg-gradient-to-br ${feature.color} flex items-center justify-center mb-5 group-hover:scale-110 transition-transform icon-float-3d`}>
-                  <feature.icon className={`h-8 w-8 ${feature.iconColor}`} />
+                <div className="w-12 h-12 flex items-center justify-center border border-foreground/10 group-hover:border-foreground/40 transition-all duration-500">
+                  <feature.icon className="h-5 w-5 text-foreground/40 group-hover:text-foreground transition-colors duration-500" />
                 </div>
-                
-                {/* Content */}
-                <h3 className="font-bold text-xl text-foreground mb-3 group-hover:text-primary transition-colors">
-                  {isRTL ? feature.titleAr : feature.titleEn}
-                </h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  {isRTL ? feature.descriptionAr : feature.descriptionEn}
-                </p>
 
-                {/* Decorative Corner */}
-                <div className="absolute top-0 end-0 w-20 h-20 bg-gradient-to-br from-primary/5 to-transparent rounded-bl-[60px] opacity-0 group-hover:opacity-100 transition-opacity" />
-              </CardContent>
-            </Card>
+                {/* Content */}
+                <div className="space-y-4">
+                  <h3 className="font-bold text-lg uppercase tracking-widest text-foreground">
+                    {isRTL ? feature.titleAr : feature.titleEn}
+                  </h3>
+                  <p className="text-xs text-foreground/40 leading-relaxed tracking-wider">
+                    {isRTL ? feature.descriptionAr : feature.descriptionEn}
+                  </p>
+                </div>
+              </div>
+            </div>
           ))}
         </div>
       </div>

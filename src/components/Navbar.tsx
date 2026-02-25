@@ -98,10 +98,10 @@ const Navbar = () => {
     <motion.nav
       initial={{ y: -100 }}
       animate={{ y: 0 }}
-      transition={{ duration: 0.6 }}
-      className={`fixed top-2 sm:top-4 right-2 sm:right-4 left-2 sm:left-4 z-50 transition-all duration-500 rounded-xl sm:rounded-2xl ${isTransparent
-        ? 'bg-transparent border-transparent py-3 sm:py-4'
-        : 'glass-effect py-2 sm:py-3 shadow-2xl border border-white/10'
+      transition={{ duration: 0.8, ease: [0.19, 1, 0.22, 1] }}
+      className={`fixed top-0 right-0 left-0 z-50 transition-all duration-700 ${isTransparent
+        ? 'bg-transparent py-6'
+        : 'bg-background/80 backdrop-blur-md border-b border-border/40 py-4 shadow-sm'
         }`}
     >
       <div className="container mx-auto px-2 sm:px-4 md:px-6">
@@ -126,24 +126,18 @@ const Navbar = () => {
           </Link>
 
           {/* Desktop Nav Links */}
-          <nav className="hidden lg:flex items-center gap-1">
+          <nav className="hidden lg:flex items-center gap-2">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 to={link.href}
-                className={`px-5 py-2 rounded-full text-sm font-black uppercase tracking-widest transition-all relative group ${isActive(link.href)
-                  ? isTransparent ? 'text-white' : 'text-primary'
-                  : isTransparent ? 'text-white/70 hover:text-white' : 'text-muted-foreground hover:text-foreground'
+                className={`px-4 py-2 text-[13px] font-medium uppercase tracking-[0.2em] transition-all relative group ${isActive(link.href)
+                  ? isTransparent ? 'text-white' : 'text-foreground'
+                  : isTransparent ? 'text-white/60 hover:text-white' : 'text-muted-foreground hover:text-foreground'
                   }`}
               >
                 {link.label}
-                {isActive(link.href) && (
-                  <motion.div
-                    layoutId="nav-active"
-                    className={`absolute inset-0 rounded-full -z-10 ${isTransparent ? 'bg-white/10' : 'bg-primary/5'}`}
-                  />
-                )}
-                <span className={`absolute bottom-1 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-4 ${isActive(link.href) ? 'w-4' : 'w-0'}`} />
+                <span className={`absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-[1px] bg-primary transition-all duration-500 group-hover:w-full ${isActive(link.href) ? 'w-full' : 'w-0'}`} />
               </Link>
             ))}
           </nav>
@@ -178,39 +172,33 @@ const Navbar = () => {
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-10 w-10 rounded-full border-2 border-primary/20 hover:border-primary/50 p-0 transition-all">
-                    <Avatar className="h-full w-full">
+                  <Button variant="ghost" className="relative h-9 w-9 rounded-full p-0 transition-opacity hover:opacity-80">
+                    <Avatar className="h-full w-full border border-border/50">
                       <AvatarImage src={user.user_metadata.avatar_url} />
-                      <AvatarFallback className="bg-primary/5 text-primary text-xs font-black">
+                      <AvatarFallback className="bg-secondary text-foreground text-[10px] font-medium">
                         {getInitials(user.user_metadata.full_name)}
                       </AvatarFallback>
                     </Avatar>
-                    <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-green-500 border-2 border-background" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 mt-2 rounded-2xl bg-card/95 backdrop-blur-xl border-border/50">
-                  <div className="p-4 border-b border-border/50">
-                    <p className="text-sm font-black truncate">{user.user_metadata.full_name || user.email}</p>
-                    <p className="text-[10px] text-muted-foreground truncate uppercase tracking-widest">{user.email}</p>
+                <DropdownMenuContent align="end" className="w-56 mt-4 rounded-lg bg-background/95 backdrop-blur-xl border-border/50">
+                  <div className="p-4 border-b border-border/10">
+                    <p className="text-xs font-bold truncate">{user.user_metadata.full_name || user.email}</p>
+                    <p className="text-[10px] text-muted-foreground truncate tracking-wider">{user.email}</p>
                   </div>
-                  <DropdownMenuItem onClick={() => navigate("/admin")} className="py-3 px-4 rounded-xl cursor-pointer">
-                    <Settings className="me-2 h-4 w-4" />
-                    <span>{isRTL ? "لوحة التحكم" : "Dashboard"}</span>
+                  <DropdownMenuItem onClick={() => navigate("/profile")} className="py-2.5 px-4 cursor-pointer text-xs">
+                    <User className="me-2 h-3.5 w-3.5" />
+                    <span>{isRTL ? "حسابي" : "Account"}</span>
                   </DropdownMenuItem>
-
-                  <DropdownMenuItem onClick={() => navigate("/profile?tab=orders")} className="py-3 px-4 rounded-xl cursor-pointer">
-                    <Package className="me-2 h-4 w-4" />
-                    <span>{isRTL ? "طلباتي" : "My Orders"}</span>
-                  </DropdownMenuItem>
-
-                  <DropdownMenuItem onClick={() => navigate("/wishlist")} className="py-3 px-4 rounded-xl cursor-pointer">
-                    <Heart className="me-2 h-4 w-4" />
-                    <span>{isRTL ? "المفضلة" : "Wishlist"}</span>
-                  </DropdownMenuItem>
-
+                  {isAdmin && (
+                    <DropdownMenuItem onClick={() => navigate("/admin")} className="py-2.5 px-4 cursor-pointer text-xs">
+                      <Settings className="me-2 h-3.5 w-3.5" />
+                      <span>{isRTL ? "الإدارة" : "Admin"}</span>
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleLogout} className="py-3 px-4 rounded-xl cursor-pointer text-destructive focus:bg-destructive/10">
-                    <LogOut className="me-2 h-4 w-4" />
+                  <DropdownMenuItem onClick={handleLogout} className="py-2.5 px-4 cursor-pointer text-destructive text-xs">
+                    <LogOut className="me-2 h-3.5 w-3.5" />
                     <span>{t.nav.logout}</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -218,10 +206,9 @@ const Navbar = () => {
             ) : (
               <Link to="/auth">
                 <Button
-                  variant={isTransparent ? "outline" : "gold"}
-                  className={`rounded-full px-6 font-black uppercase tracking-tighter ${isTransparent ? 'border-white/30 text-white hover:bg-white hover:text-black' : 'shadow-lg shadow-primary/20'}`}
+                  variant={isTransparent ? "outline" : "default"}
+                  className={`rounded-none px-8 font-medium uppercase tracking-[0.2em] text-[11px] h-10 transition-all ${isTransparent ? 'border-white/20 text-white hover:bg-white hover:text-black' : 'bg-foreground text-background hover:bg-foreground/90'}`}
                 >
-                  <LogIn className="h-4 w-4 me-2" />
                   {t.nav.login}
                 </Button>
               </Link>

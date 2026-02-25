@@ -110,33 +110,28 @@ const FeaturedCars = () => {
   });
 
   return (
-    <section className="py-24 bg-gradient-to-b from-background to-secondary/20 relative overflow-hidden">
-      {/* Background decoration */}
-      <div className="absolute top-1/4 -right-20 w-80 h-80 bg-primary/10 rounded-full blur-[100px] animate-pulse" />
-      <div className="absolute bottom-1/4 -left-20 w-80 h-80 bg-accent/10 rounded-full blur-[100px] animate-pulse delay-1000" />
-
+    <section className="py-32 bg-background relative overflow-hidden">
       <div className="container mx-auto px-4 relative z-10">
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row justify-between items-end gap-6 mb-16">
-          <div className="space-y-4 max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider">
-              <Sparkles className="h-3 w-3" />
-              {isRTL ? "مختاراتنا لك" : "Our Handpicked Selection"}
+        <div className="flex flex-col md:flex-row justify-between items-end gap-12 mb-24">
+          <div className="max-w-2xl space-y-6">
+            <div className="inline-flex items-center gap-2 px-0 py-0 text-foreground/40 text-[10px] font-bold uppercase tracking-[0.4em]">
+              {isRTL ? "مختاراتنا المختارة" : "Curation / 01"}
             </div>
-            <h2 className="text-4xl md:text-5xl font-black text-foreground leading-tight">
-              {isRTL ? "السيارات" : "Featured"} <span className="text-gradient-gold">{isRTL ? "المميزة" : "Inventory"}</span>
+            <h2 className="text-4xl md:text-6xl font-light text-foreground leading-[1.1] tracking-tight">
+              {isRTL ? "السيارات" : "The"} <span className="font-bold">{isRTL ? "المميزة" : "Collection"}</span>
             </h2>
-            <p className="text-muted-foreground text-lg">
+            <div className="w-20 h-[1px] bg-foreground/10" />
+            <p className="text-muted-foreground/60 text-sm md:text-base uppercase tracking-widest leading-relaxed">
               {isRTL
                 ? "انطلق في رحلة الفخامة مع مجموعتنا الاستثنائية من أحدث موديلات السيارات العالمية"
-                : "Embark on a luxury journey with our exceptional collection of the latest global car models"}
+                : "A meticulously selected ensemble of performance and elegance."}
             </p>
           </div>
           <Link to="/cars" className="group">
-            <Button variant="ghost" className="gap-2 text-lg font-bold hover:bg-primary/5 hover:text-primary transition-all duration-500">
-              {isRTL ? "استكشف كامل المخزون" : "Explore Full Inventory"}
-              <ArrowLeft className={`h-5 w-5 transition-transform duration-300 ${isRTL ? 'group-hover:translate-x-1' : 'group-hover:-translate-x-1'}`} />
-            </Button>
+            <button className="text-[11px] uppercase tracking-[0.3em] font-medium border-b border-foreground/20 hover:border-foreground transition-all pb-1 mb-2">
+              {isRTL ? "استكشف كامل المخزون" : "View Entire Fleet"}
+            </button>
           </Link>
         </div>
 

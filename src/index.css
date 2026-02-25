@@ -6,120 +6,82 @@
 
 @layer base {
   :root {
-    /* Automotive Light Theme - Metallic Grey & Sport Red */
-    --background: 220 15% 97%;
-    --foreground: 222 47% 10%;
+    /* Precision Automotive Theme - Deep Obsidian & Liquid Chrome */
+    --background: 0 0% 98%;
+    --foreground: 0 0% 3%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 10%;
+    --card-foreground: 0 0% 3%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 10%;
+    --popover-foreground: 0 0% 3%;
 
-    --primary: 345 85% 42%;
-    /* Premium Deep Ruby Red */
-    --primary-foreground: 0 0% 100%;
+    --primary: 0 0% 9%; /* Deep Obsidian */
+    --primary-foreground: 0 0% 98%;
 
-    --secondary: 220 14% 92%;
-    /* metallic light grey */
-    --secondary-foreground: 222 47% 15%;
+    --secondary: 210 20% 96%; /* Metallic Light Silver */
+    --secondary-foreground: 0 0% 9%;
 
-    --muted: 220 10% 85%;
-    --muted-foreground: 220 9% 40%;
+    --muted: 210 10% 90%;
+    --muted-foreground: 0 0% 40%;
 
-    --accent: 210 20% 20%;
-    /* deep charcoal for accents */
+    --accent: 345 85% 42%; /* Crimson Accent (Used sparingly) */
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 72% 51%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 220 13% 88%;
-    --input: 220 13% 88%;
-    --ring: 0 85% 48%;
+    --border: 0 0% 89%;
+    --input: 0 0% 89%;
+    --ring: 0 0% 9%;
 
-    --radius: 0.75rem;
+    --radius: 0.5rem; /* Sharper edges for premium look */
 
-    /* Custom Colors */
-    --ruby: 0 85% 48%;
-    --ruby-light: 0 80% 58%;
-    --ruby-dark: 0 90% 38%;
-    --charcoal: 220 20% 15%;
-    --charcoal-light: 220 15% 24%;
-    --gradient-primary: linear-gradient(135deg, hsl(0 85% 50%), hsl(220 20% 20%));
-    --gradient-secondary: linear-gradient(180deg, hsl(220 15% 97%), hsl(220 14% 92%));
-    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(220 14% 95%));
-
+    /* Luxury Metallics */
+    --silver-liquid: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    --gold-subtle: linear-gradient(135deg, #dfbb99 0%, #bf953f 50%, #dfbb99 100%);
+    
     /* Shadows */
-    --shadow-primary: 0 4px 30px hsl(0 85% 48% / 0.2);
-    --shadow-card: 0 8px 32px hsl(220 20% 15% / 0.08);
-    --shadow-hover: 0 12px 40px hsl(0 85% 48% / 0.25);
-
-    /* Sidebar */
-    --sidebar-background: 220 20% 12%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 0 85% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 18% 18%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 220 14% 28%;
-    --sidebar-ring: 0 85% 48%;
+    --shadow-premium: 0 10px 40px -10px rgba(0,0,0,0.1);
+    --shadow-luxury: 0 20px 60px -15px rgba(0,0,0,0.15);
   }
 
   .dark {
-    /* Automotive Dark Theme - Showroom Black & Sport Red */
-    --background: 220 25% 5%;
-    --foreground: 210 40% 96%;
+    /* Showroom Dark - Midnight Black & Carbon */
+    --background: 0 0% 2%;
+    --foreground: 0 0% 95%;
 
-    --card: 220 20% 9%;
-    --card-foreground: 210 40% 96%;
+    --card: 0 0% 5%;
+    --card-foreground: 0 0% 95%;
 
-    --popover: 220 20% 9%;
-    --popover-foreground: 210 40% 96%;
+    --popover: 0 0% 5%;
+    --popover-foreground: 0 0% 95%;
 
-    --primary: 345 85% 48%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 5%;
 
-    --secondary: 220 18% 14%;
-    --secondary-foreground: 210 40% 96%;
+    --secondary: 0 0% 10%;
+    --secondary-foreground: 0 0% 98%;
 
-    --muted: 220 16% 18%;
-    --muted-foreground: 220 12% 65%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 65%;
 
-    --accent: 0 0% 12%;
+    --accent: 345 85% 55%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 72% 55%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 220 16% 24%;
-    --input: 220 16% 24%;
-    --ring: 0 85% 55%;
-
-    /* Custom Colors */
-    --ruby: 0 85% 55%;
-    --ruby-light: 0 80% 65%;
-    --ruby-dark: 0 90% 45%;
-    --charcoal: 220 25% 6%;
-    --charcoal-light: 220 20% 14%;
-    --gradient-primary: linear-gradient(135deg, hsl(0 85% 55%), hsl(220 20% 20%));
-    --gradient-secondary: linear-gradient(180deg, hsl(220 25% 5%), hsl(220 20% 10%));
-    --gradient-card: linear-gradient(145deg, hsl(220 20% 10%), hsl(220 25% 4%));
-
-    /* Shadows */
-    --shadow-primary: 0 4px 30px hsl(0 85% 55% / 0.3);
-    --shadow-card: 0 8px 32px hsl(220 25% 2% / 0.7);
-    --shadow-hover: 0 12px 40px hsl(0 85% 55% / 0.45);
+    --border: 0 0% 15%;
+    --input: 0 0% 15%;
+    --ring: 0 0% 98%;
 
     /* Sidebar */
-    --sidebar-background: 220 30% 4%;
-    --sidebar-foreground: 210 40% 96%;
-    --sidebar-primary: 0 85% 55%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 22% 14%;
-    --sidebar-accent-foreground: 210 40% 96%;
-    --sidebar-border: 220 18% 22%;
-    --sidebar-ring: 0 85% 55%;
+    --sidebar-background: 0 0% 3%;
+    --sidebar-foreground: 0 0% 95%;
+    --sidebar-primary: 0 0% 98%;
+    --sidebar-primary-foreground: 0 0% 5%;
+    --sidebar-accent: 0 0% 8%;
+    --sidebar-accent-foreground: 0 0% 95%;
+    --sidebar-border: 0 0% 12%;
+    --sidebar-ring: 0 0% 98%;
   }
 }
 
@@ -202,55 +164,68 @@
     border-color: hsl(0 80% 55% / 0.4);
   }
 
-  /* Enhanced Glassmorphism & 3D */
+  /* Enhanced Precision Glassmorphism */
   .glass-effect {
-    backdrop-filter: blur(20px);
-    background: linear-gradient(135deg,
-        hsl(var(--background) / 0.8),
-        hsl(var(--background) / 0.6));
-    border: 1px solid hsl(var(--foreground) / 0.05);
-    box-shadow:
-      0 4px 30px rgba(0, 0, 0, 0.1),
-      inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(12px);
+    background: rgba(var(--background), 0.7);
+    border: 1px solid rgba(var(--foreground), 0.08);
   }
 
   .dark .glass-effect {
-    background: linear-gradient(135deg,
-        hsl(220 25% 10% / 0.8),
-        hsl(220 25% 5% / 0.6));
-    border: 1px solid hsl(255 255 255 / 0.05);
-    box-shadow:
-      0 4px 30px rgba(0, 0, 0, 0.5),
-      inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.05);
   }
 
-  .glass-panel-3d {
-    background: linear-gradient(145deg,
-        rgba(255, 255, 255, 0.05) 0%,
-        rgba(255, 255, 255, 0.01) 100%);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow:
-      0 20px 40px rgba(0, 0, 0, 0.2),
-      inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    transform-style: preserve-3d;
+  .precision-button {
+    @apply relative overflow-hidden transition-all duration-300;
+    border: 1px solid currentColor;
   }
 
-  .text-3d {
-    text-shadow:
-      0 1px 0 hsl(var(--background)),
-      0 2px 0 hsl(var(--muted-foreground) / 0.3),
-      0 3px 0 hsl(var(--muted-foreground) / 0.2),
-      0 4px 5px rgba(0, 0, 0, 0.1);
+  .precision-button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 120%;
+    height: 120%;
+    background: currentColor;
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+    z-index: -1;
+    opacity: 0.1;
   }
 
-  .hover-3d-transform {
-    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-    transform-style: preserve-3d;
+  .precision-button:hover::before {
+    transform: translate(-50%, -50%) scale(1);
   }
 
-  .hover-3d-transform:hover {
-    transform: translateY(-5px) scale(1.02);
+  .lux-fade-up {
+    animation: lux-fade-up 1.2s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+  }
+
+  @keyframes lux-fade-up {
+    0% {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .ken-burns {
+    animation: ken-burns 20s ease infinite alternate;
+  }
+
+  @keyframes ken-burns {
+    0% {
+      transform: scale(1);
+    }
+    100% {
+      transform: scale(1.1);
+    }
   }
 
   .animate-float {

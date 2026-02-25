@@ -49,8 +49,10 @@ const AnimatedCounter = ({ end, duration = 2000, suffix = "", prefix = "" }: Cou
   }, [end, duration, hasAnimated]);
 
   return (
-    <div ref={counterRef} className="text-3xl md:text-4xl lg:text-5xl font-black text-gradient-gold">
-      {prefix}{count.toLocaleString()}{suffix}
+    <div ref={counterRef} className="text-4xl md:text-6xl font-light tracking-tighter">
+      <span className="opacity-20">{prefix}</span>
+      {count.toLocaleString()}
+      <span className="opacity-20">{suffix}</span>
     </div>
   );
 };
@@ -67,7 +69,7 @@ const StatsCounter = () => {
         supabase.from("brands").select("id", { count: "exact", head: true }).eq("is_active", true),
         supabase.from("orders").select("id", { count: "exact", head: true }).eq("status", "completed"),
       ]);
-      
+
       return {
         carsCount: carsResult.count || 0,
         brandsCount: brandsResult.count || 0,
@@ -109,27 +111,24 @@ const StatsCounter = () => {
   ];
 
   return (
-    <section className="wp-stats-counter py-16 bg-accent relative overflow-hidden">
-      {/* Pattern Overlay */}
-      <div className="absolute inset-0 pattern-overlay opacity-10" />
-      
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+    <section className="py-32 bg-background border-y border-foreground/5">
+      <div className="container mx-auto px-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-12 sm:gap-24">
           {counters.map((counter, idx) => (
-            <div 
-              key={idx} 
-              className="text-center p-6 rounded-xl bg-background/5 backdrop-blur-sm border border-white/10 hover:bg-background/10 transition-all hover-lift-3d"
+            <div
+              key={idx}
+              className="group flex flex-col items-center sm:items-start text-center sm:text-start space-y-4"
             >
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/20 mb-4 icon-float-3d">
-                <counter.icon className="h-8 w-8 text-primary" />
-              </div>
-              <AnimatedCounter 
-                end={counter.value} 
+              <AnimatedCounter
+                end={counter.value}
                 suffix={counter.suffix}
               />
-              <p className="text-accent-foreground/80 mt-2 text-sm md:text-base">
-                {isRTL ? counter.labelAr : counter.labelEn}
-              </p>
+              <div className="space-y-1">
+                <p className="text-[10px] uppercase tracking-[0.3em] font-bold opacity-30 group-hover:opacity-100 transition-opacity">
+                  {isRTL ? counter.labelAr : counter.labelEn}
+                </p>
+                <div className="w-8 h-[1px] bg-foreground/10 group-hover:w-16 transition-all duration-700 mx-auto sm:mx-0" />
+              </div>
             </div>
           ))}
         </div>

@@ -23,36 +23,37 @@ const BrandCard = ({ brand, carCount }: BrandCardProps) => {
 
   return (
     <Link to={`/cars?brand=${brand.id}`}>
-      <Card className="group p-6 flex flex-col items-center justify-center gap-3 border-border/50 hover:border-primary/50 hover:bg-card/80 transition-all duration-300 aspect-square relative overflow-hidden wp-card-hover">
+      <div className="group relative flex flex-col items-center justify-center p-8 border border-foreground/5 hover:border-foreground/20 transition-all duration-700 aspect-square bg-foreground/[0.01] hover:bg-foreground/[0.03] shadow-luxury overflow-hidden">
         {showLogo ? (
-          <div className="h-16 w-28 rounded-xl bg-secondary/40 flex items-center justify-center">
+          <div className="h-20 w-32 flex items-center justify-center">
             <img
               src={brand.logo_url!}
               alt={displayName}
               loading="lazy"
               onError={() => setLogoError(true)}
-              className="max-h-12 max-w-full object-contain opacity-80 group-hover:opacity-100 transition-opacity"
+              className="max-h-full max-w-full object-contain opacity-20 group-hover:opacity-100 transition-all duration-700 grayscale group-hover:grayscale-0 scale-90 group-hover:scale-110"
             />
           </div>
         ) : (
-          <div className="h-16 w-28 rounded-xl bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center text-2xl font-bold text-primary">
+          <div className="h-20 w-20 flex items-center justify-center text-3xl font-light text-foreground/10 group-hover:text-foreground transition-colors duration-700 border border-foreground/5 group-hover:border-foreground/20 italic">
             {displayName.charAt(0)}
           </div>
         )}
-        <div className="text-center">
-          <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors">
+
+        <div className="absolute inset-x-0 bottom-0 p-4 opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-700 text-center">
+          <h3 className="text-[10px] uppercase font-bold tracking-[0.3em] text-foreground">
             {displayName}
           </h3>
-          <p className="text-xs text-muted-foreground">{isRTL ? brand.name : brand.name_ar}</p>
+          {carCount !== undefined && carCount > 0 && (
+            <p className="text-[8px] uppercase tracking-widest text-foreground/40 mt-1">
+              {carCount} {isRTL ? "مركبة متاحة" : "Models Available"}
+            </p>
+          )}
         </div>
 
-        {/* Car Count Badge */}
-        {carCount !== undefined && carCount > 0 && (
-          <div className="absolute bottom-2 end-2 px-2 py-0.5 bg-primary text-primary-foreground text-xs font-bold rounded-full">
-            {carCount} {isRTL ? "سيارة" : "cars"}
-          </div>
-        )}
-      </Card>
+        {/* Subtle Accent Line */}
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-[1px] bg-foreground transition-all duration-700 group-hover:w-full" />
+      </div>
     </Link>
   );
 };

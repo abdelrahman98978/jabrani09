@@ -85,76 +85,47 @@ const Footer = () => {
       <div className="container mx-auto px-3 sm:px-4 pt-12 sm:pt-16 md:pt-20 pb-6 sm:pb-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 lg:gap-8">
           {/* About Column */}
-          <div className="space-y-4 sm:space-y-6">
-            <div className="flex items-center gap-2 sm:gap-3">
-              {settings?.logo_url ? (
-                <img
-                  src={settings.logo_url}
-                  alt={siteName}
-                  className="h-10 w-10 sm:h-14 sm:w-14 object-contain rounded-lg sm:rounded-xl bg-white/10 p-1.5 sm:p-2"
-                />
-              ) : (
-                <img
-                  src={showroomLogo}
-                  alt={siteName}
-                  className="h-10 w-10 sm:h-14 sm:w-14 object-contain rounded-lg sm:rounded-xl bg-white/10 p-1.5 sm:p-2"
-                />
-              )}
-              <div>
-                <h3 className="text-base sm:text-xl font-bold text-gradient-gold">{siteName}</h3>
-                <p className="text-[10px] sm:text-xs text-accent-foreground/60">{t.siteSlogan}</p>
-              </div>
+          <div className="space-y-8">
+            <div className="flex flex-col gap-4">
+              <h3 className="text-xl font-bold tracking-tight">{siteName}</h3>
+              <p className="text-[10px] uppercase tracking-[0.3em] font-medium opacity-40">
+                {t.siteSlogan}
+              </p>
             </div>
-            <p className="text-xs sm:text-sm text-accent-foreground/80 leading-relaxed">
+            <p className="text-sm text-foreground/50 leading-relaxed max-w-xs">
               {language === "ar"
                 ? (settings?.about_text_ar || t.whyUs.qualityDesc)
                 : (settings?.about_text || t.whyUs.qualityDesc)
               }
             </p>
             {/* Social Links */}
-            <div className="flex gap-2 sm:gap-3">
+            <div className="flex gap-4">
               {socialLinks.map((link, idx) => link.url && (
                 <a
                   key={idx}
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label={link.label}
-                  className="social-icon-3d flex h-10 w-10 items-center justify-center rounded-lg bg-background/10 hover:bg-primary/20 transition-all"
+                  className="w-8 h-8 flex items-center justify-center border border-foreground/10 hover:border-foreground/40 transition-all opacity-40 hover:opacity-100"
                 >
-                  <link.icon className="h-4 w-4" />
+                  <link.icon className="h-3.5 w-3.5" />
                 </a>
               ))}
-              {!socialLinks.some(l => l.url) && (
-                <>
-                  <a href="#" className="social-icon-3d flex h-10 w-10 items-center justify-center rounded-lg bg-background/10 hover:bg-primary/20 transition-all">
-                    <Facebook className="h-4 w-4" />
-                  </a>
-                  <a href="#" className="social-icon-3d flex h-10 w-10 items-center justify-center rounded-lg bg-background/10 hover:bg-primary/20 transition-all">
-                    <Twitter className="h-4 w-4" />
-                  </a>
-                  <a href="#" className="social-icon-3d flex h-10 w-10 items-center justify-center rounded-lg bg-background/10 hover:bg-primary/20 transition-all">
-                    <Instagram className="h-4 w-4" />
-                  </a>
-                </>
-              )}
             </div>
           </div>
 
           {/* Quick Links Column */}
-          <div className="space-y-4 sm:space-y-6">
-            <h4 className="text-base sm:text-lg font-bold text-foreground relative inline-block">
+          <div className="space-y-8">
+            <h4 className="text-[10px] font-bold uppercase tracking-[0.4em] opacity-40">
               {t.footer.quickLinks}
-              <span className="absolute -bottom-2 start-0 w-10 sm:w-12 h-0.5 bg-primary rounded" />
             </h4>
-            <ul className="space-y-2 sm:space-y-3">
+            <ul className="space-y-4">
               {quickLinks.map((link, idx) => (
                 <li key={idx}>
                   <Link
                     to={link.href}
-                    className="text-sm text-accent-foreground/70 hover:text-primary transition-colors flex items-center gap-2 group"
+                    className="text-xs text-foreground/40 hover:text-foreground transition-colors uppercase tracking-[0.2em] font-medium"
                   >
-                    <span className="w-1.5 h-1.5 rounded-full bg-primary/50 group-hover:bg-primary transition-colors" />
                     {link.label}
                   </Link>
                 </li>
@@ -174,95 +145,58 @@ const Footer = () => {
           </div>
 
           {/* Contact Info Column */}
-          <div className="space-y-4 sm:space-y-6">
-            <h4 className="text-base sm:text-lg font-bold text-foreground relative inline-block">
+          <div className="space-y-8">
+            <h4 className="text-[10px] font-bold uppercase tracking-[0.4em] opacity-40">
               {t.footer.contactInfo}
-              <span className="absolute -bottom-2 start-0 w-10 sm:w-12 h-0.5 bg-primary rounded" />
             </h4>
-            <ul className="space-y-3 sm:space-y-4">
-              <li>
-                <a
-                  href={`tel:${settings?.phone || "+249123044745"}`}
-                  className="flex items-start gap-2 sm:gap-3 text-xs sm:text-sm text-accent-foreground/70 hover:text-primary transition-colors"
-                >
-                  <div className="p-1.5 sm:p-2 rounded-lg bg-primary/10 mt-0.5">
-                    <Phone className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-[10px] sm:text-xs text-accent-foreground/50 mb-1">{isRTL ? "اتصل بنا" : "Call Us"}</p>
-                    <span dir="ltr" className="font-medium text-xs sm:text-sm">{settings?.phone || "+249 12 304 4745"}</span>
-                  </div>
-                </a>
+            <ul className="space-y-6">
+              <li className="flex flex-col gap-2">
+                <span className="text-[9px] uppercase tracking-widest opacity-30 font-bold">{isRTL ? "اتصل بنا" : "Telephone"}</span>
+                <span dir="ltr" className="text-xs font-medium">{settings?.phone || "+249 12 304 4745"}</span>
               </li>
-              <li>
-                <a
-                  href={`mailto:${settings?.email || "info@alfakhim.com"}`}
-                  className="flex items-start gap-2 sm:gap-3 text-xs sm:text-sm text-accent-foreground/70 hover:text-primary transition-colors"
-                >
-                  <div className="p-1.5 sm:p-2 rounded-lg bg-primary/10 mt-0.5">
-                    <Mail className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-[10px] sm:text-xs text-accent-foreground/50 mb-1">{isRTL ? "البريد الإلكتروني" : "Email"}</p>
-                    <span className="font-medium text-xs sm:text-sm break-all">{settings?.email || "info@alfakhim.com"}</span>
-                  </div>
-                </a>
+              <li className="flex flex-col gap-2">
+                <span className="text-[9px] uppercase tracking-widest opacity-30 font-bold">{isRTL ? "العنوان" : "Showroom"}</span>
+                <span className="text-xs font-medium leading-relaxed max-w-[200px]">
+                  {language === "ar"
+                    ? (settings?.address_ar || t.common.address)
+                    : (settings?.address || t.common.address)
+                  }
+                </span>
               </li>
-              <li className="flex items-start gap-2 sm:gap-3 text-xs sm:text-sm text-accent-foreground/70">
-                <div className="p-1.5 sm:p-2 rounded-lg bg-primary/10 mt-0.5">
-                  <MapPin className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
-                </div>
-                <div>
-                  <p className="text-[10px] sm:text-xs text-accent-foreground/50 mb-1">{isRTL ? "العنوان" : "Address"}</p>
-                  <span className="font-medium text-xs sm:text-sm">
-                    {language === "ar"
-                      ? (settings?.address_ar || t.common.address)
-                      : (settings?.address || t.common.address)
-                    }
-                  </span>
-                </div>
-              </li>
-              <li className="flex items-start gap-2 sm:gap-3 text-xs sm:text-sm text-accent-foreground/70">
-                <div className="p-1.5 sm:p-2 rounded-lg bg-primary/10 mt-0.5">
-                  <Clock className="h-3 w-3 sm:h-4 sm:w-4 text-primary" />
-                </div>
-                <div>
-                  <p className="text-[10px] sm:text-xs text-accent-foreground/50 mb-1">{isRTL ? "ساعات العمل" : "Working Hours"}</p>
-                  <span className="font-medium text-xs sm:text-sm">{workingHours}</span>
-                </div>
+              <li className="flex flex-col gap-2">
+                <span className="text-[9px] uppercase tracking-widest opacity-30 font-bold">{isRTL ? "ساعات العمل" : "Operating Hours"}</span>
+                <span className="text-xs font-medium">{workingHours}</span>
               </li>
             </ul>
           </div>
 
           {/* Newsletter Column */}
-          <div className="space-y-4 sm:space-y-6">
-            <h4 className="text-base sm:text-lg font-bold text-foreground relative inline-block">
-              {isRTL ? "النشرة البريدية" : "Newsletter"}
-              <span className="absolute -bottom-2 start-0 w-10 sm:w-12 h-0.5 bg-primary rounded" />
+          <div className="space-y-8">
+            <h4 className="text-[10px] font-bold uppercase tracking-[0.4em] opacity-40">
+              {isRTL ? "النشرة البريدية" : "Journal"}
             </h4>
             <p className="text-xs sm:text-sm text-accent-foreground/70">
               {isRTL
                 ? "اشترك للحصول على أحدث العروض والأخبار"
                 : "Subscribe to get the latest offers and news"}
             </p>
-            <form onSubmit={handleSubscribe} className="space-y-3">
-              <div className="relative">
+            <form onSubmit={handleSubscribe} className="space-y-4">
+              <div className="relative group">
                 <Input
                   type="email"
-                  placeholder={isRTL ? "بريدك الإلكتروني" : "Your email"}
+                  placeholder={isRTL ? "بريدك الإلكتروني" : "EMAIL ADDRESS"}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="h-12 bg-background/10 border-background/20 text-accent-foreground placeholder:text-accent-foreground/50 pe-12"
+                  className="h-12 bg-transparent border-0 border-b border-foreground/10 rounded-none px-0 focus-visible:ring-0 focus-visible:border-foreground transition-all uppercase text-[10px] tracking-widest"
                   required
                 />
-                <Button
+                <button
                   type="submit"
-                  size="icon"
                   disabled={isLoading}
-                  className="absolute end-1 top-1 h-10 w-10 bg-primary hover:bg-primary/90"
+                  className="absolute end-0 top-1/2 -translate-y-1/2 opacity-40 hover:opacity-100 transition-opacity"
                 >
                   <Send className="h-4 w-4" />
-                </Button>
+                </button>
               </div>
             </form>
 

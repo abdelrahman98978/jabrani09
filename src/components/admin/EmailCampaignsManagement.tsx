@@ -96,27 +96,33 @@ const EmailCampaignsManagement = () => {
 
   // القوالب الجاهزة للمناسبات
   const presetTemplates = [
-    { id: "ramadan", name: isRTL ? "🌙 رمضان كريم" : "🌙 Ramadan Kareem", 
+    {
+      id: "ramadan", name: isRTL ? "🌙 رمضان كريم" : "🌙 Ramadan Kareem",
       subject: isRTL ? "عروض رمضانية حصرية من معرضنا" : "Exclusive Ramadan Offers",
       content: isRTL ? "بمناسبة شهر رمضان المبارك، نقدم لكم عروضاً استثنائية على جميع السيارات.\n\n✨ خصومات تصل إلى 15%\n🎁 هدايا مجانية مع كل عملية شراء\n📅 تقسيط ميسر بدون فوائد\n\nزورونا وحققوا حلمكم بسيارة جديدة!\n\nرمضان مبارك 🌙" : "On the occasion of Ramadan, we offer exclusive deals on all cars."
     },
-    { id: "eid", name: isRTL ? "🎉 تهنئة العيد" : "🎉 Eid Greetings",
+    {
+      id: "eid", name: isRTL ? "🎉 تهنئة العيد" : "🎉 Eid Greetings",
       subject: isRTL ? "كل عام وأنتم بخير - عروض العيد الحصرية" : "Eid Mubarak - Exclusive Eid Offers",
       content: isRTL ? "عيد مبارك! 🎉\n\nبهذه المناسبة السعيدة، نتقدم لكم بأحر التهاني.\n\nعروض العيد الخاصة:\n🚗 خصم 20% على سيارات مختارة\n🎁 باقة صيانة مجانية لمدة سنة\n💰 أسعار تنافسية لن تتكرر\n\nزورونا في معرضنا واحتفلوا بالعيد بسيارة أحلامكم!" : "Eid Mubarak! We wish you a happy Eid and offer exclusive deals."
     },
-    { id: "national_day", name: isRTL ? "🇸🇦 اليوم الوطني" : "🇸🇦 National Day",
+    {
+      id: "national_day", name: isRTL ? "🇸🇦 اليوم الوطني" : "🇸🇦 National Day",
       subject: isRTL ? "احتفالية اليوم الوطني السعودي - عروض استثنائية" : "Saudi National Day Celebration - Special Offers",
       content: isRTL ? "🇸🇦 نحتفل معكم باليوم الوطني السعودي المجيد!\n\nبهذه المناسبة الغالية على قلوبنا جميعاً، نقدم:\n\n🎯 خصومات وطنية حصرية\n🏆 أسعار تاريخية لن تتكرر\n🚗 تشكيلة واسعة من أفخم السيارات\n\nكل عام والوطن بخير! 🇸🇦" : "We celebrate Saudi National Day with exclusive offers!"
     },
-    { id: "weekend_sale", name: isRTL ? "🔥 عروض نهاية الأسبوع" : "🔥 Weekend Sale",
+    {
+      id: "weekend_sale", name: isRTL ? "🔥 عروض نهاية الأسبوع" : "🔥 Weekend Sale",
       subject: isRTL ? "عروض نهاية الأسبوع الحصرية - لا تفوتوها!" : "Exclusive Weekend Offers - Don't Miss Out!",
       content: isRTL ? "عروض حصرية لنهاية الأسبوع فقط! 🔥\n\n⏰ العرض ساري ليومين فقط\n💰 خصومات فورية على جميع السيارات\n🎁 هدايا وإكسسوارات مجانية\n📞 استشارة مجانية من خبرائنا\n\nسارعوا واحجزوا سيارتكم الآن!" : "Exclusive weekend offers! Limited time only!"
     },
-    { id: "welcome", name: isRTL ? "👋 ترحيب بالعميل" : "👋 Welcome Customer",
+    {
+      id: "welcome", name: isRTL ? "👋 ترحيب بالعميل" : "👋 Welcome Customer",
       subject: isRTL ? "مرحباً بك في عائلتنا" : "Welcome to Our Family",
       content: isRTL ? "مرحباً بك! 👋\n\nيسعدنا انضمامك إلى عائلة عملائنا الكرام.\n\nنحن هنا لمساعدتك في إيجاد سيارة أحلامك:\n\n✅ تشكيلة واسعة من السيارات\n✅ أسعار تنافسية\n✅ خدمة عملاء متميزة\n✅ ضمان شامل\n\nتواصل معنا في أي وقت!" : "Welcome! We're glad to have you as part of our family."
     },
-    { id: "test_drive_invite", name: isRTL ? "🏎️ دعوة تجربة قيادة" : "🏎️ Test Drive Invitation",
+    {
+      id: "test_drive_invite", name: isRTL ? "🏎️ دعوة تجربة قيادة" : "🏎️ Test Drive Invitation",
       subject: isRTL ? "دعوة خاصة لتجربة قيادة مميزة" : "Special Test Drive Invitation",
       content: isRTL ? "ندعوك لتجربة قيادة لا تُنسى! 🏎️\n\n✨ جرب سيارتك المفضلة قبل الشراء\n📅 احجز موعدك المناسب\n👨‍💼 مستشار مخصص لخدمتك\n☕ ضيافة مميزة في انتظارك\n\nاحجز تجربتك الآن وعش التجربة الحقيقية!" : "We invite you for an unforgettable test drive experience!"
     },
@@ -561,7 +567,7 @@ const EmailCampaignsManagement = () => {
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 border-purple-500/20">
+        <Card className="bg-gradient-to-br from-primary/10 to-accent/10 border-accent/20">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -809,8 +815,8 @@ const EmailCampaignsManagement = () => {
                   </div>
 
                   <div className="flex flex-wrap gap-3">
-                    <Button 
-                      variant="outline" 
+                    <Button
+                      variant="outline"
                       onClick={() => setShowPreviewDialog(true)}
                       className="gap-2"
                     >

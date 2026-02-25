@@ -14,7 +14,6 @@ const CTABanner = () => {
   const whatsappLink = `https://wa.me/${cleanNumber}`;
 
   return (
-  return (
     <section className="py-24 bg-background border-t border-foreground/5 relative overflow-hidden">
       <div className="container mx-auto px-4 relative z-10">
         <div className="flex flex-col lg:flex-row items-center justify-between gap-16 p-12 md:p-24 bg-foreground relative overflow-hidden group shadow-luxury">

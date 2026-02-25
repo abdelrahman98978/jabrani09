@@ -102,7 +102,7 @@ const DashboardOverview = () => {
     { title: isRTL ? "الطلبات الجديدة" : "New Orders", value: stats?.newOrders || 0, icon: ShoppingCart, color: "from-amber-500 to-orange-500" },
     { title: isRTL ? "العملاء" : "Customers", value: stats?.totalCustomers || 0, icon: Users, color: "from-blue-500 to-cyan-500" },
     { title: isRTL ? "الإيرادات" : "Revenue", value: `${(stats?.totalRevenue || 0).toLocaleString()} ${settings?.currency_symbol || (isRTL ? "ج.س" : "SDG")}`, icon: DollarSign, color: "from-green-500 to-emerald-500" },
-    { title: isRTL ? "المشاهدات" : "Views", value: stats?.totalViews || 0, icon: Eye, color: "from-purple-500 to-pink-500" },
+    { title: isRTL ? "المشاهدات" : "Views", value: stats?.totalViews || 0, icon: Eye, color: "from-amber-400 to-amber-600" },
     { title: isRTL ? "معدل التحويل" : "Conversion Rate", value: stats?.totalViews ? `${((stats?.completedOrders || 0) / stats.totalViews * 100).toFixed(1)}%` : "0%", icon: TrendingUp, color: "from-rose-500 to-red-500" },
   ];
 

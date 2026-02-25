@@ -98,7 +98,7 @@ const NewsletterPopup = () => {
   const { language } = useLanguage();
   const { toast } = useToast();
   const t = translations[language as keyof typeof translations] || translations.ar;
-  
+
   const [isOpen, setIsOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [agreePrivacy, setAgreePrivacy] = useState(false);
@@ -107,13 +107,13 @@ const NewsletterPopup = () => {
   useEffect(() => {
     const hasShown = localStorage.getItem(POPUP_SHOWN_KEY);
     const hasSubscribed = localStorage.getItem(POPUP_SUBSCRIBED_KEY);
-    
+
     if (!hasShown && !hasSubscribed) {
       const timer = setTimeout(() => {
         setIsOpen(true);
         localStorage.setItem(POPUP_SHOWN_KEY, "true");
       }, 5000);
-      
+
       return () => clearTimeout(timer);
     }
   }, []);
@@ -186,17 +186,17 @@ const NewsletterPopup = () => {
           >
             <X className="h-4 w-4" />
           </button>
-          
+
           <div className="flex items-center gap-3 mb-3">
             <div className="p-3 bg-white/20 rounded-xl icon-float-3d">
               <Gift className="h-8 w-8" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold">{t.title}</h2>
+              <DialogTitle className="text-2xl font-bold">{t.title}</DialogTitle>
               <p className="text-primary-foreground/80 text-sm">{t.subtitle}</p>
             </div>
           </div>
-          
+
           {/* Decorative sparkles */}
           <Sparkles className="absolute top-4 left-1/4 h-4 w-4 opacity-50 animate-pulse" />
           <Sparkles className="absolute bottom-6 right-1/4 h-3 w-3 opacity-40 animate-pulse delay-300" />
@@ -209,7 +209,7 @@ const NewsletterPopup = () => {
           {/* Benefits */}
           <ul className="space-y-2">
             {t.benefits.map((benefit, index) => (
-              <li 
+              <li
                 key={index}
                 className="flex items-center gap-2 text-sm text-foreground"
                 style={{ animationDelay: `${index * 100}ms` }}
@@ -243,8 +243,8 @@ const NewsletterPopup = () => {
               onCheckedChange={(checked) => setAgreePrivacy(checked as boolean)}
               className="mt-0.5"
             />
-            <label 
-              htmlFor="privacy" 
+            <label
+              htmlFor="privacy"
               className="text-xs text-muted-foreground cursor-pointer"
             >
               {t.privacyAgree}
@@ -267,7 +267,7 @@ const NewsletterPopup = () => {
                 </>
               )}
             </Button>
-            
+
             <Button
               variant="ghost"
               onClick={handleClose}

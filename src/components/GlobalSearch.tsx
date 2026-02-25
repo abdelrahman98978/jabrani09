@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSettings } from "@/hooks/useSettings";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Search, Car, Building2, FileText, ArrowRight, Command } from "lucide-react";
@@ -115,13 +115,16 @@ const GlobalSearch = ({ open, onOpenChange }: GlobalSearchProps) => {
     const formatted = new Intl.NumberFormat(isRTL ? "ar-SD" : "en-US", {
       maximumFractionDigits: 0,
     }).format(price);
-    const symbol = settings?.currency_symbol || (isRTL ? "ج.س" : "SDG");
+    const symbol = (settings as any)?.currency_symbol || (isRTL ? "ج.س" : "SDG");
     return `${formatted} ${symbol}`;
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-xl p-0 gap-0 overflow-hidden">
+        <DialogTitle className="sr-only">
+          {isRTL ? "البحث العالمي" : "Global Search"}
+        </DialogTitle>
         {/* Search Input */}
         <div className="flex items-center border-b px-4">
           <Search className="h-5 w-5 text-muted-foreground flex-shrink-0" />

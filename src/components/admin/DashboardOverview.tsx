@@ -5,20 +5,25 @@ import { Car, Users, ShoppingCart, DollarSign, Eye, TrendingUp, Clock, MessageSq
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from "recharts";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSettings } from "@/hooks/useSettings";
+import WhatsAppButton from "@/components/WhatsAppButton";
+import { useTenant } from "@/contexts/TenantContext";
+import { motion, AnimatePresence } from "framer-motion";
 
 const DashboardOverview = () => {
   const { language } = useLanguage();
   const isRTL = language === "ar";
+  const { tenant } = useTenant();
   const { data: settings } = useSettings();
 
   const { data: stats } = useQuery({
-    queryKey: ["dashboard-stats"],
+    queryKey: ["dashboard-stats", tenant?.id],
     queryFn: async () => {
+      if (!tenant) return null;
       const [carsRes, ordersRes, customersRes, paymentsRes] = await Promise.all([
-        supabase.from("cars").select("id, views_count, status, price", { count: "exact" }),
-        supabase.from("orders").select("id, status, total_amount, paid_amount, created_at", { count: "exact" }),
-        supabase.from("customers").select("id", { count: "exact" }),
-        supabase.from("payments").select("amount, status"),
+        supabase.from("cars").select("id, views_count, status, price", { count: "exact" }).eq("tenant_id", tenant.id),
+        supabase.from("orders").select("id, status, total_amount, paid_amount, created_at", { count: "exact" }).eq("tenant_id", tenant.id),
+        supabase.from("customers").select("id", { count: "exact" }).eq("tenant_id", tenant.id),
+        supabase.from("payments").select("amount, status").eq("tenant_id", tenant.id),
       ]);
 
       const totalCars = carsRes.count || 0;
@@ -47,29 +52,32 @@ const DashboardOverview = () => {
         completedOrders,
         totalRevenue,
         pendingPayments,
-        totalCustomers,
       };
     },
+    enabled: !!tenant,
   });
 
   const { data: recentOrders } = useQuery({
-    queryKey: ["recent-orders"],
+    queryKey: ["recent-orders", tenant?.id],
     queryFn: async () => {
       const { data } = await supabase
         .from("orders")
         .select("*, customers(name), cars(name_ar)")
+        .eq("tenant_id", tenant.id)
         .order("created_at", { ascending: false })
         .limit(5);
       return data || [];
     },
+    enabled: !!tenant,
   });
 
   const { data: chartData } = useQuery({
-    queryKey: ["orders-chart"],
+    queryKey: ["orders-chart", tenant?.id],
     queryFn: async () => {
       const { data } = await supabase
         .from("orders")
         .select("created_at, total_amount")
+        .eq("tenant_id", tenant.id)
         .order("created_at", { ascending: true });
 
       const last7Days = [];

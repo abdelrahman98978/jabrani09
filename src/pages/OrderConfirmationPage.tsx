@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { useSettings } from "@/hooks/useSettings";
 import WhatsAppButton from "@/components/WhatsAppButton";
+import { useTenant } from "@/contexts/TenantContext";
 import { motion, AnimatePresence } from "framer-motion";
 
 const OrderConfirmationPage = () => {
@@ -36,8 +37,9 @@ const OrderConfirmationPage = () => {
       : "Acquisition Confirmed - Jabrani Sovereign";
   }, [isRTL]);
 
+  const { tenant } = useTenant();
   const { data: order, isLoading } = useQuery({
-    queryKey: ["order-confirmation", id],
+    queryKey: ["order-confirmation", id, tenant?.id],
     enabled: !!id,
     queryFn: async () => {
       const { data, error } = await supabase

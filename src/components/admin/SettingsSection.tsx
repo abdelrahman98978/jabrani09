@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useTenant } from "@/contexts/TenantContext";
 import { Settings, Loader2, Save, Upload, Globe, Phone, Mail, MapPin, Clock, Share2, AlertTriangle, Sparkles, Video, Image as ImageIcon, Trash2 } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -18,6 +19,7 @@ const SettingsSection = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { language } = useLanguage();
+  const { tenant } = useTenant();
   const isRTL = language === "ar";
 
   const [uploadingLogo, setUploadingLogo] = useState(false);
@@ -26,25 +28,39 @@ const SettingsSection = () => {
   const [showBannerDialog, setShowBannerDialog] = useState(false);
 
   const { data: settings, isLoading } = useQuery({
-    queryKey: ["admin-settings"],
+    queryKey: ["admin-settings", tenant?.id],
     queryFn: async () => {
-      const { data } = await supabase.from("settings").select("*").limit(1).maybeSingle();
+      if (!tenant) return null;
+      const { data } = await supabase
+        .from("settings")
+        .select("*")
+        .eq("tenant_id", tenant.id)
+        .maybeSingle();
       return data;
     },
+    enabled: !!tenant,
   });
 
   const saveSettings = useMutation({
     mutationFn: async (settingsData: any) => {
+      if (!tenant) throw new Error("No tenant active");
+      
       if (settings?.id) {
-        const { error } = await supabase.from("settings").update(settingsData).eq("id", settings.id);
+        const { error } = await supabase
+          .from("settings")
+          .update(settingsData)
+          .eq("id", settings.id)
+          .eq("tenant_id", tenant.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from("settings").insert(settingsData);
+        const { error } = await supabase
+          .from("settings")
+          .insert({ ...settingsData, tenant_id: tenant.id });
         if (error) throw error;
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-settings"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-settings", tenant?.id] });
       toast({ title: isRTL ? "تم حفظ الإعدادات" : "Settings saved" });
     },
   });

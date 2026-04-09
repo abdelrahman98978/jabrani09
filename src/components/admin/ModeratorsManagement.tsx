@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useTenant } from "@/contexts/TenantContext";
 import { 
   Table, 
   TableBody, 
@@ -59,6 +60,7 @@ interface UserRole {
 
 const ModeratorsManagement = () => {
   const { language } = useLanguage();
+  const { tenant } = useTenant();
   const isRTL = language === "ar";
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -69,11 +71,14 @@ const ModeratorsManagement = () => {
 
   // Fetch user roles with profiles
   const { data: userRoles, isLoading } = useQuery({
-    queryKey: ["user-roles"],
+    queryKey: ["user-roles", tenant?.id],
     queryFn: async () => {
+      if (!tenant) return [];
+
       const { data: roles, error } = await supabase
         .from("user_roles")
         .select("*")
+        .eq("tenant_id", tenant.id)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
@@ -120,7 +125,7 @@ const ModeratorsManagement = () => {
 
       const { error } = await supabase
         .from("user_roles")
-        .insert({ user_id: profile.user_id, role });
+        .insert({ user_id: profile.user_id, role, tenant_id: tenant?.id });
 
       if (error) throw error;
     },

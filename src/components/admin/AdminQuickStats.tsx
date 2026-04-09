@@ -4,29 +4,38 @@ import { ShoppingCart, MessageSquare, DollarSign, Car } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useLanguage } from "@/contexts/LanguageContext";
 
+import { useTenant } from "@/contexts/TenantContext";
+
 const AdminQuickStats = () => {
   const { language } = useLanguage();
+  const { tenant } = useTenant();
   const isRTL = language === "ar";
 
   const { data: stats } = useQuery({
-    queryKey: ["admin-quick-stats"],
+    queryKey: ["admin-quick-stats", tenant?.id],
     queryFn: async () => {
+      if (!tenant) return null;
+      
       const [ordersResult, messagesResult, carsResult, todayOrdersResult] = await Promise.all([
         supabase
           .from("orders")
           .select("id", { count: "exact", head: true })
+          .eq("tenant_id", tenant.id)
           .in("status", ["pending", "processing"]),
         supabase
           .from("contact_messages")
           .select("id", { count: "exact", head: true })
+          .eq("tenant_id", tenant.id)
           .eq("status", "new"),
         supabase
           .from("cars")
           .select("id", { count: "exact", head: true })
+          .eq("tenant_id", tenant.id)
           .eq("status", "available"),
         supabase
           .from("orders")
           .select("total_amount")
+          .eq("tenant_id", tenant.id)
           .gte("created_at", new Date().toISOString().split("T")[0]),
       ]);
 

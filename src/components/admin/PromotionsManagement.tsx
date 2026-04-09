@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useTenant } from "@/contexts/TenantContext";
 import { Tag, Plus, Pencil, Trash2, Loader2, Percent, Gift, Star, Sparkles } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { format } from "date-fns";
@@ -19,17 +20,20 @@ const PromotionsManagement = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { language } = useLanguage();
+  const { tenant } = useTenant();
   const isRTL = language === "ar";
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingPromotion, setEditingPromotion] = useState<any>(null);
 
   const { data: promotions, isLoading } = useQuery({
-    queryKey: ["admin-promotions"],
+    queryKey: ["admin-promotions", tenant?.id],
+    enabled: !!tenant?.id,
     queryFn: async () => {
       const { data } = await supabase
         .from("promotions")
         .select("*")
+        .eq("tenant_id", tenant!.id)
         .order("created_at", { ascending: false });
       return data || [];
     },
@@ -41,12 +45,12 @@ const PromotionsManagement = () => {
         const { error } = await supabase.from("promotions").update(promotionData).eq("id", editingPromotion.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from("promotions").insert(promotionData);
+        const { error } = await supabase.from("promotions").insert({ ...promotionData, tenant_id: tenant?.id });
         if (error) throw error;
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-promotions"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-promotions", tenant?.id] });
       setIsDialogOpen(false);
       setEditingPromotion(null);
       toast({ title: editingPromotion ? (isRTL ? "تم تحديث العرض" : "Promotion updated") : (isRTL ? "تم إضافة العرض" : "Promotion added") });

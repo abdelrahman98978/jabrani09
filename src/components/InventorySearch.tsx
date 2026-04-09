@@ -9,11 +9,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Slider } from "@/components/ui/slider";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTenant } from "@/contexts/TenantContext";
 
 const InventorySearch = () => {
   const navigate = useNavigate();
   const { language } = useLanguage();
   const isRTL = language === "ar";
+  const { tenant, isLoading: isTenantLoading } = useTenant();
 
   const [keyword, setKeyword] = useState("");
   const [brand, setBrand] = useState("");
@@ -23,11 +25,13 @@ const InventorySearch = () => {
   const [showAdvanced, setShowAdvanced] = useState(false);
 
   const { data: brands } = useQuery({
-    queryKey: ["brands-for-search"],
+    queryKey: ["brands-for-search", tenant?.id],
+    enabled: !isTenantLoading && !!tenant,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("brands")
         .select("id, name, name_ar")
+        .eq("tenant_id", tenant?.id)
         .eq("is_active", true)
         .order("name");
       if (error) throw error;

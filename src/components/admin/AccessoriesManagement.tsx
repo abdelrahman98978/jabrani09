@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useTenant } from "@/contexts/TenantContext";
 import { Package, Plus, Pencil, Trash2, Loader2 } from "lucide-react";
 
 interface Accessory {
@@ -28,6 +29,7 @@ interface Accessory {
 const AccessoriesManagement = () => {
   const { toast } = useToast();
   const { language } = useLanguage();
+  const { tenant } = useTenant();
   const isRTL = language === "ar";
 
   const [accessories, setAccessories] = useState<Accessory[]>([]);
@@ -47,14 +49,18 @@ const AccessoriesManagement = () => {
   });
 
   useEffect(() => {
-    fetchAccessories();
-  }, []);
+    if (tenant) {
+      fetchAccessories();
+    }
+  }, [tenant]);
 
   const fetchAccessories = async () => {
     try {
+      if (!tenant) return;
       const { data, error } = await supabase
         .from("accessories")
         .select("*")
+        .eq("tenant_id", tenant.id)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
@@ -94,7 +100,10 @@ const AccessoriesManagement = () => {
       } else {
         const { error } = await supabase
           .from("accessories")
-          .insert(saveData);
+          .insert({
+            ...saveData,
+            tenant_id: tenant?.id
+          });
         if (error) throw error;
       }
 

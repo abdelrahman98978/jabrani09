@@ -9,27 +9,44 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Building2, Loader2, Save, CreditCard, Landmark, FileText } from "lucide-react";
 import { Label } from "@/components/ui/label";
 
+import { useTenant } from "@/contexts/TenantContext";
+
 const BankSettings = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { language } = useLanguage();
+  const { tenant } = useTenant();
   const isRTL = language === "ar";
 
   const { data: settings, isLoading } = useQuery({
-    queryKey: ["admin-settings"],
+    queryKey: ["admin-settings", tenant?.id],
     queryFn: async () => {
-      const { data } = await supabase.from("showroom_settings").select("*").limit(1).maybeSingle();
+      if (!tenant) return null;
+      const { data } = await supabase
+        .from("showroom_settings")
+        .select("*")
+        .eq("tenant_id", tenant.id)
+        .limit(1)
+        .maybeSingle();
       return data;
     },
   });
 
   const saveSettings = useMutation({
     mutationFn: async (settingsData: any) => {
+      if (!tenant) throw new Error("No tenant active");
+      
       if (settings?.id) {
-        const { error } = await supabase.from("showroom_settings").update(settingsData).eq("id", settings.id);
+        const { error } = await supabase
+          .from("showroom_settings")
+          .update(settingsData)
+          .eq("id", settings.id)
+          .eq("tenant_id", tenant.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from("showroom_settings").insert(settingsData);
+        const { error } = await supabase
+          .from("showroom_settings")
+          .insert({ ...settingsData, tenant_id: tenant.id });
         if (error) throw error;
       }
     },

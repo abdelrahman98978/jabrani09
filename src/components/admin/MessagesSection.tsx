@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useTenant } from "@/contexts/TenantContext";
 import { MessageSquare, Loader2, Phone, Mail, Eye, Archive, Trash2, CheckCircle, Users } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { format } from "date-fns";
@@ -17,6 +18,7 @@ const MessagesSection = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { language } = useLanguage();
+  const { tenant } = useTenant();
   const isRTL = language === "ar";
 
   const [statusFilter, setStatusFilter] = useState("all");
@@ -25,11 +27,14 @@ const MessagesSection = () => {
   const [linkingCustomer, setLinkingCustomer] = useState(false);
 
   const { data: messages, isLoading } = useQuery({
-    queryKey: ["admin-messages", statusFilter],
+    queryKey: ["admin-messages", statusFilter, tenant?.id],
     queryFn: async () => {
+      if (!tenant) return [];
+
       let query = supabase
         .from("contact_messages")
         .select("*, cars(name_ar)")
+        .eq("tenant_id", tenant.id)
         .order("created_at", { ascending: false });
 
       if (statusFilter !== "all") {
@@ -39,6 +44,7 @@ const MessagesSection = () => {
       const { data } = await query;
       return data || [];
     },
+    enabled: !!tenant,
   });
 
   const updateMessage = useMutation({
@@ -83,6 +89,7 @@ const MessagesSection = () => {
           notes: message.message,
           customer_type: "potential",
           last_interaction: new Date().toISOString(),
+          tenant_id: tenant?.id,
         })
         .select("*")
         .single();

@@ -35,6 +35,7 @@ import { CarQuickOrderDialog } from "@/components/CarQuickOrderDialog";
 import ReviewsList from "@/components/ReviewsList";
 import TestDriveBookingDialog from "@/components/TestDriveBookingDialog";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTenant } from "@/contexts/TenantContext";
 
 // Lazy load the 360 viewer for better performance
 const Car360Viewer = lazy(() => import("@/components/Car360Viewer"));
@@ -44,6 +45,7 @@ const CarDetailsPage = () => {
   const { toast } = useToast();
   const { t, language } = useLanguage();
   const isRTL = language === "ar";
+  const { tenant, isLoading: isTenantLoading } = useTenant();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
   const [isQuickOrderOpen, setIsQuickOrderOpen] = useState(false);
@@ -51,15 +53,20 @@ const CarDetailsPage = () => {
   const heroVideoRef = useRef<HTMLVideoElement>(null);
 
   const { data: car, isLoading } = useQuery({
-    queryKey: ["car", id],
+    queryKey: ["car", id, tenant?.id],
+    enabled: !!id && !isTenantLoading && !!tenant,
     queryFn: async () => {
       const [{ data, error }, { data: promotions, error: promoError }] = await Promise.all([
         supabase
           .from("cars")
           .select("*, brands(*)")
           .eq("id", id)
+          .eq("tenant_id", tenant?.id)
           .maybeSingle(),
-        supabase.from("promotions").select("*"),
+        supabase
+          .from("promotions")
+          .select("*")
+          .eq("tenant_id", tenant?.id),
       ]);
 
       if (error) throw error;
@@ -69,9 +76,10 @@ const CarDetailsPage = () => {
         await supabase
           .from("cars")
           .update({ views_count: (data.views_count || 0) + 1 })
-          .eq("id", id);
+          .eq("id", id)
+          .eq("tenant_id", tenant?.id);
       }
-
+// ... [applyPromotionsToCar logic remains same]
       const applyPromotionsToCar = (car: any, promotionsList: any[]) => {
         if (!car) return car;
         const now = new Date();
@@ -117,10 +125,10 @@ const CarDetailsPage = () => {
 
       return applyPromotionsToCar(data, promotions || []);
     },
-    enabled: !!id,
   });
 
   const { data: settings } = useSettings();
+  const whatsappNumber = (settings as any)?.phone || "966543389314";
 
   const formatPrice = (price: number) => {
     const formatted = new Intl.NumberFormat(isRTL ? "ar-SD" : "en-US", {
@@ -146,7 +154,7 @@ const CarDetailsPage = () => {
       en: `Hello, I'm interested in the ${car?.name} ${car?.model} ${car?.year}`,
     };
     const message = encodeURIComponent(messages[language] || messages.ar);
-    window.open(`https://wa.me/966543389314?text=${message}`, "_blank");
+    window.open(`https://wa.me/${whatsappNumber}?text=${message}`, "_blank");
   };
 
   const handleOrderViaWhatsApp = () => {
@@ -162,7 +170,7 @@ const CarDetailsPage = () => {
     };
 
     const message = encodeURIComponent(orderMessages[language] || orderMessages.ar);
-    window.open(`https://wa.me/966543389314?text=${message}`, "_blank");
+    window.open(`https://wa.me/${whatsappNumber}?text=${message}`, "_blank");
   };
 
   const handleShare = async () => {

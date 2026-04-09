@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useTenant } from "@/contexts/TenantContext";
 import { CreditCard, Plus, Loader2, FileText, Mail, CheckCircle, Clock, XCircle, DollarSign } from "lucide-react";
 import { Label } from "@/components/ui/label";
 
@@ -15,6 +16,7 @@ const PaymentsManagement = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { language } = useLanguage();
+  const { tenant } = useTenant();
   const isRTL = language === "ar";
 
   const [isPaymentDialogOpen, setIsPaymentDialogOpen] = useState(false);
@@ -22,11 +24,13 @@ const PaymentsManagement = () => {
   const [sendingInvoiceId, setSendingInvoiceId] = useState<string | null>(null);
 
   const { data: payments, isLoading: paymentsLoading } = useQuery({
-    queryKey: ["admin-payments", statusFilter],
+    queryKey: ["admin-payments", statusFilter, tenant?.id],
     queryFn: async () => {
+      if (!tenant) return [];
       let query = supabase
         .from("payments")
         .select("*, orders(order_number, customers(name))")
+        .eq("tenant_id", tenant.id)
         .order("created_at", { ascending: false });
 
       if (statusFilter !== "all") {
@@ -39,22 +43,26 @@ const PaymentsManagement = () => {
   });
 
   const { data: invoices, isLoading: invoicesLoading } = useQuery({
-    queryKey: ["admin-invoices"],
+    queryKey: ["admin-invoices", tenant?.id],
     queryFn: async () => {
+      if (!tenant) return [];
       const { data } = await supabase
         .from("invoices")
         .select("*, orders(order_number), customers(name, email)")
+        .eq("tenant_id", tenant.id)
         .order("created_at", { ascending: false });
       return data || [];
     },
   });
 
   const { data: pendingOrders } = useQuery({
-    queryKey: ["pending-orders-for-payment"],
+    queryKey: ["pending-orders-for-payment", tenant?.id],
     queryFn: async () => {
+      if (!tenant) return [];
       const { data } = await supabase
         .from("orders")
         .select("*, customers(name), cars(name_ar)")
+        .eq("tenant_id", tenant.id)
         .in("payment_status", ["pending", "partial"])
         .order("created_at", { ascending: false });
       return data || [];
@@ -62,9 +70,13 @@ const PaymentsManagement = () => {
   });
 
   const { data: stats } = useQuery({
-    queryKey: ["payments-stats"],
+    queryKey: ["payments-stats", tenant?.id],
     queryFn: async () => {
-      const { data: payments } = await supabase.from("payments").select("amount, status");
+      if (!tenant) return { totalReceived: 0, pending: 0, refunded: 0 };
+      const { data: payments } = await supabase
+        .from("payments")
+        .select("amount, status")
+        .eq("tenant_id", tenant.id);
       
       const totalReceived = payments?.filter(p => p.status === "completed").reduce((sum, p) => sum + Number(p.amount || 0), 0) || 0;
       const pending = payments?.filter(p => p.status === "pending").reduce((sum, p) => sum + Number(p.amount || 0), 0) || 0;
@@ -76,7 +88,10 @@ const PaymentsManagement = () => {
 
   const createPayment = useMutation({
     mutationFn: async (paymentData: any) => {
-      const { error } = await supabase.from("payments").insert(paymentData);
+      if (!tenant) throw new Error("No tenant active");
+      const { error } = await supabase
+        .from("payments")
+        .insert({ ...paymentData, tenant_id: tenant.id });
       if (error) throw error;
 
       // Update order paid amount
@@ -108,10 +123,12 @@ const PaymentsManagement = () => {
 
   const createInvoice = useMutation({
     mutationFn: async (orderId: string) => {
+      if (!tenant) throw new Error("No tenant active");
       const { data: order } = await supabase
         .from("orders")
         .select("*, customers(id)")
         .eq("id", orderId)
+        .eq("tenant_id", tenant.id)
         .single();
 
       if (!order) throw new Error("Order not found");
@@ -128,6 +145,7 @@ const PaymentsManagement = () => {
         invoice_number: invoiceNumber,
         order_id: orderId,
         customer_id: order.customer_id,
+        tenant_id: tenant.id,
         amount,
         tax_amount: taxAmount,
         total_amount: totalAmount,

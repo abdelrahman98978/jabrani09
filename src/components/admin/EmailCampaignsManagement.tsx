@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTenant } from "@/contexts/TenantContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -57,6 +58,7 @@ interface Campaign {
 const EmailCampaignsManagement = () => {
   const { toast } = useToast();
   const { language } = useLanguage();
+  const { tenant } = useTenant();
   const isRTL = language === "ar";
 
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
@@ -129,14 +131,18 @@ const EmailCampaignsManagement = () => {
   ];
 
   useEffect(() => {
-    fetchCampaigns();
-  }, []);
+    if (tenant) {
+      fetchCampaigns();
+    }
+  }, [tenant]);
 
   const fetchCampaigns = async () => {
     try {
+      if (!tenant) return;
       const { data, error } = await supabase
         .from("email_campaigns")
         .select("*")
+        .eq("tenant_id", tenant.id)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
@@ -305,6 +311,7 @@ const EmailCampaignsManagement = () => {
           content_ar: content,
           target_audience: targetAudience,
           status: "draft",
+          tenant_id: tenant?.id,
         })
         .select()
         .single();
@@ -365,6 +372,7 @@ const EmailCampaignsManagement = () => {
         content_ar: generatedContent.content,
         target_audience: targetAudience,
         status: "draft",
+        tenant_id: tenant?.id,
       });
 
       if (error) throw error;

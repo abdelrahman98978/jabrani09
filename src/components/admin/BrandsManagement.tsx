@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useTenant } from "@/contexts/TenantContext";
 import { Tag, Plus, Pencil, Trash2, Loader2, Upload, X } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -15,6 +16,7 @@ const BrandsManagement = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { language } = useLanguage();
+  const { tenant } = useTenant();
   const isRTL = language === "ar";
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -23,11 +25,17 @@ const BrandsManagement = () => {
   const [uploading, setUploading] = useState(false);
 
   const { data: brands, isLoading } = useQuery({
-    queryKey: ["admin-brands"],
+    queryKey: ["admin-brands", tenant?.id],
     queryFn: async () => {
-      const { data } = await supabase.from("brands").select("*").order("sort_order");
+      if (!tenant) return [];
+      const { data } = await supabase
+        .from("brands")
+        .select("*")
+        .eq("tenant_id", tenant.id)
+        .order("sort_order");
       return data || [];
     },
+    enabled: !!tenant,
   });
 
   const handleLogoUpload = async (file: File) => {
@@ -62,7 +70,10 @@ const BrandsManagement = () => {
         const { error } = await supabase.from("brands").update(brandData).eq("id", editingBrand.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from("brands").insert(brandData);
+        const { error } = await supabase.from("brands").insert({
+          ...brandData,
+          tenant_id: tenant?.id
+        });
         if (error) throw error;
       }
     },

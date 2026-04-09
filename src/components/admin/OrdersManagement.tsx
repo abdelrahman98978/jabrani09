@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useTenant } from "@/contexts/TenantContext";
 import { ShoppingCart, Search, Loader2, Eye, CheckCircle, XCircle, Clock, AlertCircle } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { format } from "date-fns";
@@ -18,6 +19,7 @@ const OrdersManagement = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { language } = useLanguage();
+  const { tenant } = useTenant();
   const isRTL = language === "ar";
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -27,11 +29,14 @@ const OrdersManagement = () => {
   const [isUploadingProof, setIsUploadingProof] = useState(false);
 
   const { data: orders, isLoading } = useQuery({
-    queryKey: ["admin-orders", statusFilter],
+    queryKey: ["admin-orders", statusFilter, tenant?.id],
     queryFn: async () => {
+      if (!tenant) return [];
+
       let query = supabase
         .from("orders")
         .select("*, customers(name, phone, email), cars(name_ar, main_image, price)")
+        .eq("tenant_id", tenant.id)
         .order("created_at", { ascending: false });
 
       if (statusFilter !== "all") {

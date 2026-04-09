@@ -8,12 +8,14 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useTenant } from "@/contexts/TenantContext";
 import { Check, X, Trash2, Search, Star, MessageSquare, Clock, CheckCircle } from "lucide-react";
 import { format } from "date-fns";
 import { ar } from "date-fns/locale";
 
 const ReviewsManagement = () => {
   const { language } = useLanguage();
+  const { tenant } = useTenant();
   const isRTL = language === "ar";
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState("");
@@ -21,7 +23,8 @@ const ReviewsManagement = () => {
   const [ratingFilter, setRatingFilter] = useState<string>("all");
 
   const { data: reviews, isLoading } = useQuery({
-    queryKey: ["admin-reviews", statusFilter, ratingFilter],
+    queryKey: ["admin-reviews", statusFilter, ratingFilter, tenant?.id],
+    enabled: !!tenant?.id,
     queryFn: async () => {
       let query = supabase
         .from("car_reviews")
@@ -29,6 +32,7 @@ const ReviewsManagement = () => {
           *,
           cars:car_id (name_ar, name, main_image)
         `)
+        .eq("tenant_id", tenant?.id)
         .order("created_at", { ascending: false });
 
       if (statusFilter === "pending") {
@@ -48,9 +52,13 @@ const ReviewsManagement = () => {
   });
 
   const { data: stats } = useQuery({
-    queryKey: ["review-stats"],
+    queryKey: ["review-stats", tenant?.id],
+    enabled: !!tenant?.id,
     queryFn: async () => {
-      const { data: all } = await supabase.from("car_reviews").select("rating, is_approved");
+      const { data: all } = await supabase
+        .from("car_reviews")
+        .select("rating, is_approved")
+        .eq("tenant_id", tenant?.id);
       const total = all?.length || 0;
       const pending = all?.filter(r => !r.is_approved).length || 0;
       const approved = all?.filter(r => r.is_approved).length || 0;
@@ -70,8 +78,8 @@ const ReviewsManagement = () => {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-reviews"] });
-      queryClient.invalidateQueries({ queryKey: ["review-stats"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-reviews", tenant?.id] });
+      queryClient.invalidateQueries({ queryKey: ["review-stats", tenant?.id] });
       toast.success(isRTL ? "تمت الموافقة على المراجعة" : "Review approved");
     },
   });
@@ -85,8 +93,8 @@ const ReviewsManagement = () => {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-reviews"] });
-      queryClient.invalidateQueries({ queryKey: ["review-stats"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-reviews", tenant?.id] });
+      queryClient.invalidateQueries({ queryKey: ["review-stats", tenant?.id] });
       toast.success(isRTL ? "تم رفض المراجعة" : "Review rejected");
     },
   });
@@ -100,8 +108,8 @@ const ReviewsManagement = () => {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-reviews"] });
-      queryClient.invalidateQueries({ queryKey: ["review-stats"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-reviews", tenant?.id] });
+      queryClient.invalidateQueries({ queryKey: ["review-stats", tenant?.id] });
       toast.success(isRTL ? "تم حذف المراجعة" : "Review deleted");
     },
   });

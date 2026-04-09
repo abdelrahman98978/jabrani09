@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useTenant } from "@/contexts/TenantContext";
 import { format } from "date-fns";
 import { ar } from "date-fns/locale";
 import { 
@@ -26,6 +27,7 @@ const statusConfig: Record<string, { label: { ar: string; en: string }; color: s
 
 const TestDriveManagement = () => {
   const { language } = useLanguage();
+  const { tenant } = useTenant();
   const isRTL = language === "ar";
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState("");
@@ -34,14 +36,16 @@ const TestDriveManagement = () => {
   const [adminNotes, setAdminNotes] = useState("");
 
   const { data: bookings, isLoading } = useQuery({
-    queryKey: ["test-drive-bookings", statusFilter],
+    queryKey: ["test-drive-bookings", statusFilter, tenant?.id],
     queryFn: async () => {
+      if (!tenant) return [];
       let query = supabase
         .from("test_drive_bookings")
         .select(`
           *,
           cars:car_id (name_ar, name, main_image)
         `)
+        .eq("tenant_id", tenant.id)
         .order("booking_date", { ascending: true })
         .order("booking_time", { ascending: true });
 
@@ -56,15 +60,20 @@ const TestDriveManagement = () => {
   });
 
   const { data: stats } = useQuery({
-    queryKey: ["test-drive-stats"],
+    queryKey: ["test-drive-stats", tenant?.id],
     queryFn: async () => {
-      const { data } = await supabase.from("test_drive_bookings").select("status");
+      if (!tenant) return { total: 0, pending: 0, confirmed: 0, completed: 0 };
+      const { data } = await supabase
+        .from("test_drive_bookings")
+        .select("status")
+        .eq("tenant_id", tenant.id);
       const total = data?.length || 0;
       const pending = data?.filter(b => b.status === "pending").length || 0;
       const confirmed = data?.filter(b => b.status === "confirmed").length || 0;
       const completed = data?.filter(b => b.status === "completed").length || 0;
       return { total, pending, confirmed, completed };
     },
+    enabled: !!tenant,
   });
 
   const updateStatusMutation = useMutation({

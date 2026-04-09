@@ -6,20 +6,24 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { useRef, useState } from "react";
 import { motion } from "framer-motion";
+import { useTenant } from "@/contexts/TenantContext";
 
 const BrandsSection = () => {
   const { language } = useLanguage();
   const isRTL = language === "ar";
+  const { tenant, isLoading: isTenantLoading } = useTenant();
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
 
   const { data: brands, isLoading } = useQuery({
-    queryKey: ["brands"],
+    queryKey: ["brands", tenant?.id],
+    enabled: !isTenantLoading && !!tenant,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("brands")
         .select("*")
+        .eq("tenant_id", tenant?.id)
         .eq("is_active", true)
         .order("sort_order", { ascending: true });
 
@@ -29,11 +33,13 @@ const BrandsSection = () => {
   });
 
   const { data: carCounts } = useQuery({
-    queryKey: ["brand-car-counts"],
+    queryKey: ["brand-car-counts", tenant?.id],
+    enabled: !isTenantLoading && !!tenant,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("cars")
         .select("brand_id")
+        .eq("tenant_id", tenant?.id)
         .eq("status", "available");
 
       if (error) throw error;

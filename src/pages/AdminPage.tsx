@@ -33,7 +33,9 @@ import AdvancedAnalytics from "@/components/admin/AdvancedAnalytics";
 import SubscribersManagement from "@/components/admin/SubscribersManagement";
 import ReviewsManagement from "@/components/admin/ReviewsManagement";
 import TestDriveManagement from "@/components/admin/TestDriveManagement";
+import ManifestsManagement from "@/components/admin/ManifestsManagement";
 import { Button } from "@/components/ui/button";
+import { useTenant } from "@/contexts/TenantContext";
 
 const AdminPage = () => {
   const navigate = useNavigate();
@@ -44,6 +46,7 @@ const AdminPage = () => {
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [activeTab, setActiveTab] = useState("dashboard");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const { tenant } = useTenant();
   const { data: settings, isLoading: settingsLoading } = useSettings();
 
   useEffect(() => {
@@ -162,6 +165,18 @@ const AdminPage = () => {
       ]
     },
   ];
+
+  // Add Sovereign Manifests if tenant is on sovereign plan
+  if (tenant?.plan_tier === 'sovereign') {
+    const mainSection = tabs.find(t => t.section === (isRTL ? "المبيعات" : "Sales"));
+    if (mainSection) {
+      mainSection.items.push({
+        id: "manifests",
+        label: isRTL ? "المانيفستو السيادي" : "Sovereign Manifests",
+        icon: Package 
+      });
+    }
+  }
 
   const allTabItems = tabs.flatMap(t => t.items);
   const activeTabConfig = allTabItems.find((t) => t.id === activeTab) ?? allTabItems[0];
@@ -292,6 +307,7 @@ const AdminPage = () => {
                       {activeTab === "reviews" && <ReviewsManagement />}
                       {activeTab === "test_drives" && <TestDriveManagement />}
                       {activeTab === "moderators" && <ModeratorsManagement />}
+                      {activeTab === "manifests" && <ManifestsManagement />}
                       {activeTab === "messages" && <MessagesSection />}
                       {activeTab === "reports" && <ReportsSection />}
                       {/* Bank Settings moved to Settings -> Payment */}

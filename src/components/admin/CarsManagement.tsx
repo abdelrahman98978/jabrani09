@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useTenant } from "@/contexts/TenantContext";
 import { Plus, Pencil, Trash2, Loader2, Search, Upload, X, Eye, Car, RotateCw, Video } from "lucide-react";
 import { Label } from "@/components/ui/label";
 
@@ -16,6 +17,7 @@ const CarsManagement = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { language } = useLanguage();
+  const { tenant } = useTenant();
   const isRTL = language === "ar";
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -33,19 +35,28 @@ const CarsManagement = () => {
   const [heroVideoOverlay, setHeroVideoOverlay] = useState("medium");
 
   const { data: brands } = useQuery({
-    queryKey: ["admin-brands"],
+    queryKey: ["admin-brands", tenant?.id],
     queryFn: async () => {
-      const { data } = await supabase.from("brands").select("*").order("sort_order");
+      if (!tenant) return [];
+      const { data } = await supabase
+        .from("brands")
+        .select("*")
+        .eq("tenant_id", tenant.id)
+        .order("sort_order");
       return data || [];
     },
+    enabled: !!tenant,
   });
 
   const { data: cars, isLoading } = useQuery({
-    queryKey: ["admin-cars", searchTerm, statusFilter],
+    queryKey: ["admin-cars", searchTerm, statusFilter, tenant?.id],
     queryFn: async () => {
+      if (!tenant) return [];
+      
       let query = supabase
         .from("cars")
         .select("*, brands(name_ar, name)")
+        .eq("tenant_id", tenant.id)
         .order("created_at", { ascending: false });
 
       if (statusFilter !== "all") {
@@ -174,7 +185,10 @@ const CarsManagement = () => {
         const { error } = await supabase.from("cars").update(carData).eq("id", editingCar.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from("cars").insert(carData);
+        const { error } = await supabase.from("cars").insert({
+          ...carData,
+          tenant_id: tenant?.id
+        });
         if (error) throw error;
       }
     },

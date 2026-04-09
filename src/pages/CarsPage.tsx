@@ -11,6 +11,7 @@ import { Search, Loader2, X } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { Input } from "@/components/ui/input";
+import { useTenant } from "@/contexts/TenantContext";
 
 interface Promotion {
   id: string;
@@ -28,6 +29,7 @@ interface Promotion {
 const CarsPage = () => {
   const [searchParams] = useSearchParams();
   const { language } = useLanguage();
+  const { tenant } = useTenant();
   const isRTL = language === "ar";
   const brandFilter = searchParams.get("brand");
   
@@ -39,24 +41,29 @@ const CarsPage = () => {
   const [sortBy, setSortBy] = useState<string>("newest");
 
   const { data: brands } = useQuery({
-    queryKey: ["brands"],
+    queryKey: ["brands", tenant?.id],
     queryFn: async () => {
+      if (!tenant) return [];
       const { data, error } = await supabase
         .from("brands")
         .select("*")
+        .eq("tenant_id", tenant.id)
         .eq("is_active", true)
         .order("sort_order");
       if (error) throw error;
       return data;
     },
+    enabled: !!tenant,
   });
 
   const { data: cars, isLoading } = useQuery({
-    queryKey: ["cars", selectedBrand, fuelType, transmission, priceRange, sortBy, search],
+    queryKey: ["cars", tenant?.id, selectedBrand, fuelType, transmission, search, priceRange, sortBy],
     queryFn: async () => {
+      if (!tenant) return [];
       let query = supabase
         .from("cars")
         .select("*, brands(name, name_ar)")
+        .eq("tenant_id", tenant.id)
         .eq("status", "available");
 
       if (selectedBrand && selectedBrand !== "all") {
@@ -93,7 +100,7 @@ const CarsPage = () => {
 
       const [{ data: cars, error }, { data: promotions, error: promoError }] = await Promise.all([
         query,
-        supabase.from("promotions").select("*"),
+        supabase.from("promotions").select("*").eq("tenant_id", tenant.id),
       ]);
 
       if (error) throw error;

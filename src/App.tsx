@@ -110,21 +110,23 @@ function parseColorToHslComponents(value?: string | null): string | null {
 }
 
 const AppInner = () => {
+  const { tenant } = useTenant();
   const { data: settings } = useSettings();
 
   useEffect(() => {
-    if (!settings) return;
+    const activeBranding = settings || tenant?.branding;
+    if (!activeBranding) return;
 
     const root = document.documentElement;
 
-    const primary = parseColorToHslComponents(settings.primary_color);
-    const secondary = parseColorToHslComponents(settings.secondary_color);
-    const accent = parseColorToHslComponents(settings.accent_color);
+    const primary = parseColorToHslComponents(activeBranding.primary_color);
+    const secondary = parseColorToHslComponents(activeBranding.secondary_color);
+    const accent = parseColorToHslComponents(activeBranding.accent_color);
 
     if (primary) root.style.setProperty("--primary", primary);
     if (secondary) root.style.setProperty("--secondary", secondary);
     if (accent) root.style.setProperty("--accent", accent);
-  }, [settings]);
+  }, [settings, tenant]);
 
   return (
     <ThemeProvider>
@@ -175,9 +177,13 @@ const AppInner = () => {
   );
 };
 
+import { TenantProvider } from "@/contexts/TenantContext";
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <AppInner />
+    <TenantProvider>
+      <AppInner />
+    </TenantProvider>
   </QueryClientProvider>
 );
 

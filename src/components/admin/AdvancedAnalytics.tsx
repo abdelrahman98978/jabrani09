@@ -9,52 +9,75 @@ import { TrendingUp, TrendingDown, DollarSign, ShoppingCart, Users, Car, Calenda
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 
+import { useTenant } from "@/contexts/TenantContext";
+
 const AdvancedAnalytics = () => {
   const { language } = useLanguage();
+  const { tenant } = useTenant();
   const { toast } = useToast();
   const isRTL = language === "ar";
   const [aiInsights, setAiInsights] = useState("");
   const [isLoadingAI, setIsLoadingAI] = useState(false);
 
   const { data: ordersData } = useQuery({
-    queryKey: ["analytics-orders"],
+    queryKey: ["analytics-orders", tenant?.id],
     queryFn: async () => {
+      if (!tenant) return [];
       const { data } = await supabase
         .from("orders")
         .select("*, customers(name), cars(name_ar, brand_id, price)")
+        .eq("tenant_id", tenant.id)
         .order("created_at", { ascending: false });
       return data || [];
     },
   });
 
   const { data: paymentsData } = useQuery({
-    queryKey: ["analytics-payments"],
+    queryKey: ["analytics-payments", tenant?.id],
     queryFn: async () => {
-      const { data } = await supabase.from("payments").select("*");
+      if (!tenant) return [];
+      const { data } = await supabase
+        .from("payments")
+        .select("*")
+        .eq("tenant_id", tenant.id);
       return data || [];
     },
   });
 
   const { data: carsData } = useQuery({
-    queryKey: ["analytics-cars"],
+    queryKey: ["analytics-cars", tenant?.id],
     queryFn: async () => {
-      const { data } = await supabase.from("cars").select("*, brands(name_ar)");
+      if (!tenant) return [];
+      const { data } = await supabase
+        .from("cars")
+        .select("*, brands(name_ar)")
+        .eq("tenant_id", tenant.id);
       return data || [];
     },
   });
 
   const { data: brandsData } = useQuery({
-    queryKey: ["analytics-brands"],
+    queryKey: ["analytics-brands", tenant?.id],
     queryFn: async () => {
-      const { data } = await supabase.from("brands").select("*");
+      if (!tenant) return [];
+      const { data } = await supabase
+        .from("brands")
+        .select("*")
+        .eq("tenant_id", tenant.id);
       return data || [];
     },
   });
 
   const { data: settings } = useQuery({
-    queryKey: ["admin-settings"],
+    queryKey: ["admin-settings", tenant?.id],
     queryFn: async () => {
-      const { data } = await supabase.from("settings").select("*").limit(1).maybeSingle();
+      if (!tenant) return null;
+      const { data } = await supabase
+        .from("settings")
+        .select("*")
+        .eq("tenant_id", tenant.id)
+        .limit(1)
+        .maybeSingle();
       return data;
     },
   });

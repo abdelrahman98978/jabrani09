@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Loader2, Sparkles, Trophy } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { motion } from "framer-motion";
+import { useTenant } from "@/contexts/TenantContext";
 
 interface Promotion {
   id: string;
@@ -84,19 +85,25 @@ const applyPromotions = (cars: any[], promotions: Promotion[]) => {
 const FeaturedCars = () => {
   const { language } = useLanguage();
   const isRTL = language === "ar";
+  const { tenant, isLoading: isTenantLoading } = useTenant();
 
   const { data: cars, isLoading } = useQuery({
-    queryKey: ["featured-cars"],
+    queryKey: ["featured-cars", tenant?.id],
+    enabled: !isTenantLoading && !!tenant,
     queryFn: async () => {
       const [{ data: carsData, error }, { data: promotions, error: promoError }] = await Promise.all([
         supabase
           .from("cars")
           .select("*")
+          .eq("tenant_id", tenant?.id)
           .eq("is_featured", true)
           .eq("status", "available")
           .order("created_at", { ascending: false })
           .limit(12),
-        supabase.from("promotions").select("*"),
+        supabase
+          .from("promotions")
+          .select("*")
+          .eq("tenant_id", tenant?.id),
       ]);
 
       if (error) {

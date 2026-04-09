@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTenant } from "@/contexts/TenantContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -62,6 +63,7 @@ interface Subscriber {
 const SubscribersManagement = () => {
   const { toast } = useToast();
   const { language } = useLanguage();
+  const { tenant } = useTenant();
   const isRTL = language === "ar";
 
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
@@ -76,15 +78,19 @@ const SubscribersManagement = () => {
   const [filter, setFilter] = useState<"all" | "active" | "inactive">("all");
 
   useEffect(() => {
-    fetchSubscribers();
-  }, []);
+    if (tenant) {
+      fetchSubscribers();
+    }
+  }, [tenant]);
 
   const fetchSubscribers = async () => {
     try {
+      if (!tenant) return;
       setLoading(true);
       const { data, error } = await supabase
         .from("newsletter_subscribers")
         .select("*")
+        .eq("tenant_id", tenant.id)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
@@ -126,6 +132,7 @@ const SubscribersManagement = () => {
       const { error } = await supabase.from("newsletter_subscribers").insert({
         email: newEmail.toLowerCase().trim(),
         is_active: true,
+        tenant_id: tenant?.id,
       });
 
       if (error) {
@@ -186,11 +193,15 @@ const SubscribersManagement = () => {
         return;
       }
 
-      const subscribers = emails.map((email) => ({ email, is_active: true }));
+      const subscribers = emails.map((email) => ({ 
+        email, 
+        is_active: true,
+        tenant_id: tenant?.id
+      }));
 
       const { error } = await supabase
         .from("newsletter_subscribers")
-        .upsert(subscribers, { onConflict: "email", ignoreDuplicates: true });
+        .upsert(subscribers, { onConflict: "email,tenant_id", ignoreDuplicates: true });
 
       if (error) throw error;
 

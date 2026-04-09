@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { motion } from "framer-motion";
+import { useTenant } from "@/contexts/TenantContext";
 
 interface CounterProps {
   end: number;
@@ -61,20 +62,34 @@ const AnimatedCounter = ({ end, duration = 2000, suffix = "", prefix = "" }: Cou
 const StatsCounter = () => {
   const { language } = useLanguage();
   const isRTL = language === "ar";
+  const { tenant, isLoading: isTenantLoading } = useTenant();
 
   const { data: stats } = useQuery({
-    queryKey: ["stats-counter"],
+    queryKey: ["stats-counter", tenant?.id],
+    enabled: !isTenantLoading && !!tenant,
     queryFn: async () => {
       const [carsResult, brandsResult, ordersResult] = await Promise.all([
-        supabase.from("cars").select("id", { count: "exact", head: true }).eq("status", "available"),
-        supabase.from("brands").select("id", { count: "exact", head: true }).eq("is_active", true),
-        supabase.from("orders").select("id", { count: "exact", head: true }).eq("status", "completed"),
+        supabase
+          .from("cars")
+          .select("id", { count: "exact", head: true })
+          .eq("tenant_id", tenant?.id)
+          .eq("status", "available"),
+        supabase
+          .from("brands")
+          .select("id", { count: "exact", head: true })
+          .eq("tenant_id", tenant?.id)
+          .eq("is_active", true),
+        supabase
+          .from("orders")
+          .select("id", { count: "exact", head: true })
+          .eq("tenant_id", tenant?.id)
+          .eq("status", "completed"),
       ]);
 
       return {
-        carsCount: carsResult.count || 250,
-        brandsCount: brandsResult.count || 15,
-        customersCount: ordersResult.count || 1200,
+        carsCount: carsResult.count || 0,
+        brandsCount: brandsResult.count || 0,
+        customersCount: ordersResult.count || 0,
       };
     },
     staleTime: 1000 * 60 * 5,

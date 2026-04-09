@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useTenant } from "@/contexts/TenantContext";
 import { Users, Search, Loader2, Plus, Pencil, Trash2, Phone, Mail, MapPin, Crown, Star, UserPlus } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { format } from "date-fns";
@@ -18,6 +19,7 @@ const CustomersManagement = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { language } = useLanguage();
+  const { tenant } = useTenant();
   const isRTL = language === "ar";
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -26,11 +28,13 @@ const CustomersManagement = () => {
   const [editingCustomer, setEditingCustomer] = useState<any>(null);
 
   const { data: customers, isLoading } = useQuery({
-    queryKey: ["admin-customers", typeFilter],
+    queryKey: ["admin-customers", typeFilter, tenant?.id],
     queryFn: async () => {
+      if (!tenant) return [];
       let query = supabase
         .from("customers")
         .select("*")
+        .eq("tenant_id", tenant.id)
         .order("created_at", { ascending: false });
 
       if (typeFilter !== "all") {
@@ -57,7 +61,10 @@ const CustomersManagement = () => {
         const { error } = await supabase.from("customers").update(customerData).eq("id", editingCustomer.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from("customers").insert(customerData);
+        const { error } = await supabase.from("customers").insert({
+          ...customerData,
+          tenant_id: tenant?.id
+        });
         if (error) throw error;
       }
     },

@@ -184,7 +184,7 @@ const CarsPage = () => {
     transmission !== "all" || priceRange !== "all";
 
   return (
-    <div className="min-h-screen bg-black overflow-x-hidden selection:bg-primary/30">
+    <div className="dark min-h-screen bg-black overflow-x-hidden selection:bg-primary/30">
       <Navbar />
       
       <main className="pt-40 pb-32">

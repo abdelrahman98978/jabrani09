@@ -19,8 +19,15 @@ import {
   Eye,
   Camera,
   RotateCw,
+  Share2,
+  Phone,
+  ArrowRight,
+  MapPin,
+  Settings,
+  ShieldCheck,
+  Zap,
 } from "lucide-react";
-import { useState, lazy, Suspense, useRef } from "react";
+import { useState, lazy, Suspense, useRef, useEffect } from "react";
 import { useSettings } from "@/hooks/useSettings";
 import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -160,10 +167,14 @@ const CarDetailsPage = () => {
 
   const handleShare = async () => {
     try {
-      await navigator.share({
-        title: isRTL ? `${car?.name_ar} ${car?.model}` : `${car?.name} ${car?.model}`,
-        url: window.location.href,
-      });
+      if (navigator.share) {
+        await navigator.share({
+          title: isRTL ? `${car?.name_ar} ${car?.model}` : `${car?.name} ${car?.model}`,
+          url: window.location.href,
+        });
+      } else {
+        throw new Error("Share not supported");
+      }
     } catch {
       navigator.clipboard.writeText(window.location.href);
       toast({ description: isRTL ? "تم نسخ الرابط" : "Link copied" });
@@ -174,15 +185,19 @@ const CarDetailsPage = () => {
   const nextImage = () => setSelectedImageIndex((prev) => (prev + 1) % allImages.length);
   const prevImage = () => setSelectedImageIndex((prev) => (prev - 1 + allImages.length) % allImages.length);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [id]);
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
         <motion.div 
           animate={{ scale: [1, 1.1, 1], opacity: [0.5, 1, 0.5] }}
           transition={{ duration: 2, repeat: Infinity }}
-          className="text-primary font-bold tracking-[0.5em] uppercase text-xs"
+          className="text-primary font-bold tracking-[0.8em] uppercase text-xs"
         >
-          Sovereign Loading
+          Analyzing Specification
         </motion.div>
       </div>
     );
@@ -192,10 +207,10 @@ const CarDetailsPage = () => {
     return (
       <div className="min-h-screen bg-black">
         <Navbar />
-        <div className="container mx-auto px-6 pt-40 text-center">
-          <h1 className="text-4xl font-light text-white italic">Car not found.</h1>
-          <Link to="/cars" className="mt-8 inline-block text-primary uppercase tracking-[0.3em] text-xs">
-            Return to Gallery
+        <div className="container mx-auto px-6 pt-64 text-center">
+          <h1 className="text-4xl font-light text-white italic tracking-tighter uppercase">Artifact Missing</h1>
+          <Link to="/cars" className="mt-12 inline-block px-12 py-5 border border-primary text-primary uppercase tracking-[0.4em] text-[10px] font-black hover:bg-primary hover:text-black transition-all">
+            Return to Fleet
           </Link>
         </div>
       </div>
@@ -213,218 +228,282 @@ const CarDetailsPage = () => {
     <div className="min-h-screen bg-black selection:bg-primary/30 overflow-x-hidden">
       <Navbar />
 
-      {/* Cinematic Hero */}
-      {hasHeroVideo ? (
-        <section className="relative h-[85vh] overflow-hidden">
-          <video
-            ref={heroVideoRef}
-            autoPlay
-            muted
-            loop
-            playsInline
-            poster={heroVideoThumbnail}
-            className="absolute inset-0 w-full h-full object-cover"
+      {/* Cinematic Over-sized Hero */}
+      <section className="relative h-[85vh] overflow-hidden">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={selectedImageIndex}
+            initial={{ scale: 1.1, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+            transition={{ duration: 2, ease: [0.19, 1, 0.22, 1] }}
+            className="absolute inset-0"
           >
-            <source src={heroVideoUrl} type="video/mp4" />
-          </video>
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
-          <div className="absolute inset-0 flex items-end pb-32">
-            <div className="container mx-auto px-6 md:px-12">
-              <motion.div
-                initial={{ opacity: 0, y: 40 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1.2, ease: [0.19, 1, 0.22, 1] }}
-                className="max-w-4xl space-y-8"
+            {hasHeroVideo && selectedImageIndex === 0 ? (
+              <video
+                ref={heroVideoRef}
+                autoPlay
+                muted
+                loop
+                playsInline
+                poster={heroVideoThumbnail}
+                className="w-full h-full object-cover grayscale opacity-60"
               >
-                {car.brands && (
-                  <div className="inline-flex items-center gap-4 px-4 py-2 bg-white/5 backdrop-blur-md border border-white/10 rounded-full">
-                    {car.brands.logo_url && <img src={car.brands.logo_url} alt="" className="h-6 w-auto grayscale brightness-200" />}
-                    <span className="text-white/60 text-[11px] uppercase tracking-[0.4em]">
-                       {isRTL ? car.brands.name_ar : car.brands.name}
-                    </span>
-                  </div>
-                )}
-                <h1 className="text-6xl md:text-9xl text-hero text-white tracking-tighter">
-                  {isRTL ? car.name_ar : car.name}
-                  <span className="block text-white/20 italic font-light text-4xl md:text-6xl mt-4">
-                    {car.model} — {car.year}
-                  </span>
-                </h1>
-              </motion.div>
-            </div>
-          </div>
-        </section>
-      ) : (
-        <div className="pt-48 pb-20 container mx-auto px-6 md:px-12">
-           <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="max-w-4xl space-y-4"
-              >
-                <div className="text-primary text-[11px] uppercase tracking-[0.5em] font-black">
-                  Exquisite Selection
-                </div>
-                <h1 className="text-6xl md:text-9xl text-hero text-white tracking-tighter leading-none">
-                  {isRTL ? car.name_ar : car.name}
-                </h1>
-              </motion.div>
+                <source src={heroVideoUrl} type="video/mp4" />
+              </video>
+            ) : (
+              <img src={currentImage} className="w-full h-full object-cover grayscale opacity-40 contrast-125" alt="" />
+            )}
+          </motion.div>
+        </AnimatePresence>
+
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+        
+        {/* Editorial Floating Data */}
+        <div className="absolute inset-0 flex flex-col justify-end pb-24">
+           <div className="container mx-auto px-6 md:px-12">
+              <div className="flex flex-col md:flex-row items-end justify-between gap-12">
+                 <motion.div
+                   initial={{ opacity: 0, x: -50 }}
+                   animate={{ opacity: 1, x: 0 }}
+                   transition={{ duration: 1.5, ease: [0.19, 1, 0.22, 1] }}
+                   className="max-w-5xl space-y-6"
+                 >
+                    <div className="flex items-center gap-6">
+                       {car.brands?.logo_url && (
+                          <div className="h-16 w-16 bg-white/5 backdrop-blur-xl border border-white/10 flex items-center justify-center p-3">
+                             <img src={car.brands.logo_url} className="w-full h-full object-contain grayscale brightness-200" alt="" />
+                          </div>
+                       )}
+                       <div className="space-y-1">
+                          <p className="text-[10px] uppercase tracking-[0.6em] text-primary font-black">Institutional Record</p>
+                          <p className="text-white/60 text-[11px] uppercase tracking-[0.4em]">
+                             {isRTL ? car.brands?.name_ar : car.brands?.name} • Series {car.model}
+                          </p>
+                       </div>
+                    </div>
+                    <h1 className="text-7xl md:text-[10rem] text-hero text-white tracking-tighter leading-[0.85] uppercase">
+                       {isRTL ? car.name_ar : car.name}
+                    </h1>
+                 </motion.div>
+
+                 <motion.div
+                   initial={{ opacity: 0, x: 50 }}
+                   animate={{ opacity: 1, x: 0 }}
+                   transition={{ duration: 1.5, delay: 0.2, ease: [0.19, 1, 0.22, 1] }}
+                   className="text-right space-y-4"
+                 >
+                    <p className="text-[10px] uppercase tracking-[0.8em] text-white/20 mb-2">Acquisition Value</p>
+                    <div className="flex flex-col items-end">
+                       {car.has_discount && (
+                          <span className="text-2xl text-white/10 line-through tracking-tighter mb-2 italic">
+                            {formatPrice(car.original_price || car.price)}
+                          </span>
+                       )}
+                       <span className="text-6xl md:text-8xl font-black text-white tracking-tighter">
+                         {formatPrice(car.price)}
+                       </span>
+                    </div>
+                 </motion.div>
+              </div>
+           </div>
         </div>
-      )}
+      </section>
 
-      <main className="pb-32">
+      {/* Main Orchestration */}
+      <main className="py-32">
         <div className="container mx-auto px-6 md:px-12">
-          <div className="grid lg:grid-cols-12 gap-20">
-            {/* Visuals */}
-            <div className="lg:col-span-12 xl:col-span-8 space-y-12">
-              <motion.div
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                transition={{ duration: 1 }}
-                className="relative aspect-[16/9] bg-surface-low border border-white/5 overflow-hidden group cursor-pointer"
-                onClick={() => setIsGalleryOpen(true)}
-              >
-                <img
-                  src={currentImage}
-                  alt=""
-                  className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                
-                <div className="absolute bottom-8 right-8 flex items-center gap-6 z-10">
-                   <span className="text-[11px] text-white/40 tracking-[0.4em] uppercase">Visual Selection</span>
-                   <div className="flex gap-2">
-                     <button onClick={(e) => { e.stopPropagation(); prevImage(); }} className="w-12 h-12 border border-white/10 flex items-center justify-center hover:bg-white hover:text-black transition-all">
-                       <ChevronLeft className="h-4 w-4" />
-                     </button>
-                     <button onClick={(e) => { e.stopPropagation(); nextImage(); }} className="w-12 h-12 border border-white/10 flex items-center justify-center hover:bg-white hover:text-black transition-all">
-                       <ChevronRight className="h-4 w-4" />
-                     </button>
-                   </div>
-                </div>
-
-                <div className="absolute top-8 left-8 flex gap-4">
-                  <Badge className="bg-primary text-black text-[10px] tracking-[0.3em] font-black rounded-none px-4 py-2">
-                    {car.year} EDITION
-                  </Badge>
-                  {car.has_discount && (
-                     <Badge className="bg-white text-black text-[10px] tracking-[0.3em] font-black rounded-none px-4 py-2">
-                       OFFER ACTIVE
-                     </Badge>
-                  )}
-                </div>
-              </motion.div>
-
-              <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
-                {allImages.map((img, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setSelectedImageIndex(idx)}
-                    className={`aspect-square border transition-all duration-500 overflow-hidden ${
-                      selectedImageIndex === idx ? "border-primary p-px" : "border-white/5 opacity-40 hover:opacity-100"
-                    }`}
-                  >
-                    <img src={img} alt="" className="w-full h-full object-cover" />
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Acquisition & Details */}
-            <div className="lg:col-span-12 xl:col-span-4 space-y-20">
-              <div className="space-y-12">
-                <div className="space-y-4">
-                  <div className="text-[11px] uppercase tracking-[0.6em] text-primary font-bold">
-                    {isRTL ? "الاستثمار" : "The Investment"}
-                  </div>
-                  <div className="flex flex-col">
-                    {car.has_discount && car.original_price && (
-                      <span className="text-xl text-white/20 line-through tracking-tighter">
-                        {formatPrice(car.original_price)}
-                      </span>
-                    )}
-                    <span className="text-6xl md:text-7xl font-bold text-white tracking-tighter">
-                      {formatPrice(car.price)}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="flex flex-col gap-4">
-                  <button 
-                    onClick={handleOrderViaWhatsApp}
-                    className="w-full h-20 bg-primary text-black text-[12px] uppercase tracking-[0.5em] font-black hover:bg-white transition-all duration-700 flex items-center justify-center gap-4 group"
-                  >
-                    <ShoppingCart className="h-4 w-4 group-hover:scale-110 transition-transform" />
-                    {t.common.whatsappOrder}
-                  </button>
-                  <div className="grid grid-cols-2 gap-4">
-                    <button onClick={handleWhatsApp} className="h-16 border border-white/10 text-white text-[11px] uppercase tracking-[0.3em] hover:bg-white hover:text-black transition-all">
-                      Inquire
-                    </button>
-                    <button onClick={handleShare} className="h-16 border border-white/10 text-white text-[11px] uppercase tracking-[0.3em] hover:bg-white hover:text-black transition-all">
-                      Dispatch
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-8">
-                <h3 className="text-[11px] uppercase tracking-[0.6em] text-white/30 font-bold px-4">
-                   Specifications
-                </h3>
-                <div className="grid grid-cols-2 gap-px bg-white/5 border border-white/5">
-                   {[
-                     { label: "Temporal", value: car.year, icon: Calendar },
-                     { label: "Propulsion", value: fuelTypeLabel, icon: Fuel },
-                     { label: "Sequence", value: transmissionLabel, icon: Gauge },
-                     { label: "Shade", value: (isRTL ? car.color_ar : car.color) || "-", icon: Palette },
-                     { label: "Engagement", value: `${car.mileage?.toLocaleString() || 0} km`, icon: Eye },
-                     { label: "Velocity", value: car.engine_size || "N/A", icon: Gauge }
-                   ].map((spec, idx) => (
-                     <div key={idx} className="bg-black p-8 space-y-4 transition-colors hover:bg-surface-low group">
-                        <spec.icon className="h-4 w-4 text-white/10 group-hover:text-primary transition-colors" />
-                        <div className="space-y-1">
-                          <p className="text-[9px] uppercase tracking-[0.4em] text-white/20">{spec.label}</p>
-                          <p className="text-[14px] uppercase tracking-[0.1em] text-white font-bold">{spec.value}</p>
+          <div className="grid lg:grid-cols-12 gap-24">
+            
+            {/* Gallery Viewport */}
+            <div className="lg:col-span-8 space-y-12">
+               <div className="relative group overflow-hidden bg-surface-low border border-white/5 cursor-crosshair">
+                  <motion.img
+                    key={selectedImageIndex}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 1 }}
+                    src={currentImage}
+                    className="w-full aspect-[16/9] object-cover transition-transform duration-1000 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black/80 to-transparent flex items-end p-8">
+                     <div className="flex items-center justify-between w-full">
+                        <span className="text-[10px] uppercase tracking-[0.5em] text-white/40">Visual Specimen {selectedImageIndex + 1}/{allImages.length}</span>
+                        <div className="flex gap-4">
+                           <button onClick={prevImage} className="w-14 h-14 border border-white/10 flex items-center justify-center text-white hover:bg-white hover:text-black transition-all">
+                              <ChevronLeft className="h-4 w-4" />
+                           </button>
+                           <button onClick={nextImage} className="w-14 h-14 border border-white/10 flex items-center justify-center text-white hover:bg-white hover:text-black transition-all">
+                              <ChevronRight className="h-4 w-4" />
+                           </button>
                         </div>
                      </div>
-                   ))}
-                </div>
-              </div>
+                  </div>
+               </div>
 
-              <TestDriveBookingDialog
+               <div className="grid grid-cols-4 md:grid-cols-8 gap-4">
+                  {allImages.map((img, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setSelectedImageIndex(idx)}
+                      className={`aspect-square border transition-all duration-700 p-px ${
+                        selectedImageIndex === idx ? 'border-primary opacity-100' : 'border-white/5 opacity-30 hover:opacity-60'
+                      }`}
+                    >
+                       <img src={img} className="w-full h-full object-cover" alt="" />
+                    </button>
+                  ))}
+                  {/* Digital 360 Entry if available */}
+                  {(car as any)?.has_360 && (
+                    <button className="aspect-square border border-primary/40 bg-primary/5 flex flex-col items-center justify-center gap-2 group hover:bg-primary hover:text-black transition-all">
+                       <RotateCw className="h-4 w-4 group-hover:rotate-180 transition-transform duration-1000" />
+                       <span className="text-[8px] uppercase tracking-widest font-black">VR Orbit</span>
+                    </button>
+                  )}
+               </div>
+            </div>
+
+            {/* Procurement Sidebar */}
+            <div className="lg:col-span-4 space-y-20">
+               <div className="space-y-12 bg-surface-low border border-white/5 p-12">
+                  <div className="space-y-4">
+                     <p className="text-[10px] uppercase tracking-[0.6em] text-primary font-black">Engagement Terminal</p>
+                     <h3 className="text-2xl font-black text-white uppercase tracking-tighter">Secure Procurement</h3>
+                  </div>
+
+                  <div className="space-y-4">
+                     <button
+                        onClick={handleOrderViaWhatsApp}
+                        className="w-full h-24 bg-primary text-black text-[12px] uppercase tracking-[0.6em] font-black flex items-center justify-center gap-6 group hover:bg-white transition-all duration-700"
+                     >
+                        <ShoppingCart className="h-4 w-4" />
+                        Initiate Acquisition
+                        <ArrowRight className="h-3 w-3 -translate-x-4 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all" />
+                     </button>
+                     <div className="grid grid-cols-2 gap-4">
+                        <button onClick={handleWhatsApp} className="h-16 border border-white/10 text-white text-[10px] uppercase tracking-[0.4em] font-black hover:bg-white hover:text-black transition-all flex items-center justify-center gap-3">
+                           <Phone className="h-3 w-3" /> Inquire
+                        </button>
+                        <button onClick={handleShare} className="h-16 border border-white/10 text-white text-[10px] uppercase tracking-[0.4em] font-black hover:bg-white hover:text-black transition-all flex items-center justify-center gap-3">
+                           <Share2 className="h-3 w-3" /> Dispatch
+                        </button>
+                     </div>
+                  </div>
+
+                  <div className="pt-8 border-t border-white/5 flex items-center gap-4">
+                     <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+                     <span className="text-[9px] uppercase tracking-[0.4em] text-white/40 font-bold">Authorized Agent Available</span>
+                  </div>
+               </div>
+
+               {/* Institutional Credentials */}
+               <div className="space-y-8">
+                  <div className="flex items-center justify-between border-b border-white/5 pb-4">
+                     <p className="text-[10px] uppercase tracking-[0.6em] text-white/30 font-black">Technical Grid</p>
+                     <Settings className="h-3 w-3 text-white/10" />
+                  </div>
+                  <div className="grid grid-cols-2 gap-px bg-white/5 border border-white/5">
+                     {[
+                       { label: "Temporal", value: car.year, icon: Calendar },
+                       { label: "Propulsion", value: fuelTypeLabel, icon: Fuel },
+                       { label: "Sequence", value: transmissionLabel, icon: Gauge },
+                       { label: "Tone", value: (isRTL ? car.color_ar : car.color) || "-", icon: Palette },
+                       { label: "Engagement", value: `${car.mileage?.toLocaleString() || 0} KM`, icon: Zap },
+                       { label: "Efficiency", value: car.engine_size || "Standard", icon: ShieldCheck }
+                     ].map((spec, i) => (
+                       <div key={i} className="bg-black p-10 space-y-4 group transition-all duration-700 hover:bg-surface-low">
+                          <spec.icon className="h-4 w-4 text-white/5 group-hover:text-primary transition-colors" />
+                          <div className="space-y-1">
+                             <p className="text-[8px] uppercase tracking-[0.5em] text-white/20 font-black">{spec.label}</p>
+                             <p className="text-[13px] uppercase tracking-[0.2em] text-white font-bold">{spec.value}</p>
+                          </div>
+                       </div>
+                     ))}
+                  </div>
+               </div>
+               
+               <TestDriveBookingDialog
                 carId={car.id}
                 carName={isRTL ? `${car.name_ar} ${car.model}` : `${car.name} ${car.model}`}
               />
             </div>
           </div>
 
-          <div className="mt-48 max-w-4xl border-t border-white/5 pt-20">
-             <h3 className="text-[10px] uppercase tracking-[0.8em] text-primary font-bold mb-12">
-               The Narrative
-             </h3>
-             <p className="text-3xl md:text-4xl font-light text-white/60 leading-relaxed tracking-tight italic">
-                {isRTL ? car.description_ar : car.description}
-             </p>
-          </div>
+          {/* Narrative Block */}
+          <section className="mt-48 grid lg:grid-cols-12 gap-24 border-t border-white/5 pt-40">
+             <div className="lg:col-span-4">
+                <div className="sticky top-40 space-y-6">
+                   <p className="text-[10px] uppercase tracking-[0.8em] text-primary font-black">Design Philosophy</p>
+                   <h2 className="text-5xl font-black text-white uppercase tracking-tighter leading-none">The <br /> Collective <br /> Narrative</h2>
+                   <div className="w-12 h-1 bg-primary/20" />
+                </div>
+             </div>
+             <div className="lg:col-span-8">
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 1.2 }}
+                  className="space-y-12"
+                >
+                   <p className="text-3xl md:text-5xl font-light text-white/60 leading-tight tracking-tight italic">
+                      {isRTL ? car.description_ar : car.description || "Entering a realm of unprecedented mechanical authority, this curated specimen represents the horizontal zenith of its lineage."}
+                   </p>
+                   <div className="flex flex-wrap gap-4 pt-12">
+                      {["Certified Heritage", "Hardware Verified", "Institutional Grade", "Global Series"].map((t, i) => (
+                        <div key={i} className="px-6 py-2 border border-white/5 text-[9px] uppercase tracking-[0.4em] text-white/20 font-black">
+                           {t}
+                        </div>
+                      ))}
+                   </div>
+                </motion.div>
+             </div>
+          </section>
 
-          <div className="mt-48 border-t border-white/5 pt-20">
-            <ReviewsList carId={car.id} />
-          </div>
+          {/* Institutional Reviews */}
+          <section className="mt-48 border-t border-white/5 pt-40">
+             <div className="flex items-end justify-between mb-24">
+                <div className="space-y-4">
+                   <p className="text-[10px] uppercase tracking-[0.8em] text-white/20 font-black">Verification Feed</p>
+                   <h2 className="text-5xl font-black text-white uppercase tracking-tighter">Market Sentiments</h2>
+                </div>
+             </div>
+             <ReviewsList carId={car.id} />
+          </section>
         </div>
       </main>
 
-      {/* 360 & Gallery Dialogs */}
+      {/* Cinematic Overlays */}
       <Dialog open={isGalleryOpen} onOpenChange={setIsGalleryOpen}>
-        <DialogContent className="max-w-7xl p-0 bg-black/95 backdrop-blur-xl border-white/10 rounded-none">
-          <div className="relative aspect-video flex items-center justify-center">
-            <img src={currentImage} alt="" className="h-full w-full object-contain" />
-            <div className="absolute inset-0 flex items-center justify-between px-8">
-                <button onClick={prevImage} className="w-16 h-16 border border-white/20 flex items-center justify-center text-white hover:bg-white hover:text-black rounded-full transition-all">
-                  <ChevronLeft className="h-6 w-6" />
+        <DialogContent className="max-w-[95vw] h-[95vh] p-0 bg-black/95 backdrop-blur-3xl border-none rounded-none">
+          <div className="relative w-full h-full flex flex-col items-center justify-center p-12">
+            <AnimatePresence mode="wait">
+              <motion.img
+                key={selectedImageIndex}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 1.05 }}
+                transition={{ duration: 0.8, ease: [0.19, 1, 0.22, 1] }}
+                src={currentImage}
+                className="max-h-full max-w-full object-contain shadow-2xl"
+              />
+            </AnimatePresence>
+            
+            <div className="absolute inset-0 flex items-center justify-between px-12 pointer-events-none">
+                <button onClick={prevImage} className="w-24 h-24 border border-white/10 flex items-center justify-center text-white/20 hover:text-white hover:border-white transition-all rounded-full pointer-events-auto">
+                  <ChevronLeft className="h-8 w-8" />
                 </button>
-                <button onClick={nextImage} className="w-16 h-16 border border-white/20 flex items-center justify-center text-white hover:bg-white hover:text-black rounded-full transition-all">
-                  <ChevronRight className="h-6 w-6" />
+                <button onClick={nextImage} className="w-24 h-24 border border-white/10 flex items-center justify-center text-white/20 hover:text-white hover:border-white transition-all rounded-full pointer-events-auto">
+                  <ChevronRight className="h-8 w-8" />
                 </button>
+            </div>
+            
+            <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex gap-4 pointer-events-auto overflow-x-auto max-w-full p-4">
+               {allImages.map((img, idx) => (
+                 <button key={idx} onClick={() => setSelectedImageIndex(idx)} className={`w-16 h-16 border-2 transition-all ${selectedImageIndex === idx ? 'border-primary' : 'border-transparent opacity-40'}`}>
+                    <img src={img} className="w-full h-full object-cover" alt="" />
+                 </button>
+               ))}
             </div>
           </div>
         </DialogContent>

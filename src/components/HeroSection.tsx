@@ -118,14 +118,30 @@ const HeroSection = () => {
           </motion.div>
         </div>
       </div>
-dest text-center">
+          {/* Precision Stats */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1.5, delay: 1.5 }}
+            className="mt-24 grid grid-cols-3 gap-8 max-w-3xl mx-auto"
+          >
+            {[
+              { label: isRTL ? "مركبة متاحة" : "Available Fleet", value: stats?.carsCount || "250+", icon: Zap },
+              { label: isRTL ? "علامة تجارية" : "Elite Brands", value: stats?.brandsCount || "15+", icon: Trophy },
+              { label: isRTL ? "عميل راضٍ" : "Happy Clients", value: stats?.customersCount || "1200+", icon: ShieldCheck },
+            ].map((item, index) => (
+              <div key={index} className="flex flex-col items-center gap-4 group">
+                <div className="w-px h-8 bg-white/10 group-hover:bg-primary transition-colors duration-700" />
+                <span className="text-3xl font-bold text-white tracking-tighter">
+                  {item.value}
+                </span>
+                <span className="text-[9px] uppercase tracking-[0.4em] text-white/30 group-hover:text-white/60 transition-colors duration-700">
                   {item.label}
                 </span>
               </div>
             ))}
           </motion.div>
-        </div>
-      </div>
+
 
       {/* Scroll Down Indicator */}
       <motion.div

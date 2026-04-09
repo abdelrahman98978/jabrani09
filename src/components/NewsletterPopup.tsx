@@ -2,17 +2,16 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Mail, Gift, X, Sparkles } from "lucide-react";
+import { Mail, Gift, X, Sparkles, ShieldCheck, Zap, ArrowRight, Shield } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
 } from "@/components/ui/dialog";
 import { z } from "zod";
+import { motion, AnimatePresence } from "framer-motion";
 
 const POPUP_SHOWN_KEY = "newsletter_popup_shown";
 const POPUP_SUBSCRIBED_KEY = "newsletter_subscribed";
@@ -21,75 +20,35 @@ const emailSchema = z.string().email();
 
 const translations = {
   ar: {
-    title: "احصل على خصم 10%! 🎉",
-    subtitle: "اشترك في نشرتنا البريدية",
-    offer: "احصل على خصم حصري على طلبك الأول عند الاشتراك في نشرتنا البريدية",
-    emailPlaceholder: "بريدك الإلكتروني",
-    subscribe: "اشترك الآن",
-    noThanks: "لا شكراً",
-    privacyAgree: "أوافق على سياسة الخصوصية والشروط والأحكام",
-    success: "تم الاشتراك بنجاح! سيصلك كود الخصم على بريدك",
-    error: "حدث خطأ، يرجى المحاولة مرة أخرى",
-    invalidEmail: "يرجى إدخال بريد إلكتروني صحيح",
-    privacyRequired: "يجب الموافقة على سياسة الخصوصية",
+    title: "الالتحاق بالبيانات السيادية",
+    subtitle: "قائمة الإرسال للمجموعة الخاصة",
+    offer: "انضم إلى الدائرة الداخلية لتلقي إشعارات فورية حول الأصول المضافة حديثاً والتحديثات المؤسسية.",
+    emailPlaceholder: "العنوان الإلكتروني",
+    subscribe: "تفعيل الاشتراك",
+    noThanks: "تجاهل الإرسال",
+    privacyAgree: "أوافق على بروتوكولات الخصوصية والشروط",
+    success: "تم التفعيل بنجاح. بروتوكول التواصل مُفعل.",
+    error: "خطأ في التشفير، يرجى إعادة المحاولة",
     benefits: [
-      "عروض حصرية أسبوعية",
-      "أول من يعرف عن السيارات الجديدة",
-      "نصائح ومقالات متخصصة",
+      "إشعارات فورية للأصول النادرة",
+      "أولوية الوصول للبيانات الفنية",
+      "تقارير حصرية عن حالة السوق",
     ],
   },
   en: {
-    title: "Get 10% OFF! 🎉",
-    subtitle: "Subscribe to our newsletter",
-    offer: "Get an exclusive discount on your first order when you subscribe to our newsletter",
-    emailPlaceholder: "Your email",
-    subscribe: "Subscribe Now",
-    noThanks: "No Thanks",
-    privacyAgree: "I agree to the privacy policy and terms",
-    success: "Subscribed successfully! Your discount code will be sent to your email",
-    error: "An error occurred, please try again",
-    invalidEmail: "Please enter a valid email",
-    privacyRequired: "You must agree to the privacy policy",
+    title: "SOVEREIGN DISPATCH",
+    subtitle: "Priority Collection Enrollment",
+    offer: "Enroll in the inner circle to receive prioritized alerts on newly archived assets and institutional shifts.",
+    emailPlaceholder: "ELECTRONIC_ADDRESS@DOMAIN.COM",
+    subscribe: "ACTIVATE_ENROLLMENT",
+    noThanks: "VOID_DISPATCH",
+    privacyAgree: "I consent to privacy protocols and service terms",
+    success: "Enrollment Confirmed. Communication frequency synchronized.",
+    error: "System Fault. Please re-initiate sequence.",
     benefits: [
-      "Weekly exclusive offers",
-      "First to know about new cars",
-      "Expert tips and articles",
-    ],
-  },
-  fr: {
-    title: "Obtenez 10% de réduction! 🎉",
-    subtitle: "Abonnez-vous à notre newsletter",
-    offer: "Obtenez une réduction exclusive sur votre première commande en vous abonnant",
-    emailPlaceholder: "Votre email",
-    subscribe: "S'abonner",
-    noThanks: "Non merci",
-    privacyAgree: "J'accepte la politique de confidentialité",
-    success: "Abonné avec succès! Votre code sera envoyé par email",
-    error: "Une erreur s'est produite, veuillez réessayer",
-    invalidEmail: "Veuillez entrer un email valide",
-    privacyRequired: "Vous devez accepter la politique de confidentialité",
-    benefits: [
-      "Offres exclusives hebdomadaires",
-      "Premier informé des nouvelles voitures",
-      "Conseils et articles d'experts",
-    ],
-  },
-  de: {
-    title: "Erhalten Sie 10% Rabatt! 🎉",
-    subtitle: "Abonnieren Sie unseren Newsletter",
-    offer: "Erhalten Sie einen exklusiven Rabatt auf Ihre erste Bestellung",
-    emailPlaceholder: "Ihre E-Mail",
-    subscribe: "Jetzt abonnieren",
-    noThanks: "Nein danke",
-    privacyAgree: "Ich stimme der Datenschutzrichtlinie zu",
-    success: "Erfolgreich abonniert! Ihr Rabattcode wird per E-Mail gesendet",
-    error: "Ein Fehler ist aufgetreten, bitte versuchen Sie es erneut",
-    invalidEmail: "Bitte geben Sie eine gültige E-Mail ein",
-    privacyRequired: "Sie müssen der Datenschutzrichtlinie zustimmen",
-    benefits: [
-      "Wöchentliche exklusive Angebote",
-      "Als Erster über neue Autos informiert",
-      "Expertentipps und Artikel",
+      "Immediate Rare Asset Intelligence",
+      "Priority Access to Technical Dossiers",
+      "Exclusive Institutional Market Reports",
     ],
   },
 };
@@ -112,7 +71,7 @@ const NewsletterPopup = () => {
       const timer = setTimeout(() => {
         setIsOpen(true);
         localStorage.setItem(POPUP_SHOWN_KEY, "true");
-      }, 5000);
+      }, 8000); // 8 seconds for a more premium approach
 
       return () => clearTimeout(timer);
     }
@@ -123,11 +82,10 @@ const NewsletterPopup = () => {
   };
 
   const handleSubscribe = async () => {
-    // Validate email
     const emailResult = emailSchema.safeParse(email.trim());
     if (!emailResult.success) {
       toast({
-        title: t.invalidEmail,
+        title: t.error,
         variant: "destructive",
       });
       return;
@@ -135,7 +93,7 @@ const NewsletterPopup = () => {
 
     if (!agreePrivacy) {
       toast({
-        title: t.privacyRequired,
+        title: "PRIVACY_PROTOCOL_REQUIRED",
         variant: "destructive",
       });
       return;
@@ -150,17 +108,12 @@ const NewsletterPopup = () => {
 
       if (error) {
         if (error.code === "23505") {
-          // Already subscribed
-          toast({
-            title: t.success,
-          });
+          toast({ title: t.success });
         } else {
           throw error;
         }
       } else {
-        toast({
-          title: t.success,
-        });
+        toast({ title: t.success });
       }
 
       localStorage.setItem(POPUP_SUBSCRIBED_KEY, "true");
@@ -177,105 +130,100 @@ const NewsletterPopup = () => {
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="max-w-md p-0 overflow-hidden popup-zoom-in border-0">
-        {/* Header with gradient */}
-        <div className="relative bg-gradient-to-br from-primary via-primary/90 to-accent p-6 text-primary-foreground">
-          <button
-            onClick={handleClose}
-            className="absolute top-3 right-3 p-1.5 rounded-full bg-white/20 hover:bg-white/30 transition-colors"
-          >
-            <X className="h-4 w-4" />
-          </button>
+      <DialogContent className="max-w-2xl p-0 overflow-hidden bg-black border border-white/10 rounded-none shadow-[0_50px_100px_rgba(0,0,0,0.9)] outline-none">
+        <div className="grid md:grid-cols-12 min-h-[500px]">
+           {/* Visual Brand Block */}
+           <div className="md:col-span-5 bg-surface-low p-12 flex flex-col justify-between border-r border-white/5 relative overflow-hidden">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(196,164,132,0.05)_0%,transparent_70%)]" />
+              <div className="space-y-8 relative z-10">
+                 <div className="h-1 w-10 bg-primary" />
+                 <h2 className="text-4xl font-black tracking-tighter text-white uppercase italic leading-none">{t.title}</h2>
+                 <p className="text-[10px] tracking-[0.6em] text-white/20 uppercase font-black">{t.subtitle}</p>
+              </div>
+              
+              <div className="relative z-10 mt-auto">
+                 <div className="flex items-center gap-4 text-primary">
+                    <ShieldCheck className="h-4 w-4" />
+                    <span className="text-[9px] uppercase tracking-[0.4em] font-black">Authorized Data Stream</span>
+                 </div>
+              </div>
 
-          <div className="flex items-center gap-3 mb-3">
-            <div className="p-3 bg-white/20 rounded-xl icon-float-3d">
-              <Gift className="h-8 w-8" />
-            </div>
-            <div>
-              <DialogTitle className="text-2xl font-bold">{t.title}</DialogTitle>
-              <p className="text-primary-foreground/80 text-sm">{t.subtitle}</p>
-            </div>
-          </div>
+              <div className="absolute -bottom-20 -right-20 text-[10rem] font-black text-white/[0.02] uppercase select-none pointer-events-none italic">
+                 Dispatch
+              </div>
+           </div>
 
-          {/* Decorative sparkles */}
-          <Sparkles className="absolute top-4 left-1/4 h-4 w-4 opacity-50 animate-pulse" />
-          <Sparkles className="absolute bottom-6 right-1/4 h-3 w-3 opacity-40 animate-pulse delay-300" />
-        </div>
-
-        {/* Content */}
-        <div className="p-6 space-y-4">
-          <p className="text-muted-foreground text-sm text-center">{t.offer}</p>
-
-          {/* Benefits */}
-          <ul className="space-y-2">
-            {t.benefits.map((benefit, index) => (
-              <li
-                key={index}
-                className="flex items-center gap-2 text-sm text-foreground"
-                style={{ animationDelay: `${index * 100}ms` }}
+           {/* Input Block */}
+           <div className="md:col-span-7 p-12 md:p-16 flex flex-col justify-center">
+              <button 
+                onClick={handleClose}
+                className="absolute top-8 right-8 text-white/20 hover:text-white transition-colors"
               >
-                <span className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs">
-                  ✓
-                </span>
-                {benefit}
-              </li>
-            ))}
-          </ul>
+                 <X className="h-5 w-5" />
+              </button>
 
-          {/* Email Input */}
-          <div className="relative">
-            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="email"
-              placeholder={t.emailPlaceholder}
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="pl-10 input-focus-3d"
-              dir="ltr"
-            />
-          </div>
+              <div className="space-y-12">
+                 <p className="text-white/40 text-xs uppercase tracking-[0.3em] leading-relaxed font-medium italic">{t.offer}</p>
 
-          {/* Privacy Checkbox */}
-          <div className="flex items-start gap-2">
-            <Checkbox
-              id="privacy"
-              checked={agreePrivacy}
-              onCheckedChange={(checked) => setAgreePrivacy(checked as boolean)}
-              className="mt-0.5"
-            />
-            <label
-              htmlFor="privacy"
-              className="text-xs text-muted-foreground cursor-pointer"
-            >
-              {t.privacyAgree}
-            </label>
-          </div>
+                 <div className="space-y-6">
+                    {t.benefits.map((benefit, idx) => (
+                       <div key={idx} className="flex items-center gap-6 group">
+                          <div className="h-px w-6 bg-white/5 group-hover:bg-primary transition-all duration-700" />
+                          <span className="text-[10px] uppercase tracking-[0.4em] text-white/20 group-hover:text-white transition-all">{benefit}</span>
+                       </div>
+                    ))}
+                 </div>
 
-          {/* Buttons */}
-          <div className="space-y-2">
-            <Button
-              onClick={handleSubscribe}
-              disabled={isLoading}
-              className="w-full btn-glow btn-ripple bg-primary hover:bg-primary/90"
-            >
-              {isLoading ? (
-                <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
-              ) : (
-                <>
-                  <Mail className="h-4 w-4 mr-2" />
-                  {t.subscribe}
-                </>
-              )}
-            </Button>
+                 <div className="space-y-8">
+                    <div className="relative group">
+                       <label className="text-[8px] uppercase tracking-[0.6em] text-white/20 font-black mb-4 block group-focus-within:text-primary transition-colors">Electronic Mailing Address</label>
+                       <Input
+                         type="email"
+                         placeholder={t.emailPlaceholder}
+                         value={email}
+                         onChange={(e) => setEmail(e.target.value)}
+                         className="bg-transparent border-none border-b border-white/10 rounded-none px-0 py-6 text-sm tracking-[0.3em] font-black uppercase placeholder:text-white/5 focus-visible:ring-0 focus-visible:border-primary transition-all"
+                         dir="ltr"
+                       />
+                    </div>
 
-            <Button
-              variant="ghost"
-              onClick={handleClose}
-              className="w-full text-muted-foreground hover:text-foreground"
-            >
-              {t.noThanks}
-            </Button>
-          </div>
+                    <div className="flex items-start gap-4 p-4 border border-white/5 bg-white/[0.02]">
+                       <Checkbox
+                         id="privacy-popup"
+                         checked={agreePrivacy}
+                         onCheckedChange={(checked) => setAgreePrivacy(checked as boolean)}
+                         className="mt-1 border-white/20 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                       />
+                       <label htmlFor="privacy-popup" className="text-[9px] uppercase tracking-[0.2em] text-white/20 cursor-pointer leading-relaxed hover:text-white/40 transition-colors">
+                         {t.privacyAgree}
+                       </label>
+                    </div>
+                 </div>
+
+                 <div className="flex flex-col gap-4">
+                    <button 
+                      onClick={handleSubscribe}
+                      disabled={isLoading}
+                      className="h-16 bg-primary text-black text-[11px] font-black uppercase tracking-[0.6em] hover:bg-white transition-all duration-1000 flex items-center justify-center gap-6 group"
+                    >
+                       {isLoading ? (
+                          <div className="animate-spin h-5 w-5 border-2 border-black border-t-transparent rounded-full" />
+                       ) : (
+                          <>
+                             {t.subscribe}
+                             <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                          </>
+                       )}
+                    </button>
+                    <button 
+                      onClick={handleClose}
+                      className="h-14 text-[9px] font-black uppercase tracking-[0.4em] text-white/10 hover:text-white/40 transition-colors"
+                    >
+                       {t.noThanks}
+                    </button>
+                 </div>
+              </div>
+           </div>
         </div>
       </DialogContent>
     </Dialog>

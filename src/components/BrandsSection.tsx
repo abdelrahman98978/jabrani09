@@ -1,10 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import BrandCard from "./BrandCard";
-import { Loader2, ChevronLeft, ChevronRight } from "lucide-react";
+import { Loader2, ChevronLeft, ChevronRight, Trophy, ShieldCheck } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { useRef, useState } from "react";
+import { motion } from "framer-motion";
 
 const BrandsSection = () => {
   const { language } = useLanguage();
@@ -27,7 +28,6 @@ const BrandsSection = () => {
     },
   });
 
-  // Fetch car counts per brand
   const { data: carCounts } = useQuery({
     queryKey: ["brand-car-counts"],
     queryFn: async () => {
@@ -58,87 +58,128 @@ const BrandsSection = () => {
 
   const scroll = (direction: "left" | "right") => {
     if (scrollRef.current) {
-      const scrollAmount = 300;
+      const scrollAmount = 350;
       scrollRef.current.scrollBy({
         left: direction === "right" ? scrollAmount : -scrollAmount,
         behavior: "smooth",
       });
-      setTimeout(checkScrollButtons, 300);
+      setTimeout(checkScrollButtons, 500);
     }
   };
 
   return (
-    <section className="py-32 bg-background border-t border-foreground/5 relative overflow-hidden">
-      <div className="container mx-auto px-4 relative z-10">
-        {/* Section Header */}
-        <div className="flex flex-col md:flex-row justify-between items-end gap-12 mb-24">
-          <div className="max-w-2xl space-y-6">
-            <div className="inline-flex items-center gap-2 px-0 py-0 text-foreground/40 text-[10px] font-bold uppercase tracking-[0.4em]">
-              {isRTL ? "شركاء النجاح" : "Partners / 01"}
-            </div>
-            <h2 className="text-4xl md:text-6xl font-light text-foreground leading-[1.1] tracking-tight">
-              {isRTL ? "موزع" : "Authorized"} <span className="font-bold">{isRTL ? "معتمد" : "Dealer"}</span>
-            </h2>
-            <div className="w-20 h-[1px] bg-foreground/10" />
-            <p className="text-muted-foreground/60 text-sm md:text-base uppercase tracking-widest leading-relaxed">
+    <section className="py-48 bg-black overflow-hidden relative border-t border-white/5">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(196,164,132,0.02)_0%,transparent_70%)]" />
+      
+      <div className="container mx-auto px-6 md:px-12 relative z-10">
+        {/* Editorial Header */}
+        <div className="flex flex-col md:flex-row justify-between items-end gap-16 mb-32">
+          <div className="max-w-4xl space-y-8">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 1 }}
+              className="flex items-center gap-6"
+            >
+              <Trophy className="h-4 w-4 text-primary opacity-40" />
+              <span className="text-[11px] uppercase tracking-[1em] text-primary font-black">
+                {isRTL ? "موزعون سياديون" : "Institutional Signatures"}
+              </span>
+            </motion.div>
+            
+            <motion.h2
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1.2, delay: 0.1 }}
+              className="text-5xl md:text-8xl text-hero text-white leading-[0.85] uppercase"
+            >
+              {isRTL ? (
+                <>
+                  معتمد <br /><span className="font-bold">حصرياً</span>
+                </>
+              ) : (
+                <>
+                  Authorized <br /><span className="font-bold">Signatures.</span>
+                </>
+              )}
+            </motion.h2>
+
+            <motion.div 
+              initial={{ width: 0 }}
+              whileInView={{ width: 120 }}
+              transition={{ duration: 1.5, delay: 0.5 }}
+              className="h-[1px] bg-primary/20" 
+            />
+            
+            <motion.p 
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ duration: 1.5, delay: 0.3 }}
+              className="text-white/20 text-[11px] uppercase tracking-[0.6em] leading-relaxed max-w-xl italic"
+            >
               {isRTL
-                ? "نوفر لكم أشهر الماركات العالمية مع ضمان الجودة والأصالة"
-                : "A curated collection of the world's most prestigious automotive makers."}
-            </p>
+                ? "مجموعتنا المختارة من أرقى صانعي السيارات في العالم."
+                : "A categorized archive of the world's most prestigious automotive makers."}
+            </motion.p>
+          </div>
+
+          {/* Navigation Controls */}
+          <div className="flex items-center gap-4 mb-2">
+            <button
+               onClick={() => scroll("left")}
+               className="group p-5 border border-white/5 rounded-full hover:border-primary transition-all duration-700"
+            >
+               <ChevronLeft className="h-5 w-5 text-white/20 group-hover:text-primary transition-colors" />
+            </button>
+            <button
+               onClick={() => scroll("right")}
+               className="group p-5 border border-white/5 rounded-full hover:border-primary transition-all duration-700"
+            >
+               <ChevronRight className="h-5 w-5 text-white/20 group-hover:text-primary transition-colors" />
+            </button>
           </div>
         </div>
 
-        {/* Brands Carousel */}
+        {/* Brands Scrollable Exhibition */}
         {isLoading ? (
-          <div className="flex justify-center items-center py-12">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <div className="flex gap-12 overflow-hidden py-12">
+            {Array(6).fill(0).map((_, i) => (
+              <div key={i} className="flex-shrink-0 w-[240px] h-[320px] bg-surface-low border border-white/5 animate-pulse" />
+            ))}
           </div>
         ) : brands && brands.length > 0 ? (
-          <div className="relative">
-            {/* Navigation Buttons */}
-            {canScrollRight && (
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => scroll("right")}
-                className="absolute -left-4 top-1/2 -translate-y-1/2 z-10 h-12 w-12 rounded-full shadow-lg bg-card hover:bg-primary hover:text-primary-foreground hidden md:flex"
-              >
-                <ChevronLeft className="h-5 w-5" />
-              </Button>
-            )}
-            {canScrollLeft && (
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => scroll("left")}
-                className="absolute -right-4 top-1/2 -translate-y-1/2 z-10 h-12 w-12 rounded-full shadow-lg bg-card hover:bg-primary hover:text-primary-foreground hidden md:flex"
-              >
-                <ChevronRight className="h-5 w-5" />
-              </Button>
-            )}
-
+          <div className="relative group">
             {/* Scrollable Container */}
             <div
               ref={scrollRef}
               onScroll={checkScrollButtons}
-              className="flex gap-4 overflow-x-auto scrollbar-hide pb-4 snap-x snap-mandatory"
+              className="flex gap-12 overflow-x-auto scrollbar-hide pb-20 snap-x snap-mandatory"
               style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
             >
               {brands.map((brand, index) => (
-                <div
+                <motion.div
                   key={brand.id}
-                  className="flex-shrink-0 w-[160px] md:w-[200px] snap-start brand-logo-float wp-brand-card"
-                  style={{ animationDelay: `${index * 0.15}s` }}
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 1, delay: index * 0.1, ease: [0.19, 1, 0.22, 1] }}
+                  className="flex-shrink-0 w-[220px] md:w-[280px] snap-start"
                 >
                   <BrandCard brand={brand} carCount={carCounts?.[brand.id] || 0} />
-                </div>
+                </motion.div>
               ))}
+            </div>
+            
+            {/* Ambient Background Badge */}
+            <div className="absolute -bottom-10 left-0 text-[15rem] font-black text-white/[0.02] tracking-tighter select-none pointer-events-none uppercase">
+                Archive
             </div>
           </div>
         ) : (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground">
-              {isRTL ? "لا توجد ماركات متاحة" : "No brands available"}
+          <div className="py-32 border border-white/5 bg-surface-low flex flex-col items-center justify-center text-center">
+             <ShieldCheck className="h-16 w-16 text-white/5 mb-8" />
+             <p className="text-[10px] uppercase tracking-[0.5em] text-white/20">
+              {isRTL ? "لا توجد علامات متاحة حالياً" : "Institutional records empty"}
             </p>
           </div>
         )}

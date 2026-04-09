@@ -5,9 +5,9 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import CarCard, { mapCarToCardData } from "@/components/CarCard";
-import { Heart, Trash2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Heart, Trash2, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 
 const WishlistPage = () => {
   const { wishlistItems, removeFromWishlist, isLoading: wishlistLoading } = useWishlist();
@@ -20,7 +20,7 @@ const WishlistPage = () => {
       if (wishlistItems.length === 0) return [];
       const { data, error } = await supabase
         .from("cars")
-        .select("*")
+        .select("*, brands(name, name_ar)")
         .in("id", wishlistItems);
       if (error) throw error;
       return data;
@@ -35,65 +35,91 @@ const WishlistPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background" dir={isRTL ? "rtl" : "ltr"}>
+    <div className="min-h-screen bg-black selection:bg-primary/30">
       <Navbar />
       
-      <main className="container mx-auto px-4 py-8 pt-28">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-          <div>
-            <h1 className="text-3xl font-bold flex items-center gap-3">
-              <Heart className="h-8 w-8 text-red-500 fill-red-500" />
-              {isRTL ? "قائمة المفضلة" : "My Wishlist"}
-            </h1>
-            <p className="text-muted-foreground mt-1">
-              {wishlistItems.length} {isRTL ? "سيارة في قائمتك" : "cars in your list"}
-            </p>
-          </div>
-          
-          {wishlistItems.length > 0 && (
-            <Button
-              variant="outline"
-              onClick={handleClearAll}
-              className="text-destructive hover:text-destructive"
-            >
-              <Trash2 className="h-4 w-4 me-2" />
-              {isRTL ? "مسح الكل" : "Clear All"}
-            </Button>
-          )}
-        </div>
+      <main className="pt-40 pb-32">
+        <div className="container mx-auto px-6 md:px-12">
+          {/* Sovereign Header */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.2, ease: [0.19, 1, 0.22, 1] }}
+            className="flex flex-col md:flex-row md:items-end justify-between gap-12 mb-24 border-b border-white/5 pb-10"
+          >
+            <div className="space-y-4">
+               <div className="flex items-center gap-4 text-primary">
+                  <Heart className="h-6 w-6 fill-primary/20" />
+                  <span className="text-[10px] uppercase tracking-[0.8em] font-black">Private Selection</span>
+               </div>
+               <h1 className="text-7xl font-black tracking-tighter uppercase leading-none">
+                 The <span className="text-primary">Curated</span> <br /> Collection
+               </h1>
+            </div>
+            {wishlistItems.length > 0 && (
+              <button 
+                onClick={handleClearAll} 
+                className="text-[10px] uppercase tracking-[0.4em] text-white/20 hover:text-destructive transition-colors flex items-center gap-3 font-black"
+              >
+                <Trash2 className="h-4 w-4" />
+                {isRTL ? "تطهير المجموعة" : "Dissolve Collection"}
+              </button>
+            )}
+          </motion.div>
 
-        {/* Content */}
-        {isLoading || wishlistLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="h-80 bg-muted animate-pulse rounded-xl" />
-            ))}
-          </div>
-        ) : wishlistItems.length === 0 ? (
-          <div className="text-center py-20">
-            <Heart className="h-20 w-20 mx-auto text-muted-foreground/30 mb-6" />
-            <h2 className="text-2xl font-semibold mb-2">
-              {isRTL ? "قائمة المفضلة فارغة" : "Your wishlist is empty"}
-            </h2>
-            <p className="text-muted-foreground mb-6">
-              {isRTL 
-                ? "ابدأ بإضافة السيارات التي تعجبك لحفظها هنا" 
-                : "Start adding cars you like to save them here"}
-            </p>
-            <Button asChild variant="gold">
-              <Link to="/cars">
-                {isRTL ? "تصفح السيارات" : "Browse Cars"}
-              </Link>
-            </Button>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {cars?.map((car) => (
-              <CarCard key={car.id} car={mapCarToCardData(car)} />
-            ))}
-          </div>
-        )}
+          {/* Content */}
+          <AnimatePresence mode="wait">
+            {isLoading || wishlistLoading ? (
+              <motion.div 
+                key="loading"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-12"
+              >
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} className="h-96 bg-surface-low border border-white/5 animate-pulse" />
+                ))}
+              </motion.div>
+            ) : wishlistItems.length === 0 ? (
+              <motion.div 
+                key="empty"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="text-center py-40 border border-white/5 bg-surface-low"
+              >
+                <div className="max-w-xs mx-auto space-y-8">
+                  <div className="w-16 h-16 border border-white/10 flex items-center justify-center mx-auto opacity-20">
+                    <Heart className="h-6 w-6 text-white" />
+                  </div>
+                  <h3 className="text-xl uppercase tracking-[0.4em] text-white/40">Your Private Vault is Empty</h3>
+                  <Link to="/cars" className="inline-block px-12 py-5 bg-primary text-black text-[11px] uppercase tracking-[0.4em] font-black hover:bg-white transition-all duration-700 flex items-center justify-center gap-4">
+                    {isRTL ? "تصفح القائمة" : "Acquire Masterpieces"}
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </div>
+              </motion.div>
+            ) : (
+              <motion.div 
+                key="results"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-12"
+              >
+                {cars?.map((car, index) => (
+                  <motion.div
+                    key={car.id}
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: index * 0.1, ease: [0.19, 1, 0.22, 1] }}
+                  >
+                    <CarCard car={mapCarToCardData(car)} />
+                  </motion.div>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </main>
 
       <Footer />

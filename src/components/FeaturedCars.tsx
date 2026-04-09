@@ -3,8 +3,9 @@ import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import CarCard, { mapCarToCardData } from "./CarCard";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Loader2, Sparkles } from "lucide-react";
+import { ArrowRight, Loader2, Sparkles, Trophy } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { motion } from "framer-motion";
 
 interface Promotion {
   id: string;
@@ -33,7 +34,6 @@ const applyPromotions = (cars: any[], promotions: Promotion[]) => {
     let bestDiscount = 0;
     let bestPromo: Promotion | null = null;
 
-    // Manual discount check
     if (car.original_price && car.original_price > car.price) {
       bestDiscount = car.original_price - car.price;
     }
@@ -110,37 +110,41 @@ const FeaturedCars = () => {
   });
 
   return (
-    <section className="py-40 bg-black overflow-hidden">
+    <section className="py-64 bg-black overflow-hidden relative">
+      <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/5 to-transparent" />
+      
       <div className="container mx-auto px-6 md:px-12 relative z-10">
         {/* Section Header */}
-        <div className="max-w-4xl mb-32 flex flex-col md:flex-row justify-between items-end gap-12">
-          <div className="space-y-6">
+        <div className="max-w-6xl mb-40 flex flex-col md:flex-row justify-between items-end gap-12">
+          <div className="space-y-8">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 1, ease: [0.19, 1, 0.22, 1] }}
+              className="flex items-center gap-6"
             >
-              <span className="text-[11px] uppercase tracking-[0.5em] text-primary font-bold">
+              <div className="h-0.5 w-12 bg-primary" />
+              <span className="text-[11px] uppercase tracking-[1em] text-primary font-black">
                 {isRTL ? "منصة السيادة" : "Sovereign Curation"}
               </span>
             </motion.div>
             <motion.h2
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1.2, delay: 0.2, ease: [0.19, 1, 0.22, 1] }}
-              className="text-5xl md:text-8xl text-hero text-white"
+              transition={{ duration: 1.5, delay: 0.2, ease: [0.19, 1, 0.22, 1] }}
+              className="text-6xl md:text-[8rem] text-hero text-white leading-[0.85] uppercase"
             >
               {isRTL ? (
                 <>
                   أيقونات <span className="font-bold">المجموعة</span>
                   <br />
-                  في <span className="text-white/30 italic">المقدمة</span>
+                  في <span className="text-white/20 italic font-light">المقدمة</span>
                 </>
               ) : (
                 <>
-                  The <span className="font-bold">Icons</span>
+                  The <span className="font-bold">Icons.</span>
                   <br />
-                  Of our <span className="text-white/30 italic">Fleet</span>
+                  Elite <span className="text-white/20 italic font-light">Edition.</span>
                 </>
               )}
             </motion.h2>
@@ -150,56 +154,60 @@ const FeaturedCars = () => {
             <motion.div
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
-              className="flex items-center gap-6 text-[11px] uppercase tracking-[0.4em] text-white/40 hover:text-white transition-all duration-700"
+              transition={{ delay: 0.8 }}
+              className="flex items-center gap-8 text-[11px] uppercase tracking-[0.6em] text-white/30 hover:text-white transition-all duration-700"
             >
-              <div className="w-12 h-[1px] bg-white/10 group-hover:w-20 group-hover:bg-primary transition-all duration-700" />
-              <span>{isRTL ? "استعرض المجموعة الكاملة" : "View Entire Fleet"}</span>
+              <div className="w-16 h-[0.5px] bg-white/10 group-hover:w-24 group-hover:bg-primary transition-all duration-700" />
+              <span className="font-black italic">{isRTL ? "استعرض المجموعة الكاملة" : "Enter the Gallery"}</span>
+              <ArrowRight className="h-4 w-4 -translate-x-4 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all" />
             </motion.div>
           </Link>
         </div>
 
         {/* Cars Grid */}
         {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16 md:gap-24">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-[500px] bg-surface-low border border-white/5 animate-pulse" />
+              <div key={i} className="h-[600px] bg-surface-low/50 border border-white/5 animate-pulse" />
             ))}
           </div>
         ) : cars && cars.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 md:gap-20">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16 md:gap-24">
             {cars.map((car, index) => (
               <motion.div
                 key={car.id}
-                initial={{ opacity: 0, y: 40 }}
+                initial={{ opacity: 0, y: 60 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 1, delay: index * 0.1, ease: [0.19, 1, 0.22, 1] }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 1.5, delay: index * 0.1, ease: [0.19, 1, 0.22, 1] }}
               >
-                <CarCard car={mapCarToCardData(car)} />
+                <div className="group relative">
+                  <div className="absolute -inset-4 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-1000 blur-2xl" />
+                  <CarCard car={mapCarToCardData(car)} />
+                </div>
               </motion.div>
             ))}
           </div>
         ) : (
-          <div className="relative py-40 border border-white/5 bg-surface-low flex flex-col items-center justify-center text-center overflow-hidden">
-            <div className="absolute inset-0 opacity-5 grayscale">
+          <div className="relative py-64 border border-white/5 bg-surface-low/30 backdrop-blur-xl flex flex-col items-center justify-center text-center overflow-hidden">
+            <div className="absolute inset-0 opacity-[0.03] grayscale contrast-150">
               <img 
                 src="https://images.unsplash.com/photo-1542281286-9e0a16bb7366?q=80&w=2070" 
                 alt="Empty state background" 
                 className="w-full h-full object-cover"
               />
             </div>
-            <Sparkles className="h-20 w-20 text-primary/20 mb-12 relative z-10" />
-            <h3 className="text-3xl font-light text-white uppercase tracking-tighter mb-6 relative z-10">
+            <Trophy className="h-32 w-32 text-primary/10 mb-16 relative z-10 animate-pulse" />
+            <h3 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tighter mb-8 relative z-10 italic">
               {isRTL ? "المجموعة قيد التحديث" : "Collection Under Refresh"}
             </h3>
-            <p className="text-white/30 text-[11px] uppercase tracking-[0.3em] max-w-sm mb-12 relative z-10">
+            <p className="text-white/20 text-[11px] uppercase tracking-[0.8em] max-w-lg mb-16 relative z-10 leading-relaxed font-light">
               {isRTL
-                ? "نحن ننتقي أيقونات جديدة لتنضم لمجموعتنا المميزة. ترقبوا الإطلاق."
-                : "New icons are being curated for our premier collection."}
+                ? "نحن ننتقي أيقونات جديدة لتنضم لمجموعتنا المميزة. ترقبوا الإطلاق قريباً."
+                : "A world-class selection of new icons is being curated for our premier collection."}
             </p>
             <Link to="/cars" className="relative z-10">
-              <button className="px-12 py-5 border border-white/20 text-white text-[11px] uppercase tracking-[0.4em] font-medium hover:bg-white hover:text-black transition-all duration-700">
+              <button className="px-16 py-8 border border-white/10 text-white text-[12px] uppercase tracking-[0.6em] font-black hover:bg-white hover:text-black transition-all duration-1000">
                 {isRTL ? "تصفح المتاح الآن" : "Browse Essentials"}
               </button>
             </Link>

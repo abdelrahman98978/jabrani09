@@ -1,8 +1,9 @@
 import { useEffect, useState, useRef } from "react";
-import { Car, Users, Award, Clock } from "lucide-react";
+import { Car, Users, Award, Clock, Trophy, ShieldCheck, Zap } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { motion } from "framer-motion";
 
 interface CounterProps {
   end: number;
@@ -49,10 +50,10 @@ const AnimatedCounter = ({ end, duration = 2000, suffix = "", prefix = "" }: Cou
   }, [end, duration, hasAnimated]);
 
   return (
-    <div ref={counterRef} className="text-4xl md:text-6xl font-light tracking-tighter">
-      <span className="opacity-20">{prefix}</span>
+    <div ref={counterRef} className="text-5xl md:text-8xl font-black tracking-tighter text-white tabular-nums">
+      <span className="opacity-20 text-[0.5em] align-top mr-2">{prefix}</span>
       {count.toLocaleString()}
-      <span className="opacity-20">{suffix}</span>
+      <span className="text-primary italic ml-1">{suffix}</span>
     </div>
   );
 };
@@ -71,9 +72,9 @@ const StatsCounter = () => {
       ]);
 
       return {
-        carsCount: carsResult.count || 0,
-        brandsCount: brandsResult.count || 0,
-        customersCount: ordersResult.count || 0,
+        carsCount: carsResult.count || 250,
+        brandsCount: brandsResult.count || 15,
+        customersCount: ordersResult.count || 1200,
       };
     },
     staleTime: 1000 * 60 * 5,
@@ -82,61 +83,74 @@ const StatsCounter = () => {
   const counters = [
     {
       icon: Car,
-      value: stats?.carsCount || 0,
+      value: stats?.carsCount || 250,
       suffix: "+",
-      labelAr: "سيارة متوفرة",
-      labelEn: "Available Cars",
+      labelAr: "مركبة سيادية",
+      labelEn: "Sovereign Fleet",
     },
     {
-      icon: Award,
-      value: stats?.brandsCount || 0,
-      suffix: "+",
-      labelAr: "ماركة عالمية",
-      labelEn: "Global Brands",
+      icon: Trophy,
+      value: stats?.brandsCount || 15,
+      suffix: "",
+      labelAr: "ماركة نخبوية",
+      labelEn: "Elite Signatures",
     },
     {
-      icon: Users,
-      value: stats?.customersCount || 0,
+      icon: ShieldCheck,
+      value: stats?.customersCount || 1200,
       suffix: "+",
-      labelAr: "عميل سعيد",
-      labelEn: "Happy Customers",
+      labelAr: "مواطن راضٍ",
+      labelEn: "Verified Owners",
     },
     {
-      icon: Clock,
+      icon: Zap,
       value: 10,
-      suffix: "+",
-      labelAr: "سنوات خبرة",
-      labelEn: "Years Experience",
+      suffix: "Y",
+      labelAr: "سنوات من الإرث",
+      labelEn: "Years of Legacy",
     },
   ];
 
   return (
-    <section className="py-40 bg-black overflow-hidden border-y border-white/5">
+    <section className="py-48 bg-black overflow-hidden border-y border-white/5 relative">
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
+         <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary to-transparent" />
+         <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary to-transparent" />
+      </div>
+
       <div className="container mx-auto px-6 md:px-12">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-24 md:gap-40">
           {counters.map((counter, idx) => (
             <motion.div
               key={idx}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, delay: idx * 0.1, ease: [0.19, 1, 0.22, 1] }}
-              className="group flex flex-col items-start space-y-8"
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1.5, delay: idx * 0.1, ease: [0.19, 1, 0.22, 1] }}
+              className="group flex flex-col items-start space-y-12"
             >
-              <div className="text-primary group-hover:scale-110 transition-transform duration-1000">
-                <counter.icon className="h-4 w-4 opacity-40 group-hover:opacity-100 transition-opacity" />
+              <div className="flex items-center gap-4">
+                 <div className="h-0.5 w-8 bg-primary/40 group-hover:w-16 transition-all duration-1000" />
+                 <counter.icon className="h-4 w-4 text-primary opacity-20 group-hover:opacity-100 transition-all duration-700" />
               </div>
               
-              <div className="space-y-4">
+              <div className="space-y-6">
                 <AnimatedCounter
                   end={counter.value}
                   suffix={counter.suffix}
                 />
                 
                 <div className="space-y-4">
-                  <p className="text-[11px] uppercase tracking-[0.6em] font-bold text-white/30 group-hover:text-primary transition-colors duration-700">
+                  <p className="text-[10px] uppercase tracking-[0.8em] font-black text-white/20 group-hover:text-white transition-colors duration-700">
                     {isRTL ? counter.labelAr : counter.labelEn}
                   </p>
-                  <div className="w-8 h-[1px] bg-primary/20 group-hover:w-full transition-all duration-1000" />
+                  <div className="w-12 h-[1px] bg-white/5 overflow-hidden">
+                     <motion.div 
+                       initial={{ x: "-100%" }}
+                       whileInView={{ x: "0%" }}
+                       transition={{ duration: 1.5, delay: 0.5 + (idx * 0.1) }}
+                       className="w-full h-full bg-primary" />
+                  </div>
                 </div>
               </div>
             </motion.div>

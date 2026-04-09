@@ -14,7 +14,7 @@ import StatsCounter from "@/components/StatsCounter";
 import CTABanner from "@/components/CTABanner";
 const Index = () => {
   return (
-    <div className="min-h-screen bg-background overflow-x-hidden">
+    <div className="min-h-screen bg-black overflow-x-hidden selection:bg-primary/30">
       <Navbar />
       <main>
         <motion.div

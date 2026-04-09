@@ -2,10 +2,11 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import BrandCard from "@/components/BrandCard";
 import CarCard, { mapCarToCardData } from "@/components/CarCard";
 import WhatsAppButton from "@/components/WhatsAppButton";
-import { Loader2 } from "lucide-react";
+import { Loader2, Award, ShieldCheck, Zap } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { motion } from "framer-motion";
 
 interface Promotion {
   id: string;
@@ -21,6 +22,9 @@ interface Promotion {
 }
 
 const BrandsPage = () => {
+  const { language } = useLanguage();
+  const isRTL = language === "ar";
+
   const { data, isLoading } = useQuery({
     queryKey: ["brands-with-cars"],
     queryFn: async () => {
@@ -115,63 +119,102 @@ const BrandsPage = () => {
   });
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-black text-white">
       <Navbar />
       
-      <main className="pt-24 pb-12">
-        <div className="container mx-auto px-4">
-          {/* Page Header */}
-          <div className="text-center mb-12">
-            <h1 className="text-4xl font-black text-foreground">
-              الماركات <span className="text-gradient-gold">المتوفرة</span>
-            </h1>
-            <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">
-              موزع معتمد لأشهر الماركات العالمية
-            </p>
+      <main>
+        {/* Heritage Hero */}
+        <section className="relative h-[60vh] flex items-center justify-center overflow-hidden">
+          <motion.div 
+            initial={{ scale: 1.2, opacity: 0 }}
+            animate={{ scale: 1, opacity: 0.3 }}
+            transition={{ duration: 2 }}
+            className="absolute inset-0"
+          >
+             <img src="https://images.unsplash.com/photo-1542282088-fe8426682b8f?auto=format&fit=crop&q=80" className="w-full h-full object-cover grayscale" alt="" />
+             <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black" />
+          </motion.div>
+          
+          <div className="container relative z-10 text-center space-y-8">
+             <motion.div
+               initial={{ y: 30, opacity: 0 }}
+               animate={{ y: 0, opacity: 1 }}
+               transition={{ duration: 1.2, ease: [0.19, 1, 0.22, 1] }}
+               className="space-y-4"
+             >
+                <div className="flex items-center justify-center gap-4 text-primary">
+                   <Award className="h-6 w-6" />
+                   <span className="text-[10px] uppercase tracking-[0.8em] font-black">Lineage</span>
+                </div>
+                <h1 className="text-8xl font-black tracking-tighter uppercase leading-none">
+                  The <span className="text-primary">Curated</span> <br /> Heritage
+                </h1>
+                <p className="text-white/40 text-xl font-light italic max-w-2xl mx-auto">
+                   Exploring the world's most prestigious automotive lineages, refined for the modern connoisseur.
+                </p>
+             </motion.div>
           </div>
+        </section>
 
-          {/* Brands with Cars */}
+        <div className="container mx-auto px-6 md:px-12 py-32">
           {isLoading ? (
-            <div className="flex justify-center items-center py-20">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <div className="flex justify-center items-center py-40">
+              <Loader2 className="h-12 w-12 animate-spin text-primary" />
             </div>
           ) : data && data.length > 0 ? (
-            <div className="space-y-12 stagger-3d-entrance">
+            <div className="space-y-40">
               {data.map(({ brand, cars }, sectionIndex) => (
                 <section 
                   key={brand.id} 
-                  className="border border-border rounded-2xl p-6 bg-card/40 hover:shadow-lg transition-all duration-300 opacity-0 animate-fade-in"
-                  style={{ animationDelay: `${sectionIndex * 0.15}s` }}
+                  className="space-y-16"
                 >
-                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-                    <div className="flex items-center gap-3 brand-logo-float">
-                      <BrandCard brand={brand} />
+                  <motion.div 
+                    initial={{ opacity: 0, x: -50 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 1.2, ease: [0.19, 1, 0.22, 1] }}
+                    className="flex flex-col md:flex-row md:items-end justify-between gap-8 border-b border-white/5 pb-10"
+                  >
+                    <div className="space-y-4">
+                       <div className="flex items-center gap-6">
+                          <img src={brand.logo_url} alt={brand.name} className="h-20 w-auto grayscale brightness-200" />
+                          <div className="h-10 w-px bg-white/10" />
+                          <h2 className="text-6xl font-black tracking-tighter uppercase text-white">{brand.name}</h2>
+                       </div>
+                       <p className="text-white/40 text-sm tracking-widest uppercase">
+                          {cars.length} Masterpieces Available
+                       </p>
                     </div>
-                    <p className="text-sm text-muted-foreground">
-                      {cars.length} سيارة متاحة لهذه الماركة
-                    </p>
-                  </div>
+                    
+                    <div className="hidden md:flex items-center gap-12">
+                       <div className="flex items-center gap-3 text-[10px] uppercase tracking-widest text-white/20">
+                          <ShieldCheck className="h-4 w-4 text-primary" /> Verified Excellence
+                       </div>
+                       <div className="flex items-center gap-3 text-[10px] uppercase tracking-widest text-white/20">
+                          <Zap className="h-4 w-4 text-primary" /> Performance Ready
+                       </div>
+                    </div>
+                  </motion.div>
+
                   {cars.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
                       {cars.map((car: any, carIndex: number) => (
-                        <div 
-                          key={car.id}
-                          className="opacity-0 animate-fade-in"
-                          style={{ animationDelay: `${(sectionIndex * 0.15) + (carIndex * 0.08)}s` }}
-                        >
-                          <CarCard car={mapCarToCardData(car)} />
-                        </div>
+                        <CarCard key={car.id} car={mapCarToCardData(car)} />
                       ))}
                     </div>
                   ) : (
-                    <p className="text-muted-foreground text-sm">لا توجد سيارات متاحة حالياً لهذه الماركة</p>
+                    <div className="py-20 bg-white/5 border border-white/5 text-center">
+                       <p className="text-white/20 text-[11px] uppercase tracking-[0.5em] font-black">
+                         {isRTL ? "لا توجد سيارات متاحة حالياً" : "Collection currently archived"}
+                       </p>
+                    </div>
                   )}
                 </section>
               ))}
             </div>
           ) : (
-            <div className="text-center py-20">
-              <p className="text-muted-foreground">لا توجد ماركات متاحة</p>
+            <div className="text-center py-40">
+               <p className="text-white/20 text-[11px] uppercase tracking-[0.8em] font-black">Repository Empty</p>
             </div>
           )}
         </div>

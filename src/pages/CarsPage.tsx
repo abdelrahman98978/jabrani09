@@ -6,10 +6,11 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import CarCard, { mapCarToCardData } from "@/components/CarCard";
 import WhatsAppButton from "@/components/WhatsAppButton";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, Filter, Loader2, X } from "lucide-react";
+import { Search, Loader2, X } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { motion, AnimatePresence } from "framer-motion";
+import { Input } from "@/components/ui/input";
 
 interface Promotion {
   id: string;
@@ -26,6 +27,8 @@ interface Promotion {
 
 const CarsPage = () => {
   const [searchParams] = useSearchParams();
+  const { language } = useLanguage();
+  const isRTL = language === "ar";
   const brandFilter = searchParams.get("brand");
   
   const [search, setSearch] = useState("");
@@ -53,7 +56,7 @@ const CarsPage = () => {
     queryFn: async () => {
       let query = supabase
         .from("cars")
-        .select("*")
+        .select("*, brands(name, name_ar)")
         .eq("status", "available");
 
       if (selectedBrand && selectedBrand !== "all") {
@@ -100,15 +103,6 @@ const CarsPage = () => {
       return carsWithPromos;
     },
   });
-
-  const clearFilters = () => {
-    setSearch("");
-    setSelectedBrand("all");
-    setFuelType("all");
-    setTransmission("all");
-    setPriceRange("all");
-    setSortBy("newest");
-  };
 
   const applyPromotions = (cars: any[], promotions: Promotion[]) => {
     const now = new Date();
@@ -170,25 +164,17 @@ const CarsPage = () => {
     });
   };
 
+  const clearFilters = () => {
+    setSearch("");
+    setSelectedBrand("all");
+    setFuelType("all");
+    setTransmission("all");
+    setPriceRange("all");
+    setSortBy("newest");
+  };
+
   const hasActiveFilters = search || selectedBrand !== "all" || fuelType !== "all" || 
     transmission !== "all" || priceRange !== "all";
-
-import { motion, AnimatePresence } from "framer-motion";
-
-const CarsPage = () => {
-  const [searchParams] = useSearchParams();
-  const { language } = useLanguage();
-  const isRTL = language === "ar";
-  const brandFilter = searchParams.get("brand");
-  
-  const [search, setSearch] = useState("");
-  const [selectedBrand, setSelectedBrand] = useState<string>(brandFilter || "all");
-  const [fuelType, setFuelType] = useState<string>("all");
-  const [transmission, setTransmission] = useState<string>("all");
-  const [priceRange, setPriceRange] = useState<string>("all");
-  const [sortBy, setSortBy] = useState<string>("newest");
-
-  // ... (keep query logic same, but we will wrap the UI in our new sovereign style)
 
   return (
     <div className="min-h-screen bg-black overflow-x-hidden selection:bg-primary/30">
@@ -260,7 +246,7 @@ const CarsPage = () => {
                    <SelectContent className="bg-surface-high border-white/10 text-white rounded-none">
                      <SelectItem value="all">All Brands</SelectItem>
                      {brands?.map((brand) => (
-                       <SelectItem key={brand.id} value={brand.id} className="uppercase text-[10px] tracking-widest">{brand.name_en}</SelectItem>
+                       <SelectItem key={brand.id} value={brand.id} className="uppercase text-[10px] tracking-widest">{isRTL ? brand.name_ar : brand.name}</SelectItem>
                      ))}
                    </SelectContent>
                  </Select>
@@ -310,8 +296,9 @@ const CarsPage = () => {
                    </SelectTrigger>
                    <SelectContent className="bg-surface-high border-white/10 text-white rounded-none">
                      <SelectItem value="newest">Recent Entry</SelectItem>
-                     <SelectItem value="price_asc">Investment: Lo -> Hi</SelectItem>
-                     <SelectItem value="price_desc">Investment: Hi -> Lo</SelectItem>
+                     <SelectItem value="price_asc">Investment: Lo → Hi</SelectItem>
+                     <SelectItem value="price_desc">Investment: Hi → Lo</SelectItem>
+                     <SelectItem value="year_desc">Temporal: Hi → Lo</SelectItem>
                    </SelectContent>
                  </Select>
                </div>

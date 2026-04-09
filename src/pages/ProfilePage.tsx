@@ -53,12 +53,14 @@ import {
   AlertTriangle,
   Package,
   MessageSquare,
+  ArrowRight,
 } from "lucide-react";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Progress } from "@/components/ui/progress";
 import { formatDistanceToNow } from "date-fns";
 import { ar } from "date-fns/locale";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface Profile {
   id: string;
@@ -100,37 +102,18 @@ interface Notification {
 
 const UserOrdersSection = ({ user, isRTL }: { user: SupabaseUser | null; isRTL: boolean }) => {
   const { toast } = useToast();
-
-  /* Add useSettings hook inside UserOrdersSection */
   const { data: settings } = useSettings();
 
   const { data: orders, isLoading } = useQuery({
-    /* ... existing query ... */
-
     queryKey: ["my-orders", user?.id],
     enabled: !!user?.id,
     queryFn: async () => {
       if (!user?.id) return [];
-      const { data, error } = await supabase
-        .rpc("get_my_orders");
-
+      const { data, error } = await supabase.rpc("get_my_orders");
       if (error) throw error;
-      return data;
-
-      if (error) {
-        console.error("Error fetching user orders", error);
-        toast({
-          variant: "destructive",
-          title: isRTL ? "خطأ في تحميل الطلبات" : "Error loading orders",
-          description: error.message,
-        });
-        return [];
-      }
-
       return data || [];
     },
   });
-
 
   const getStatusLabel = (status: string | null) => {
     const map: Record<string, string> = {
@@ -143,51 +126,24 @@ const UserOrdersSection = ({ user, isRTL }: { user: SupabaseUser | null; isRTL: 
     return map[status || ""] || (status || "-");
   };
 
-  const getDeliveryLabel = (method: string | null) => {
-    if (method === "pickup") return isRTL ? "استلام من المعرض" : "Pickup from showroom";
-    if (method === "delivery") return isRTL ? "توصيل عبر سحاب" : "Delivery via Sahab";
-    return "-";
-  };
-
-  if (!user) {
-    return (
-      <div className="py-12 text-center">
-        <p className="text-muted-foreground">
-          {isRTL ? "سجّل الدخول لعرض طلباتك" : "Sign in to view your orders"}
-        </p>
-      </div>
-    );
-  }
+  if (!user) return null;
 
   if (isLoading) {
     return (
-      <div className="py-12 flex items-center justify-center">
-        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+      <div className="py-32 flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary/40" />
       </div>
     );
   }
 
   if (!orders || orders.length === 0) {
     return (
-      <div className="py-16 text-center">
-        <div className="relative inline-block mb-6">
-          <div className="h-24 w-24 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
-            <ShoppingCart className="h-12 w-12 text-primary/50" />
-          </div>
-          <Sparkles className="absolute top-0 right-0 h-6 w-6 text-primary/30 animate-pulse" />
-        </div>
-        <h3 className="text-2xl font-bold text-foreground mb-3">
-          {isRTL ? "لا توجد طلبات بعد" : "No Orders Yet"}
-        </h3>
-        <p className="text-muted-foreground mb-8 max-w-md mx-auto">
-          {isRTL
-            ? "ابدأ رحلتك معنا واستكشف مجموعتنا المميزة من السيارات"
-            : "Start your journey with us and explore our premium car collection"}
-        </p>
-        <Button onClick={() => window.location.assign("/cars")} size="lg" className="gap-2 rounded-xl">
-          <Car className="h-5 w-5" />
-          {isRTL ? "تصفح السيارات" : "Browse Cars"}
-        </Button>
+      <div className="py-32 text-center border border-white/5 bg-surface-low">
+        <ShoppingCart className="h-16 w-16 text-white/5 mx-auto mb-8" />
+        <h3 className="text-xl uppercase tracking-[0.4em] text-white/40 mb-8">No Acquisitions Yet</h3>
+        <Link to="/cars" className="inline-block px-12 py-5 bg-primary text-black text-[11px] uppercase tracking-[0.4em] font-black hover:bg-white transition-all duration-700">
+          Begin Journey
+        </Link>
       </div>
     );
   }
@@ -200,114 +156,75 @@ const UserOrdersSection = ({ user, isRTL }: { user: SupabaseUser | null; isRTL: 
   ];
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-8">
       {orders.map((order: any) => {
-        const activeIndex = Math.max(
-          0,
-          steps.findIndex((s) => s.id === order.status)
-        );
-
+        const activeIndex = Math.max(0, steps.findIndex((s) => s.id === order.status));
         const progress = ((activeIndex + 1) / steps.length) * 100;
 
         return (
-          <Card key={order.id} className="border-border/60 bg-card/80 mb-4">
-            <CardContent className="p-4 md:p-5 space-y-4">
-              <div className="flex flex-wrap items-center justify-between gap-3">
+          <div key={order.id} className="group bg-surface-low border border-white/5 overflow-hidden">
+            <div className="p-8 md:p-12 space-y-10">
+              <div className="flex flex-wrap items-center justify-between gap-8 border-b border-white/5 pb-8">
                 <div>
-                  <p className="text-xs text-muted-foreground">
-                    {isRTL ? "رقم الطلب" : "Order"} #{order.order_number}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    {new Date(order.created_at).toLocaleString(isRTL ? "ar-SA" : "en-US")}
-                  </p>
+                   <p className="text-[10px] uppercase tracking-[0.4em] text-white/20 mb-2">{isRTL ? "مرجع المعاملة" : "Transaction Ref"}</p>
+                   <p className="text-sm font-bold text-white tracking-widest">#{order.order_number}</p>
                 </div>
-                <div className="flex flex-wrap items-center gap-2">
-                  <Badge className="bg-primary/10 text-primary border-primary/30">
+                <div className="flex flex-wrap items-center gap-4">
+                  <Badge className="bg-primary/10 text-primary border-primary/20 rounded-none px-4 py-1 uppercase text-[10px] tracking-widest">
                     {getStatusLabel(order.status)}
                   </Badge>
-                  <Badge variant="outline" className="text-xs">
-                    {isRTL ? "طريقة الدفع" : "Payment"}: {order.payment_method === "bank_transfer" ? (isRTL ? "تحويل بنكي" : "Bank Transfer") : (isRTL ? "نقدًا" : "Cash")}
-                  </Badge>
-                  <Badge variant="outline" className="text-xs">
-                    {isRTL ? "الاستلام" : "Delivery"}: {getDeliveryLabel(order.delivery_method)}
-                  </Badge>
+                  <p className="text-[10px] uppercase tracking-widest text-white/40">{new Date(order.created_at).toLocaleDateString()}</p>
                 </div>
               </div>
 
-              {/* Car summary */}
               {order.cars && (
-                <div className="flex items-center gap-4 p-3 rounded-xl bg-secondary/40">
-                  <img
-                    src={order.cars.main_image || "/placeholder.svg"}
-                    alt={order.cars.name_ar}
-                    className="h-16 w-24 rounded-lg object-cover"
-                  />
-                  <div className="flex-1">
-                    <p className="font-semibold text-sm">{order.cars.name_ar}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {order.cars.model} - {order.cars.year}
-                    </p>
-                    <p className="text-sm font-bold text-primary mt-1">
-                      {Number(order.total_amount).toLocaleString()} {settings?.currency_symbol || (isRTL ? "ج.س" : "SDG")}
-                    </p>
-                  </div>
-                  <div className="flex flex-col gap-2 items-end">
-                    <a
-                      href={`/orders/${order.id}`}
-                      className="text-xs text-primary hover:underline font-medium"
-                    >
-                      {isRTL ? "عرض التفاصيل" : "View Details"}
-                    </a>
-                    {/* Invoice Download Button */}
-                    {order.payment_status === "paid" && (
-                      <InvoicePDF
-                        order={{
-                          ...order,
-                          customers: order.customers,
-                          cars: order.cars,
-                        }}
-                      />
-                    )}
-                    {order.payment_status !== "paid" && (
-                      <span className="text-[10px] text-muted-foreground flex items-center gap-1">
-                        <FileText className="h-3 w-3" />
-                        {isRTL ? "الفاتورة متاحة بعد السداد" : "Invoice available after payment"}
-                      </span>
-                    )}
-                  </div>
+                <div className="flex flex-col md:flex-row items-start lg:items-center gap-12">
+                   <div className="relative group/img overflow-hidden w-full md:w-64 aspect-[16/9]">
+                     <img
+                       src={order.cars.main_image || "/placeholder.svg"}
+                       alt={order.cars.name_ar}
+                       className="w-full h-full object-cover grayscale opacity-50 group-hover/img:grayscale-0 group-hover/img:opacity-100 transition-all duration-1000 scale-100 group-hover/img:scale-110"
+                     />
+                   </div>
+                   <div className="flex-1 space-y-2">
+                     <h4 className="text-2xl font-black tracking-tight text-white uppercase">{isRTL ? order.cars.name_ar : order.cars.name_en || order.cars.name_ar}</h4>
+                     <p className="text-[10px] uppercase tracking-[0.4em] text-white/40">{order.cars.model} • {order.cars.year}</p>
+                     <p className="text-xl font-bold text-primary tracking-tighter mt-4">
+                       {Number(order.total_amount).toLocaleString()} {(settings as any)?.currency_symbol || (isRTL ? "ج.س" : "SDG")}
+                     </p>
+                   </div>
+                   <div className="flex flex-col gap-6 items-end">
+                      <Link to={`/orders/${order.id}`} className="text-[10px] uppercase tracking-[0.4em] font-black text-white hover:text-primary transition-colors flex items-center gap-3">
+                         {isRTL ? "مراجعة التفاصيل" : "Review Details"}
+                         <ArrowRight className="h-3 w-3" />
+                      </Link>
+                      {order.payment_status === "paid" && (
+                         <div className="scale-75 origin-right">
+                           <InvoicePDF order={{ ...order, customers: order.customers, cars: order.cars }} />
+                         </div>
+                      )}
+                   </div>
                 </div>
               )}
 
-              {/* Timeline */}
-              <div className="space-y-2">
-                <p className="text-xs font-semibold text-muted-foreground">
-                  {isRTL ? "مراحل الطلب" : "Order stages"}
-                </p>
-                <Progress value={progress} className="h-2" />
-                <div className="flex justify-between text-[10px] text-muted-foreground mt-1">
+              <div className="space-y-6 pt-6 border-t border-white/5">
+                <div className="flex justify-between text-[10px] uppercase tracking-[0.4em] text-white/20">
                   {steps.map((step, idx) => (
-                    <span
-                      key={step.id}
-                      className={idx <= activeIndex ? "text-primary font-semibold" : ""}
-                    >
+                    <span key={step.id} className={idx <= activeIndex ? "text-primary font-black" : ""}>
                       {isRTL ? step.labelAr : step.labelEn}
                     </span>
                   ))}
                 </div>
-              </div>
-
-              {/* Delivery notes */}
-              {order.delivery_method === "delivery" && (
-                <div className="text-xs text-muted-foreground">
-                  <span className="font-semibold">
-                    {isRTL ? "عنوان التوصيل:" : "Delivery address:"}
-                  </span>{" "}
-                  {order.delivery_city && `${order.delivery_city} - `}
-                  {order.delivery_address}
+                <div className="h-[1px] bg-white/5 relative">
+                   <motion.div 
+                     initial={{ width: 0 }}
+                     animate={{ width: `${progress}%` }}
+                     transition={{ duration: 1.5, ease: [0.19, 1, 0.22, 1] }}
+                     className="absolute inset-y-0 left-0 bg-primary shadow-[0_0_10px_rgba(var(--primary),0.5)]" />
                 </div>
-              )}
-            </CardContent>
-          </Card>
+              </div>
+            </div>
+          </div>
         );
       })}
     </div>
@@ -330,407 +247,138 @@ const ProfilePage = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [editMode, setEditMode] = useState(false);
-  const [formData, setFormData] = useState({
-    full_name: "",
-    phone: "",
-  });
+  const [formData, setFormData] = useState({ full_name: "", phone: "" });
 
-  // Address form state
   const [showAddressForm, setShowAddressForm] = useState(false);
   const [editingAddress, setEditingAddress] = useState<Address | null>(null);
-  const [addressForm, setAddressForm] = useState({
-    label: "home",
-    city: "",
-    district: "",
-    street: "",
-    building_number: "",
-    postal_code: "",
-    is_default: false,
-  });
+  const [addressForm, setAddressForm] = useState({ label: "home", city: "", district: "", street: "", building_number: "", postal_code: "", is_default: false });
 
-  // Password change state
-  const [passwordForm, setPasswordForm] = useState({
-    newPassword: "",
-    confirmPassword: "",
-  });
+  const [passwordForm, setPasswordForm] = useState({ newPassword: "", confirmPassword: "" });
   const [changingPassword, setChangingPassword] = useState(false);
 
-  // Get default tab from URL
   const defaultTab = searchParams.get("tab") || "profile";
 
-  // Fetch orders count
   const { data: ordersCount = 0 } = useQuery({
     queryKey: ["orders-count", user?.id],
     enabled: !!user?.id,
     queryFn: async () => {
-      const { count } = await supabase
-        .from("orders")
-        .select("*", { count: "exact", head: true })
-        .eq("user_id", user!.id);
+      const { count } = await supabase.from("orders").select("*", { count: "exact", head: true }).eq("user_id", user!.id);
       return count || 0;
     },
   });
 
-  // Fetch wishlist cars
   const { data: wishlistCars = [], isLoading: wishlistLoading } = useQuery({
     queryKey: ["wishlist-cars-profile", wishlistItems],
     enabled: wishlistItems.length > 0,
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("cars")
-        .select("*")
-        .in("id", wishlistItems);
+      const { data, error } = await supabase.from("cars").select("*, brands(name, name_ar)").in("id", wishlistItems);
       if (error) throw error;
       return data || [];
     },
   });
 
-  // Fetch notifications
   const { data: notifications = [], isLoading: notificationsLoading } = useQuery({
     queryKey: ["notifications", user?.id],
     enabled: !!user?.id,
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("notifications")
-        .select("*")
-        .eq("user_id", user!.id)
-        .order("created_at", { ascending: false })
-        .limit(50);
+      const { data, error } = await supabase.from("notifications").select("*").eq("user_id", user!.id).order("created_at", { ascending: false }).limit(50);
       if (error) throw error;
       return data as Notification[];
     },
   });
 
-  // Fetch addresses
   const { data: addresses = [], isLoading: addressesLoading } = useQuery({
     queryKey: ["addresses", user?.id],
     enabled: !!user?.id,
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("addresses")
-        .select("*")
-        .eq("user_id", user!.id)
-        .order("is_default", { ascending: false });
+      const { data, error } = await supabase.from("addresses").select("*").eq("user_id", user!.id).order("is_default", { ascending: false });
       if (error) throw error;
       return data as Address[];
     },
   });
 
-  // Count unread notifications
   const unreadCount = notifications.filter(n => !n.is_read).length;
 
-  // Mark notification as read
   const markAsReadMutation = useMutation({
     mutationFn: async (notificationId: string) => {
-      const { error } = await supabase
-        .from("notifications")
-        .update({ is_read: true })
-        .eq("id", notificationId);
+      const { error } = await supabase.from("notifications").update({ is_read: true }).eq("id", notificationId);
       if (error) throw error;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["notifications"] });
-    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["notifications"] }),
   });
 
-  // Mark all as read
   const markAllAsReadMutation = useMutation({
     mutationFn: async () => {
       if (!user?.id) return;
-      const { error } = await supabase
-        .from("notifications")
-        .update({ is_read: true })
-        .eq("user_id", user.id)
-        .eq("is_read", false);
+      const { error } = await supabase.from("notifications").update({ is_read: true }).eq("user_id", user.id).eq("is_read", false);
       if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["notifications"] });
-      toast({
-        title: isRTL ? "تم التحديث" : "Updated",
-        description: isRTL ? "تم تحديد جميع الإشعارات كمقروءة" : "All notifications marked as read",
-      });
+      toast({ title: isRTL ? "تم التحديث" : "Updated", description: isRTL ? "تم تحديد جميع الإشعارات كمقروءة" : "All notifications marked as read" });
     },
   });
 
-  // Add address mutation
   const addAddressMutation = useMutation({
     mutationFn: async (address: typeof addressForm) => {
       if (!user?.id) throw new Error("Not authenticated");
-      const { error } = await supabase
-        .from("addresses")
-        .insert({ ...address, user_id: user.id });
+      const { error } = await supabase.from("addresses").insert({ ...address, user_id: user.id });
       if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["addresses"] });
       setShowAddressForm(false);
-      resetAddressForm();
-      toast({
-        title: isRTL ? "تم الحفظ" : "Saved",
-        description: isRTL ? "تم إضافة العنوان بنجاح" : "Address added successfully",
-      });
-    },
-    onError: (error: any) => {
-      toast({
-        variant: "destructive",
-        title: isRTL ? "خطأ" : "Error",
-        description: error.message,
-      });
+      setAddressForm({ label: "home", city: "", district: "", street: "", building_number: "", postal_code: "", is_default: false });
+      toast({ title: isRTL ? "تم الحفظ" : "Saved", description: isRTL ? "تم إضافة العنوان بنجاح" : "Address added successfully" });
     },
   });
 
-  // Update address mutation
-  const updateAddressMutation = useMutation({
-    mutationFn: async ({ id, ...address }: Address) => {
-      const { error } = await supabase
-        .from("addresses")
-        .update(address)
-        .eq("id", id);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["addresses"] });
-      setEditingAddress(null);
-      resetAddressForm();
-      toast({
-        title: isRTL ? "تم التحديث" : "Updated",
-        description: isRTL ? "تم تحديث العنوان بنجاح" : "Address updated successfully",
-      });
-    },
-  });
-
-  // Delete address mutation
   const deleteAddressMutation = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase
-        .from("addresses")
-        .delete()
-        .eq("id", id);
+      const { error } = await supabase.from("addresses").delete().eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["addresses"] });
-      toast({
-        title: isRTL ? "تم الحذف" : "Deleted",
-        description: isRTL ? "تم حذف العنوان بنجاح" : "Address deleted successfully",
-      });
+      toast({ title: isRTL ? "تم الحذف" : "Deleted", description: isRTL ? "تم حذف العنوان بنجاح" : "Address deleted successfully" });
     },
   });
 
-  // Set default address mutation
   const setDefaultAddressMutation = useMutation({
     mutationFn: async (id: string) => {
       if (!user?.id) return;
-      // First, unset all defaults
-      await supabase
-        .from("addresses")
-        .update({ is_default: false })
-        .eq("user_id", user.id);
-      // Then set the new default
-      const { error } = await supabase
-        .from("addresses")
-        .update({ is_default: true })
-        .eq("id", id);
+      await supabase.from("addresses").update({ is_default: false }).eq("user_id", user.id);
+      const { error } = await supabase.from("addresses").update({ is_default: true }).eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["addresses"] });
-      toast({
-        title: isRTL ? "تم التحديث" : "Updated",
-        description: isRTL ? "تم تحديد العنوان الافتراضي" : "Default address updated",
-      });
+      toast({ title: isRTL ? "تم التحديث" : "Updated", description: isRTL ? "تم تحديد العنوان الافتراضي" : "Default address updated" });
     },
   });
-
-  const resetAddressForm = () => {
-    setAddressForm({
-      label: "home",
-      city: "",
-      district: "",
-      street: "",
-      building_number: "",
-      postal_code: "",
-      is_default: false,
-    });
-  };
-
-  // Handle avatar upload
-  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file || !user) return;
-
-    setUploadingAvatar(true);
-    try {
-      const fileExt = file.name.split(".").pop();
-      const fileName = `${user.id}-${Date.now()}.${fileExt}`;
-      const filePath = `avatars/${fileName}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from("car-images")
-        .upload(filePath, file);
-
-      if (uploadError) throw uploadError;
-
-      const { data: urlData } = supabase.storage
-        .from("car-images")
-        .getPublicUrl(filePath);
-
-      const { error: updateError } = await supabase
-        .from("profiles")
-        .update({ avatar_url: urlData.publicUrl })
-        .eq("user_id", user.id);
-
-      if (updateError) throw updateError;
-
-      setProfile((prev) => prev ? { ...prev, avatar_url: urlData.publicUrl } : null);
-      toast({
-        title: isRTL ? "تم رفع الصورة" : "Avatar uploaded",
-        description: isRTL ? "تم تحديث صورتك الشخصية بنجاح" : "Your avatar has been updated successfully",
-      });
-    } catch (error: any) {
-      console.error("Error uploading avatar:", error);
-      toast({
-        variant: "destructive",
-        title: isRTL ? "خطأ" : "Error",
-        description: error.message,
-      });
-    } finally {
-      setUploadingAvatar(false);
-    }
-  };
-
-  // MFA State
-  const [mfaData, setMfaData] = useState<{ id: string; type: string; secret: string; qr_code: string } | null>(null);
-  const [mfaCode, setMfaCode] = useState("");
-  const [isEnrollingMfa, setIsEnrollingMfa] = useState(false);
-  const [verifyingMfa, setVerifyingMfa] = useState(false);
-
-  const handleEnrollMFA = async () => {
-    try {
-      setIsEnrollingMfa(true);
-      const { data, error } = await supabase.auth.mfa.enroll({
-        factorType: 'totp',
-      });
-      if (error) throw error;
-      setMfaData(data);
-    } catch (error: any) {
-      toast({
-        variant: "destructive",
-        title: isRTL ? "خطأ" : "Error",
-        description: error.message
-      });
-    } finally {
-      setIsEnrollingMfa(false);
-    }
-  };
-
-  const handleVerifyMFA = async () => {
-    if (!mfaData) return;
-    setVerifyingMfa(true);
-    try {
-      const { data, error } = await supabase.auth.mfa.challengeAndVerify({
-        factorId: mfaData.id,
-        code: mfaCode,
-      });
-      if (error) throw error;
-      toast({
-        title: isRTL ? "تم تفعيل المصادقة الثنائية" : "2FA Enabled",
-        description: isRTL ? "تم تأمين حسابك بنجاح" : "Your account is now secured",
-      });
-      setMfaData(null);
-      setMfaCode("");
-    } catch (error: any) {
-      toast({
-        variant: "destructive",
-        title: isRTL ? "رمز غير صحيح" : "Invalid Code",
-        description: error.message
-      });
-    } finally {
-      setVerifyingMfa(false);
-    }
-  };
-
-  // Handle password change
-  const handlePasswordChange = async () => {
-    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-      toast({
-        variant: "destructive",
-        title: isRTL ? "خطأ" : "Error",
-        description: isRTL ? "كلمات المرور غير متطابقة" : "Passwords do not match",
-      });
-      return;
-    }
-
-    if (passwordForm.newPassword.length < 6) {
-      toast({
-        variant: "destructive",
-        title: isRTL ? "خطأ" : "Error",
-        description: isRTL ? "كلمة المرور يجب أن تكون 6 أحرف على الأقل" : "Password must be at least 6 characters",
-      });
-      return;
-    }
-
-    setChangingPassword(true);
-    try {
-      const { error } = await supabase.auth.updateUser({
-        password: passwordForm.newPassword,
-      });
-
-      if (error) throw error;
-
-      setPasswordForm({ newPassword: "", confirmPassword: "" });
-      toast({
-        title: isRTL ? "تم التحديث" : "Updated",
-        description: isRTL ? "تم تغيير كلمة المرور بنجاح" : "Password changed successfully",
-      });
-    } catch (error: any) {
-      toast({
-        variant: "destructive",
-        title: isRTL ? "خطأ" : "Error",
-        description: error.message,
-      });
-    } finally {
-      setChangingPassword(false);
-    }
-  };
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setUser(session?.user ?? null);
-      if (!session) {
-        navigate("/auth");
-      }
+      if (!session) navigate("/auth");
     });
-
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!session) {
-        navigate("/auth");
-      } else {
+      if (!session) navigate("/auth");
+      else {
         setUser(session.user);
         fetchProfile(session.user.id);
       }
     });
-
     return () => subscription.unsubscribe();
   }, [navigate]);
 
   const fetchProfile = async (userId: string) => {
     try {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("user_id", userId)
-        .single();
-
+      const { data, error } = await supabase.from("profiles").select("*").eq("user_id", userId).single();
       if (error && error.code !== "PGRST116") throw error;
-
       if (data) {
         setProfile(data);
-        setFormData({
-          full_name: data.full_name || "",
-          phone: data.phone || "",
-        });
+        setFormData({ full_name: data.full_name || "", phone: data.phone || "" });
       }
     } catch (error: any) {
       console.error("Error fetching profile:", error);
@@ -742,31 +390,14 @@ const ProfilePage = () => {
   const handleSave = async () => {
     if (!user) return;
     setSaving(true);
-
     try {
-      const { error } = await supabase
-        .from("profiles")
-        .update({
-          full_name: formData.full_name,
-          phone: formData.phone,
-          updated_at: new Date().toISOString(),
-        })
-        .eq("user_id", user.id);
-
+      const { error } = await supabase.from("profiles").update({ full_name: formData.full_name, phone: formData.phone, updated_at: new Date().toISOString() }).eq("user_id", user.id);
       if (error) throw error;
-
       setProfile((prev) => prev ? { ...prev, ...formData } : null);
       setEditMode(false);
-      toast({
-        title: isRTL ? "تم الحفظ" : "Saved",
-        description: isRTL ? "تم تحديث الملف الشخصي بنجاح" : "Profile updated successfully",
-      });
+      toast({ title: isRTL ? "تم الحفظ" : "Saved", description: isRTL ? "تم تحديث الملف الشخصي بنجاح" : "Profile updated successfully" });
     } catch (error: any) {
-      toast({
-        variant: "destructive",
-        title: isRTL ? "خطأ" : "Error",
-        description: error.message,
-      });
+      toast({ variant: "destructive", title: isRTL ? "خطأ" : "Error", description: error.message });
     } finally {
       setSaving(false);
     }
@@ -777,9 +408,11 @@ const ProfilePage = () => {
     navigate("/");
   };
 
-  const getInitials = (name: string | null) => {
-    if (!name) return "U";
-    return name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2);
+  const calculatePoints = () => {
+    const signupBonus = 100;
+    const referralPoints = (profile?.referral_earnings || 0);
+    const orderPoints = ordersCount * 50;
+    return signupBonus + referralPoints + orderPoints;
   };
 
   const getMembershipLevel = () => {
@@ -792,1095 +425,401 @@ const ProfilePage = () => {
 
   const membership = getMembershipLevel();
 
-  // Calculate real points
-  const calculatePoints = () => {
-    const signupBonus = 100;
-    const referralPoints = (profile?.referral_earnings || 0);
-    const orderPoints = ordersCount * 50;
-    return signupBonus + referralPoints + orderPoints;
-  };
-
-  const getNotificationIcon = (type: string) => {
-    switch (type) {
-      case "order": return <Package className="h-5 w-5 text-blue-500" />;
-      case "promotion": return <Gift className="h-5 w-5 text-purple-500" />;
-      case "system": return <Bell className="h-5 w-5 text-amber-500" />;
-      case "message": return <MessageSquare className="h-5 w-5 text-green-500" />;
-      default: return <Bell className="h-5 w-5 text-primary" />;
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+    setUploadingAvatar(true);
+    try {
+      const fileExt = file.name.split(".").pop();
+      const fileName = `${user.id}-${Date.now()}.${fileExt}`;
+      const filePath = `avatars/${fileName}`;
+      const { error: uploadError } = await supabase.storage.from("car-images").upload(filePath, file);
+      if (uploadError) throw uploadError;
+      const { data: urlData } = supabase.storage.from("car-images").getPublicUrl(filePath);
+      const { error: updateError } = await supabase.from("profiles").update({ avatar_url: urlData.publicUrl }).eq("user_id", user.id);
+      if (updateError) throw updateError;
+      setProfile((prev) => prev ? { ...prev, avatar_url: urlData.publicUrl } : null);
+      toast({ title: isRTL ? "تم رفع الصورة" : "Avatar uploaded", description: isRTL ? "تم تحديث صورتك الشخصية بنجاح" : "Your avatar has been updated successfully" });
+    } catch (error: any) {
+      toast({ variant: "destructive", title: isRTL ? "خطأ" : "Error", description: error.message });
+    } finally {
+      setUploadingAvatar(false);
     }
   };
 
-  const getAddressIcon = (label: string) => {
-    switch (label) {
-      case "home": return <Home className="h-5 w-5" />;
-      case "work": return <Building className="h-5 w-5" />;
-      default: return <MapPin className="h-5 w-5" />;
+  const handlePasswordChange = async () => {
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      toast({ variant: "destructive", title: isRTL ? "خطأ" : "Error", description: isRTL ? "كلمات المرور غير متطابقة" : "Passwords do not match" });
+      return;
     }
-  };
-
-  const getAddressLabel = (label: string) => {
-    switch (label) {
-      case "home": return isRTL ? "المنزل" : "Home";
-      case "work": return isRTL ? "العمل" : "Work";
-      default: return isRTL ? "أخرى" : "Other";
+    setChangingPassword(true);
+    try {
+      const { error } = await supabase.auth.updateUser({ password: passwordForm.newPassword });
+      if (error) throw error;
+      setPasswordForm({ newPassword: "", confirmPassword: "" });
+      toast({ title: isRTL ? "تم التحديث" : "Updated", description: isRTL ? "تم تغيير كلمة المرور بنجاح" : "Password changed successfully" });
+    } catch (error: any) {
+      toast({ variant: "destructive", title: isRTL ? "خطأ" : "Error", description: error.message });
+    } finally {
+      setChangingPassword(false);
     }
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <div className="relative">
-            <div className="h-20 w-20 rounded-full bg-gradient-to-r from-primary/20 to-primary/40 animate-pulse mx-auto mb-4" />
-            <Loader2 className="h-8 w-8 animate-spin text-primary absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
-          </div>
-          <p className="text-muted-foreground animate-pulse">{isRTL ? "جاري التحميل..." : "Loading..."}</p>
-        </div>
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <Loader2 className="h-12 w-12 animate-spin text-primary/40" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-black selection:bg-primary/30 overflow-x-hidden">
       <Navbar />
 
-      <main className="pt-20 pb-16">
-        {/* Premium Hero Header */}
-        <div className="relative overflow-hidden">
-          {/* Background with gradient */}
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-primary/5" />
-          <div className="absolute inset-0 pattern-overlay opacity-30" />
-
-          {/* Decorative elements */}
-          <div className="absolute top-0 right-0 w-96 h-96 bg-primary/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-          <div className="absolute bottom-0 left-0 w-64 h-64 bg-primary/15 rounded-full blur-2xl translate-y-1/2 -translate-x-1/2" />
-
-          <div className="container mx-auto px-4 py-12 relative z-10">
-            {/* Profile Header Card */}
-            <Card className="border-0 bg-card/80 backdrop-blur-lg shadow-2xl overflow-hidden">
-              <div className="relative">
-                {/* Cover gradient */}
-                <div className="h-32 md:h-44 bg-gradient-to-br from-primary via-primary/80 to-primary/60 relative overflow-hidden">
-                  <div className="absolute inset-0 opacity-20">
-                    <div className="absolute top-4 right-8 w-20 h-20 border-4 border-white/30 rounded-full" />
-                    <div className="absolute bottom-4 left-12 w-32 h-32 border-4 border-white/20 rounded-full" />
-                    <div className="absolute top-1/2 left-1/2 w-40 h-40 border-4 border-white/10 rounded-full" />
-                  </div>
-                  <Sparkles className="absolute top-4 left-4 h-6 w-6 text-white/50 animate-pulse" />
-                  <Sparkles className="absolute bottom-4 right-8 h-4 w-4 text-white/40 animate-pulse delay-300" />
+      <main className="pt-40 pb-32">
+        <div className="container mx-auto px-6 md:px-12">
+          
+          {/* Sovereign Concierge Header */}
+          <section className="mb-24 flex flex-col md:flex-row items-start md:items-end justify-between gap-12 border-b border-white/5 pb-10">
+             <motion.div 
+               initial={{ opacity: 0, x: -20 }}
+               animate={{ opacity: 1, x: 0 }}
+               transition={{ duration: 1.2, ease: [0.19, 1, 0.22, 1] }}
+               className="space-y-4"
+             >
+                <div className="flex items-center gap-4 text-primary">
+                   <div className="w-12 h-[1px] bg-primary/40" />
+                   <span className="text-[10px] uppercase tracking-[0.8em] font-black">Authorized Member</span>
                 </div>
+                <h1 className="text-7xl font-black tracking-tighter uppercase leading-none text-white">
+                  The <span className="text-primary italic">Concierge</span> <br /> Interface
+                </h1>
+             </motion.div>
 
-                {/* Profile Info */}
-                <div className="relative px-6 pb-6">
-                  <div className="flex flex-col md:flex-row gap-6 items-center md:items-end -mt-16 md:-mt-20">
-                    {/* Avatar */}
-                    <div className="relative group">
-                      <div className="absolute inset-0 bg-gradient-to-br from-primary to-primary/60 rounded-full blur-lg opacity-50 group-hover:opacity-75 transition-opacity" />
-                      <Avatar className="h-32 w-32 md:h-40 md:w-40 border-4 border-background shadow-2xl relative z-10">
-                        <AvatarImage src={profile?.avatar_url || ""} />
-                        <AvatarFallback className="text-3xl md:text-4xl bg-gradient-to-br from-primary to-primary/80 text-primary-foreground font-bold">
-                          {getInitials(profile?.full_name)}
-                        </AvatarFallback>
-                      </Avatar>
-                      <input
-                        ref={avatarInputRef}
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        onChange={handleAvatarUpload}
-                      />
-                      <button
-                        onClick={() => avatarInputRef.current?.click()}
-                        disabled={uploadingAvatar}
-                        className="absolute bottom-2 right-2 h-10 w-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-lg hover:scale-110 transition-transform z-20 border-2 border-background disabled:opacity-50"
+             <motion.div 
+               initial={{ opacity: 0, x: 20 }}
+               animate={{ opacity: 1, x: 0 }}
+               transition={{ duration: 1.2, delay: 0.2, ease: [0.19, 1, 0.22, 1] }}
+               className="flex items-center gap-8"
+             >
+                <div className="text-end hidden lg:block">
+                   <p className="text-[10px] uppercase tracking-[0.4em] text-white/20 mb-2">Member Since</p>
+                   <p className="text-sm font-bold text-white tracking-widest">{profile?.created_at ? new Date(profile.created_at).getFullYear() : '2024'}</p>
+                </div>
+                <div className="relative group">
+                   <div className="absolute inset-0 bg-primary/20 blur-2xl rounded-full scale-50 group-hover:scale-100 transition-transform duration-1000" />
+                   <Avatar className="h-24 w-24 border border-white/10 ring-8 ring-white/5 relative z-10">
+                      <AvatarImage src={profile?.avatar_url || ""} className="grayscale contrast-125" />
+                      <AvatarFallback className="bg-surface-high text-white font-black text-2xl uppercase tracking-tighter">{profile?.full_name?.[0] || 'U'}</AvatarFallback>
+                   </Avatar>
+                   <button 
+                     onClick={() => avatarInputRef.current?.click()}
+                     className="absolute -bottom-2 -right-2 h-10 w-10 bg-primary text-black rounded-full flex items-center justify-center border-4 border-black group-hover:scale-110 transition-all z-20"
+                   >
+                     {uploadingAvatar ? <Loader2 className="h-4 w-4 animate-spin" /> : <Camera className="h-4 w-4" />}
+                   </button>
+                   <input ref={avatarInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
+                </div>
+             </motion.div>
+          </section>
+
+          {/* Quick Metrics Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-0 border border-white/5 bg-surface-low divide-x divide-white/5 mb-24">
+             {[
+               { label: isRTL ? "الاستثمارات" : "Investments", value: ordersCount, icon: ShoppingCart },
+               { label: isRTL ? "المجموعة" : "Curated", value: wishlistItems.length, icon: Heart },
+               { label: isRTL ? "التنبيهات" : "Dispatch", value: unreadCount, icon: Bell },
+               { label: isRTL ? "الرصيد" : "Sovereign Pts", value: calculatePoints(), icon: Star },
+             ].map((stat, i) => (
+                <div key={i} className="p-10 flex flex-col gap-4 group">
+                   <div className="flex items-center justify-between">
+                      <p className="text-[10px] uppercase tracking-[0.4em] text-white/20 group-hover:text-primary transition-colors">{stat.label}</p>
+                      <stat.icon className="h-4 w-4 text-white/5 group-hover:text-primary/20 transition-colors" />
+                   </div>
+                   <p className="text-4xl font-black text-white tracking-tighter">{stat.value}</p>
+                </div>
+             ))}
+          </div>
+
+          <div className="grid lg:grid-cols-4 gap-20">
+             {/* Sovereign Sidebar Navigation */}
+             <div className="lg:col-span-1 space-y-12">
+                <nav className="flex flex-col gap-6">
+                   {[
+                     { id: "profile", label: isRTL ? "الهوية" : "Identity", icon: User },
+                     { id: "orders", label: isRTL ? "السجل" : "Ledger", icon: ShoppingCart },
+                     { id: "notifications", label: isRTL ? "المراسلات" : "Dispatch", icon: Bell },
+                     { id: "rewards", label: isRTL ? "المكافآت" : "Privileges", icon: Gift },
+                     { id: "addresses", label: isRTL ? "المواقع" : "Stations", icon: MapPin },
+                     { id: "security", label: isRTL ? "الثقة" : "Security", icon: Shield },
+                   ].map((nav) => (
+                      <button 
+                        key={nav.id}
+                        onClick={() => navigate(`/profile?tab=${nav.id}`)}
+                        className={`group flex items-center gap-6 text-[10px] uppercase tracking-[0.5em] font-black transition-all duration-500 ${defaultTab === nav.id ? 'text-primary' : 'text-white/20 hover:text-white'}`}
                       >
-                        {uploadingAvatar ? (
-                          <Loader2 className="h-5 w-5 animate-spin" />
-                        ) : (
-                          <Camera className="h-5 w-5" />
-                        )}
+                         <nav.icon className={`h-4 w-4 transition-transform ${defaultTab === nav.id ? 'scale-125' : 'group-hover:scale-110'}`} />
+                         {nav.label}
+                         {nav.id === activeTab && <motion.div layoutId="activeTab" className="ml-auto w-2 h-2 bg-primary rounded-full shadow-[0_0_10px_rgba(var(--primary),0.5)]" />}
                       </button>
+                   ))}
+                </nav>
 
-                      {/* Membership Badge */}
-                      <div className={`absolute -top-2 -right-2 z-20 ${membership.level === 'gold' ? 'bg-yellow-500' :
-                        membership.level === 'silver' ? 'bg-gray-400' : 'bg-amber-700'
-                        } rounded-full p-2 shadow-lg`}>
-                        <Trophy className="h-4 w-4 text-white" />
-                      </div>
-                    </div>
-
-                    {/* User Info */}
-                    <div className="flex-1 text-center md:text-start pb-4">
-                      <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 mb-3">
-                        <h1 className="text-2xl md:text-3xl font-black text-foreground">
-                          {profile?.full_name || (isRTL ? "مستخدم جديد" : "New User")}
-                        </h1>
-                        <Badge className={`gap-1 ${membership.level === 'gold' ? 'bg-yellow-500/20 text-yellow-600 border-yellow-500/30' :
-                          membership.level === 'silver' ? 'bg-gray-500/20 text-gray-600 border-gray-500/30' :
-                            'bg-amber-700/20 text-amber-700 border-amber-700/30'
-                          }`}>
-                          <Trophy className="h-3 w-3" />
-                          {membership.name}
-                        </Badge>
-                        {profile?.role && (
-                          <Badge variant="secondary" className="gap-1 bg-primary/10 text-primary border-primary/20">
-                            <Shield className="h-3 w-3" />
-                            {profile.role === "admin"
-                              ? (isRTL ? "مدير" : "Admin")
-                              : profile.role === "moderator"
-                                ? (isRTL ? "مشرف" : "Moderator")
-                                : (isRTL ? "عضو" : "Member")
-                            }
-                          </Badge>
-                        )}
-                      </div>
-                      <div className="flex flex-col md:flex-row gap-3 text-muted-foreground">
-                        <p className="flex items-center gap-2 justify-center md:justify-start">
-                          <Mail className="h-4 w-4 text-primary" />
-                          {user?.email}
-                        </p>
-                        {profile?.phone && (
-                          <p className="flex items-center gap-2 justify-center md:justify-start">
-                            <Phone className="h-4 w-4 text-primary" />
-                            <span dir="ltr">{profile.phone}</span>
-                          </p>
-                        )}
-                        {profile?.created_at && (
-                          <p className="flex items-center gap-2 justify-center md:justify-start">
-                            <Calendar className="h-4 w-4 text-primary" />
-                            {isRTL ? "عضو منذ" : "Member since"} {new Date(profile.created_at).toLocaleDateString(
-                              language === "ar" ? "ar-SA" : "en-US",
-                              { month: "long", year: "numeric" }
-                            )}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Actions */}
-                    <div className="flex gap-3">
-                      <Button variant="outline" size="icon" className="rounded-full relative" onClick={() => navigate("/profile?tab=notifications")}>
-                        <Bell className="h-5 w-5" />
-                        {unreadCount > 0 && (
-                          <span className="absolute -top-1 -right-1 h-5 w-5 bg-destructive text-destructive-foreground text-xs rounded-full flex items-center justify-center">
-                            {unreadCount}
-                          </span>
-                        )}
-                      </Button>
-                      <Button variant="outline" size="icon" className="rounded-full" onClick={() => navigate("/profile?tab=security")}>
-                        <Settings className="h-5 w-5" />
-                      </Button>
-                      <Button
-                        variant="destructive"
-                        onClick={handleLogout}
-                        className="gap-2 rounded-full"
-                      >
-                        <LogOut className="h-4 w-4" />
-                        {t.auth.logout}
-                      </Button>
-                    </div>
-                  </div>
+                <div className="pt-12 border-t border-white/5 space-y-8">
+                   <div className="p-8 bg-surface-high border border-white/5 space-y-4">
+                      <p className="text-[10px] uppercase tracking-[0.4em] text-white/30">{isRTL ? "المستوى السيادي" : "Authority Level"}</p>
+                      <h4 className="text-xl font-black text-white uppercase italic">{membership.name} Tier</h4>
+                      <Progress value={60} className="h-1 bg-white/5" />
+                   </div>
+                   <button onClick={handleLogout} className="w-full py-5 border border-white/5 text-[10px] uppercase tracking-[0.4em] font-black text-white/40 hover:text-destructive hover:border-destructive/30 transition-all flex items-center justify-center gap-4">
+                      {isRTL ? "إنهاء الجلسة" : "Terminate Session"}
+                      <LogOut className="h-3 w-3" />
+                   </button>
                 </div>
-              </div>
-            </Card>
+             </div>
+
+             {/* Tab Content Display */}
+             <div className="lg:col-span-3">
+                <AnimatePresence mode="wait">
+                   <motion.div
+                     key={defaultTab}
+                     initial={{ opacity: 0, y: 20 }}
+                     animate={{ opacity: 1, y: 0 }}
+                     exit={{ opacity: 0, y: -20 }}
+                     transition={{ duration: 0.8, ease: [0.19, 1, 0.22, 1] }}
+                   >
+                      {defaultTab === "profile" && (
+                         <div className="space-y-12">
+                            <h2 className="text-4xl font-black uppercase tracking-tighter border-b border-white/5 pb-8">{isRTL ? "إدارة الهوية" : "Identity Management"}</h2>
+                            <div className="grid md:grid-cols-2 gap-12">
+                               <div className="space-y-8">
+                                  <div className="space-y-4">
+                                     <label className="text-[10px] uppercase tracking-[0.4em] text-white/20">{isRTL ? "الاسم الكامل" : "Full Sovereign Name"}</label>
+                                     <Input 
+                                       value={formData.full_name} 
+                                       onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
+                                       disabled={!editMode}
+                                       className="h-16 bg-surface-low border-white/5 rounded-none text-white focus-visible:ring-primary focus-visible:ring-1" 
+                                     />
+                                  </div>
+                                  <div className="space-y-4">
+                                     <label className="text-[10px] uppercase tracking-[0.4em] text-white/20">{isRTL ? "رقم الاتصال" : "Verification Line"}</label>
+                                     <Input 
+                                       value={formData.phone} 
+                                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                                       disabled={!editMode}
+                                       className="h-16 bg-surface-low border-white/5 rounded-none text-white transition-all" 
+                                     />
+                                  </div>
+                                  {!editMode ? (
+                                     <button onClick={() => setEditMode(true)} className="px-12 py-5 border border-primary text-primary text-[10px] uppercase tracking-[0.4em] font-black hover:bg-primary hover:text-black transition-all">
+                                        Edit Credentials
+                                     </button>
+                                  ) : (
+                                     <div className="flex gap-4">
+                                        <button onClick={handleSave} disabled={saving} className="px-12 py-5 bg-primary text-black text-[10px] uppercase tracking-[0.4em] font-black hover:bg-white transition-all flex items-center gap-3">
+                                           {saving && <Loader2 className="h-3 w-3 animate-spin" />}
+                                           Record Authority
+                                        </button>
+                                        <button onClick={() => setEditMode(false)} className="px-12 py-5 border border-white/10 text-white/40 text-[10px] uppercase tracking-[0.4em] font-black hover:text-white transition-all">
+                                           Cancel
+                                        </button>
+                                     </div>
+                                  )}
+                               </div>
+                               <div className="p-10 bg-surface-low border border-white/5 space-y-6">
+                                  <p className="text-[10px] uppercase tracking-[0.4em] text-white/20">Verified Email</p>
+                                  <div className="flex items-center gap-4 text-white font-bold tracking-widest py-4 border-b border-white/5">
+                                     <Mail className="h-4 w-4 text-primary" />
+                                     {user?.email}
+                                  </div>
+                                  <p className="text-[9px] uppercase tracking-[0.3em] text-white/10 italic">This address is used for all high-level institutional communications.</p>
+                               </div>
+                            </div>
+                         </div>
+                      )}
+
+                      {defaultTab === "orders" && (
+                         <div className="space-y-12">
+                            <h2 className="text-4xl font-black uppercase tracking-tighter border-b border-white/5 pb-8">{isRTL ? "سجل الاقتناء" : "Acquisition Ledger"}</h2>
+                            <UserOrdersSection user={user} isRTL={isRTL} />
+                         </div>
+                      )}
+
+                      {defaultTab === "notifications" && (
+                         <div className="space-y-12">
+                            <div className="flex items-end justify-between border-b border-white/5 pb-8">
+                               <h2 className="text-4xl font-black uppercase tracking-tighter">{isRTL ? "صندوق Dispatch" : "Dispatch Terminal"}</h2>
+                               {unreadCount > 0 && (
+                                  <button onClick={() => markAllAsReadMutation.mutate()} className="text-[10px] uppercase tracking-[0.4em] text-primary font-black hover:text-white transition-colors">Silence All Alerts</button>
+                               )}
+                            </div>
+                            <div className="space-y-4">
+                               {notifications.length === 0 ? (
+                                  <div className="py-32 text-center border border-white/5 bg-surface-low">
+                                     <Bell className="h-16 w-16 text-white/5 mx-auto mb-8" />
+                                     <p className="text-[10px] uppercase tracking-[0.4em] text-white/20">No transmissions recorded</p>
+                                  </div>
+                               ) : (
+                                  notifications.map((n) => (
+                                     <div key={n.id} className={`p-8 border-l-2 transition-all ${n.is_read ? 'border-white/5 opacity-40 grayscale' : 'border-primary bg-surface-low shadow-lg'}`}>
+                                        <div className="flex justify-between items-start gap-8 mb-4">
+                                           <h4 className="text-lg font-black text-white uppercase tracking-tight">{isRTL ? n.title_ar : n.title}</h4>
+                                           <span className="text-[9px] uppercase tracking-widest text-white/20 whitespace-nowrap">{formatDistanceToNow(new Date(n.created_at), { addSuffix: true, locale: isRTL ? ar : undefined })}</span>
+                                        </div>
+                                        <p className="text-sm text-white/60 leading-relaxed mb-6">{isRTL ? n.message_ar : n.message}</p>
+                                        {!n.is_read && (
+                                           <button onClick={() => markAsReadMutation.mutate(n.id)} className="text-[9px] uppercase tracking-[0.4em] text-primary font-black">Archive Alert</button>
+                                        )}
+                                     </div>
+                                  ))
+                               )}
+                            </div>
+                         </div>
+                      )}
+
+                      {defaultTab === "rewards" && (
+                         <div className="space-y-12">
+                             <h2 className="text-4xl font-black uppercase tracking-tighter border-b border-white/5 pb-8">{isRTL ? "مركز القمة" : "Apex Privilege"}</h2>
+                             <div className="grid md:grid-cols-2 gap-12">
+                                <section className="space-y-8">
+                                   <div className="p-12 bg-surface-low border border-white/5 text-center space-y-4">
+                                      <p className="text-[10px] uppercase tracking-[0.4em] text-white/30">Current Influence</p>
+                                      <p className="text-6xl font-black text-white tracking-tighter">{calculatePoints()} PTS</p>
+                                      <p className="text-[9px] uppercase tracking-[0.3em] text-primary italic">Institutional Credits</p>
+                                   </div>
+                                   <ReferralCard />
+                                </section>
+                                <section className="space-y-4">
+                                   <p className="text-[10px] uppercase tracking-[0.4em] text-white/20 mb-8">Available Redemptions</p>
+                                   {[
+                                     { points: 500, reward: isRTL ? "خصم 5% على أي سيارة" : "5% off any car", icon: Gift },
+                                     { points: 1000, reward: isRTL ? "فحص مجاني للسيارة" : "Free car inspection", icon: Settings },
+                                     { points: 2500, reward: isRTL ? "تأمين مجاني لمدة شهر" : "1 month free insurance", icon: Shield },
+                                   ].map((item, index) => (
+                                     <div key={index} className="p-8 border border-white/5 bg-surface-low flex items-center justify-between group">
+                                        <div className="space-y-2">
+                                            <h5 className="text-sm font-bold text-white uppercase tracking-tight group-hover:text-primary transition-colors">{item.reward}</h5>
+                                            <p className="text-[9px] uppercase tracking-widest text-white/30">{item.points} CREDITS</p>
+                                        </div>
+                                        <button disabled={calculatePoints() < item.points} className="text-[9px] uppercase tracking-[0.4em] font-black disabled:opacity-20 text-primary">Engage</button>
+                                     </div>
+                                   ))}
+                                </section>
+                             </div>
+                         </div>
+                      )}
+
+                      {defaultTab === "addresses" && (
+                         <div className="space-y-12">
+                             <div className="flex items-end justify-between border-b border-white/5 pb-8">
+                               <h2 className="text-4xl font-black uppercase tracking-tighter">{isRTL ? "محطات التوصيل" : "Station Network"}</h2>
+                               <button 
+                                 onClick={() => { setEditingAddress(null); setAddressForm({ label: "home", city: "", district: "", street: "", building_number: "", postal_code: "", is_default: false }); setShowAddressForm(true); }}
+                                 className="text-[10px] uppercase tracking-[0.4em] text-primary font-black hover:text-white transition-colors"
+                               >
+                                 Assign New Station
+                               </button>
+                             </div>
+                             
+                             {showAddressForm ? (
+                                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-12 bg-surface-low border border-white/5 space-y-10 max-w-2xl">
+                                   <div className="grid grid-cols-2 gap-8">
+                                      <div className="space-y-4">
+                                         <label className="text-[10px] uppercase tracking-[0.4em] text-white/20">Station Label</label>
+                                         <div className="flex gap-4">
+                                            {["home", "work", "other"].map(l => (
+                                               <button key={l} onClick={() => setAddressForm({...addressForm, label: l})} className={`p-4 border text-[9px] uppercase tracking-widest font-black flex-1 transition-all ${addressForm.label === l ? 'bg-primary text-black border-primary' : 'border-white/10 text-white/40 hover:text-white'}`}>
+                                                  {l}
+                                               </button>
+                                            ))}
+                                         </div>
+                                      </div>
+                                      <div className="space-y-4">
+                                         <label className="text-[10px] uppercase tracking-[0.4em] text-white/20">Metropolitan</label>
+                                         <Input value={addressForm.city} onChange={e => setAddressForm({...addressForm, city: e.target.value})} className="h-14 bg-black/40 border-white/10" />
+                                      </div>
+                                   </div>
+                                   <div className="grid grid-cols-2 gap-8">
+                                      <div className="space-y-4">
+                                         <label className="text-[10px] uppercase tracking-[0.4em] text-white/20">Sector / District</label>
+                                         <Input value={addressForm.district} onChange={e => setAddressForm({...addressForm, district: e.target.value})} className="h-14 bg-black/40 border-white/10" />
+                                      </div>
+                                      <div className="space-y-4">
+                                         <label className="text-[10px] uppercase tracking-[0.4em] text-white/20">Thoroughfare</label>
+                                         <Input value={addressForm.street} onChange={e => setAddressForm({...addressForm, street: e.target.value})} className="h-14 bg-black/40 border-white/10" />
+                                      </div>
+                                   </div>
+                                   <div className="flex gap-4 pt-6">
+                                      <button onClick={() => addAddressMutation.mutate(addressForm)} className="px-12 py-5 bg-primary text-black text-[10px] uppercase tracking-[0.4em] font-black hover:bg-white transition-all">Record Station</button>
+                                      <button onClick={() => setShowAddressForm(false)} className="px-12 py-5 border border-white/10 text-white/40 text-[10px] uppercase tracking-[0.4em] font-black hover:text-white transition-all">Cancel</button>
+                                   </div>
+                                </motion.div>
+                             ) : (
+                                <div className="grid md:grid-cols-2 gap-8">
+                                   {addresses.map(addr => (
+                                      <div key={addr.id} className={`p-10 border transition-all duration-700 ${addr.is_default ? 'bg-surface-low border-primary shadow-[0_0_30px_rgba(var(--primary),0.05)]' : 'border-white/5 bg-surface-low hover:border-white/20'}`}>
+                                         <div className="flex justify-between items-start mb-10">
+                                            <div className="space-y-2">
+                                                <h4 className="text-lg font-black text-white uppercase tracking-tight">{addr.label} Station</h4>
+                                                {addr.is_default && <span className="text-[8px] uppercase tracking-[0.3em] text-primary font-black px-2 py-1 border border-primary/20">Primary Hub</span>}
+                                            </div>
+                                            <div className="flex gap-4">
+                                               <button onClick={() => deleteAddressMutation.mutate(addr.id)} className="text-white/20 hover:text-destructive transition-colors"><Trash2 className="h-4 w-4" /></button>
+                                            </div>
+                                         </div>
+                                         <div className="space-y-1 text-[11px] uppercase tracking-[0.3em] text-white/40">
+                                            <p className="text-white font-bold">{addr.street}</p>
+                                            <p>{addr.district}, {addr.city}</p>
+                                            <p>Sector {addr.postal_code || '---'}</p>
+                                         </div>
+                                         {!addr.is_default && (
+                                            <button onClick={() => setDefaultAddressMutation.mutate(addr.id)} className="mt-10 text-[9px] uppercase tracking-[0.4em] text-primary font-black hover:text-white transition-colors">Establish as Primary Hub</button>
+                                         )}
+                                      </div>
+                                   ))}
+                                </div>
+                             )}
+                         </div>
+                      )}
+
+                      {defaultTab === "security" && (
+                         <div className="space-y-12">
+                             <h2 className="text-4xl font-black uppercase tracking-tighter border-b border-white/5 pb-8">{isRTL ? "بروتوكولات الأمان" : "Security Protocols"}</h2>
+                             <div className="grid md:grid-cols-2 gap-12">
+                                <div className="p-10 bg-surface-low border border-white/5 space-y-8">
+                                   <div className="space-y-2">
+                                      <h4 className="text-[10px] uppercase tracking-[0.4em] text-white/20">Credential Rotation</h4>
+                                      <p className="text-sm text-white/40 italic">Update your primary entry signature.</p>
+                                   </div>
+                                   <div className="space-y-4">
+                                      <Input type="password" value={passwordForm.newPassword} onChange={e => setPasswordForm({...passwordForm, newPassword: e.target.value})} placeholder="NEW SIGNATURE" className="h-16 bg-black/40 border-white/10 rounded-none text-white tracking-[0.4em] text-xs" />
+                                      <Input type="password" value={passwordForm.confirmPassword} onChange={e => setPasswordForm({...passwordForm, confirmPassword: e.target.value})} placeholder="CONFIRM SIGNATURE" className="h-16 bg-black/40 border-white/10 rounded-none text-white tracking-[0.4em] text-xs" />
+                                   </div>
+                                   <button onClick={handlePasswordChange} disabled={changingPassword} className="w-full py-5 bg-primary text-black text-[10px] uppercase tracking-[0.4em] font-black hover:bg-white transition-all">Execute Encryption</button>
+                                </div>
+
+                                <div className="space-y-8">
+                                   <div className="p-10 bg-surface-low border border-white/5 flex items-center justify-between">
+                                      <div className="space-y-2">
+                                         <p className="text-[10px] uppercase tracking-[0.4em] text-white/20">Verification Status</p>
+                                         <p className="text-sm font-bold text-white tracking-widest">{user?.email}</p>
+                                      </div>
+                                      <CheckCircle2 className="h-6 w-6 text-primary" />
+                                   </div>
+                                   <div className="p-10 bg-surface-low border border-red-500/10 space-y-6">
+                                      <p className="text-[10px] uppercase tracking-[0.4em] text-red-500/40">Critical Action</p>
+                                      <button onClick={handleLogout} className="w-full py-5 border border-red-500/20 text-red-500 text-[10px] uppercase tracking-[0.4em] font-black hover:bg-red-500 hover:text-white transition-all">Sign out from All Terminals</button>
+                                   </div>
+                                </div>
+                             </div>
+                         </div>
+                      )}
+                   </motion.div>
+                </AnimatePresence>
+             </div>
           </div>
-        </div>
-
-        {/* Quick Stats Bar */}
-        <div className="container mx-auto px-4 -mt-6 relative z-20 mb-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[
-              { icon: ShoppingCart, label: isRTL ? "طلباتي" : "Orders", value: String(ordersCount), color: "from-blue-500 to-blue-600", link: "/profile?tab=orders" },
-              { icon: Heart, label: isRTL ? "المفضلة" : "Favorites", value: String(wishlistItems.length), color: "from-rose-500 to-rose-600", link: "/wishlist" },
-              { icon: Bell, label: isRTL ? "الإشعارات" : "Notifications", value: String(unreadCount), color: "from-amber-500 to-amber-600", link: "/profile?tab=notifications" },
-              { icon: Star, label: isRTL ? "النقاط" : "Points", value: String(calculatePoints()), color: "from-yellow-500 to-amber-500", link: "/profile?tab=rewards" },
-            ].map((stat, index) => (
-              <Link to={stat.link} key={index}>
-                <Card className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer overflow-hidden">
-                  <CardContent className="p-4 relative">
-                    <div className={`absolute inset-0 bg-gradient-to-br ${stat.color} opacity-0 group-hover:opacity-5 transition-opacity`} />
-                    <div className="flex items-center gap-3">
-                      <div className={`h-12 w-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center shadow-lg`}>
-                        <stat.icon className="h-6 w-6 text-white" />
-                      </div>
-                      <div>
-                        <p className="text-2xl font-bold text-foreground">{stat.value}</p>
-                        <p className="text-sm text-muted-foreground">{stat.label}</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
-            ))}
-          </div>
-        </div>
-
-        {/* Content Area */}
-        <div className="container mx-auto px-4">
-          <Tabs defaultValue={defaultTab} className="space-y-6">
-            <TabsList className="w-full md:w-auto bg-card/50 backdrop-blur-sm p-1 rounded-2xl flex-wrap h-auto gap-1">
-              <TabsTrigger value="profile" className="gap-2 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                <User className="h-4 w-4" />
-                {isRTL ? "الملف الشخصي" : "Profile"}
-              </TabsTrigger>
-              <TabsTrigger value="orders" className="gap-2 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                <ShoppingCart className="h-4 w-4" />
-                {isRTL ? "طلباتي" : "My Orders"}
-              </TabsTrigger>
-              <TabsTrigger value="favorites" className="gap-2 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                <Heart className="h-4 w-4" />
-                {isRTL ? "المفضلة" : "Favorites"}
-              </TabsTrigger>
-              <TabsTrigger value="notifications" className="gap-2 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground relative">
-                <Bell className="h-4 w-4" />
-                {isRTL ? "الإشعارات" : "Notifications"}
-                {unreadCount > 0 && (
-                  <Badge className="h-5 min-w-5 p-0 flex items-center justify-center text-[10px] bg-destructive absolute -top-1 -right-1">
-                    {unreadCount}
-                  </Badge>
-                )}
-              </TabsTrigger>
-              <TabsTrigger value="rewards" className="gap-2 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                <Gift className="h-4 w-4" />
-                {isRTL ? "المكافآت" : "Rewards"}
-              </TabsTrigger>
-              <TabsTrigger value="addresses" className="gap-2 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                <MapPin className="h-4 w-4" />
-                {isRTL ? "العناوين" : "Addresses"}
-              </TabsTrigger>
-              <TabsTrigger value="security" className="gap-2 rounded-xl data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                <Shield className="h-4 w-4" />
-                {isRTL ? "الأمان" : "Security"}
-              </TabsTrigger>
-            </TabsList>
-
-            {/* Profile Tab */}
-            <TabsContent value="profile">
-              <div className="grid md:grid-cols-2 gap-6">
-                {/* Edit Profile Card */}
-                <Card className="overflow-hidden">
-                  <CardHeader className="bg-gradient-to-br from-primary/5 to-transparent">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <CardTitle className="flex items-center gap-2">
-                          <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                            <Edit3 className="h-5 w-5 text-primary" />
-                          </div>
-                          {isRTL ? "تعديل الملف الشخصي" : "Edit Profile"}
-                        </CardTitle>
-                        <CardDescription className="mt-2">
-                          {isRTL
-                            ? "قم بتحديث معلوماتك الشخصية"
-                            : "Update your personal information"
-                          }
-                        </CardDescription>
-                      </div>
-                      {!editMode && (
-                        <Button variant="ghost" size="icon" onClick={() => setEditMode(true)} className="rounded-full hover:bg-primary/10">
-                          <Edit3 className="h-4 w-4" />
-                        </Button>
-                      )}
-                    </div>
-                  </CardHeader>
-                  <CardContent className="space-y-5 pt-6">
-                    <div className="space-y-2">
-                      <label className="text-sm font-semibold flex items-center gap-2">
-                        <User className="h-4 w-4 text-primary" />
-                        {t.auth.fullName}
-                      </label>
-                      <Input
-                        value={formData.full_name}
-                        onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
-                        disabled={!editMode}
-                        placeholder={isRTL ? "أدخل اسمك" : "Enter your name"}
-                        className="h-12 rounded-xl border-2 focus:border-primary transition-colors"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-semibold flex items-center gap-2">
-                        <Phone className="h-4 w-4 text-primary" />
-                        {t.auth.phone}
-                      </label>
-                      <Input
-                        value={formData.phone}
-                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                        disabled={!editMode}
-                        placeholder="+966 5XX XXX XXXX"
-                        dir="ltr"
-                        className="h-12 rounded-xl border-2 focus:border-primary transition-colors"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-semibold flex items-center gap-2">
-                        <Mail className="h-4 w-4 text-primary" />
-                        {t.auth.email}
-                      </label>
-                      <Input
-                        value={user?.email || ""}
-                        disabled
-                        dir="ltr"
-                        className="h-12 rounded-xl bg-muted/50 border-2"
-                      />
-                      <p className="text-xs text-muted-foreground flex items-center gap-1">
-                        <CheckCircle2 className="h-3 w-3 text-green-500" />
-                        {isRTL ? "البريد الإلكتروني تم التحقق منه" : "Email verified"}
-                      </p>
-                    </div>
-
-                    {editMode && (
-                      <div className="flex gap-3 pt-4">
-                        <Button onClick={handleSave} disabled={saving} className="gap-2 rounded-xl flex-1">
-                          {saving ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                          ) : (
-                            <Save className="h-4 w-4" />
-                          )}
-                          {isRTL ? "حفظ التغييرات" : "Save Changes"}
-                        </Button>
-                        <Button variant="outline" onClick={() => setEditMode(false)} className="rounded-xl">
-                          {isRTL ? "إلغاء" : "Cancel"}
-                        </Button>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-
-                {/* Quick Actions Card */}
-                <div className="space-y-6">
-                  <Card className="overflow-hidden">
-                    <CardHeader className="bg-gradient-to-br from-primary/5 to-transparent">
-                      <CardTitle className="flex items-center gap-2">
-                        <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                          <Settings className="h-5 w-5 text-primary" />
-                        </div>
-                        {isRTL ? "إجراءات سريعة" : "Quick Actions"}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="pt-4">
-                      <div className="grid grid-cols-2 gap-3">
-                        {[
-                          { icon: Car, label: isRTL ? "تصفح السيارات" : "Browse Cars", onClick: () => navigate("/cars"), color: "text-blue-500", bg: "bg-blue-500/10" },
-                          { icon: Heart, label: isRTL ? "المفضلة" : "Favorites", onClick: () => navigate("/wishlist"), color: "text-rose-500", bg: "bg-rose-500/10", badge: wishlistItems.length > 0 ? wishlistItems.length : undefined },
-                          { icon: ShoppingCart, label: isRTL ? "طلباتي" : "My Orders", onClick: () => navigate("/profile?tab=orders"), color: "text-green-500", bg: "bg-green-500/10", badge: ordersCount > 0 ? ordersCount : undefined },
-                          { icon: Bell, label: isRTL ? "الإشعارات" : "Notifications", onClick: () => navigate("/profile?tab=notifications"), color: "text-amber-500", bg: "bg-amber-500/10", badge: unreadCount > 0 ? unreadCount : undefined },
-                          { icon: Star, label: isRTL ? "المكافآت" : "Rewards", onClick: () => navigate("/profile?tab=rewards"), color: "text-yellow-500", bg: "bg-yellow-500/10" },
-                          { icon: Gift, label: isRTL ? "الإحالات" : "Referrals", onClick: () => navigate("/profile?tab=rewards"), color: "text-purple-500", bg: "bg-purple-500/10" },
-                          { icon: MapPin, label: isRTL ? "العناوين" : "Addresses", onClick: () => navigate("/profile?tab=addresses"), color: "text-teal-500", bg: "bg-teal-500/10" },
-                          { icon: Shield, label: isRTL ? "الأمان" : "Security", onClick: () => navigate("/profile?tab=security"), color: "text-indigo-500", bg: "bg-indigo-500/10" },
-                        ].map((action, index) => (
-                          <Button
-                            key={index}
-                            variant="outline"
-                            className="h-20 flex-col gap-2 rounded-xl hover:bg-primary/5 hover:border-primary/30 transition-all relative"
-                            onClick={action.onClick}
-                          >
-                            <div className={`h-10 w-10 rounded-lg ${action.bg} flex items-center justify-center`}>
-                              <action.icon className={`h-5 w-5 ${action.color}`} />
-                            </div>
-                            <span className="text-xs font-medium">{action.label}</span>
-                            {action.badge && (
-                              <Badge className="absolute top-2 right-2 h-5 min-w-5 p-0 flex items-center justify-center text-[10px] bg-primary">
-                                {action.badge}
-                              </Badge>
-                            )}
-                          </Button>
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  {/* Membership Card */}
-                  <Card className={`overflow-hidden border-2 ${membership.level === 'gold' ? 'border-yellow-500/30 bg-gradient-to-br from-yellow-500/5 to-transparent' :
-                    membership.level === 'silver' ? 'border-gray-500/30 bg-gradient-to-br from-gray-500/5 to-transparent' :
-                      'border-amber-700/30 bg-gradient-to-br from-amber-700/5 to-transparent'
-                    }`}>
-                    <CardContent className="p-6">
-                      <div className="flex items-center gap-4">
-                        <div className={`h-16 w-16 rounded-2xl flex items-center justify-center ${membership.level === 'gold' ? 'bg-yellow-500' :
-                          membership.level === 'silver' ? 'bg-gray-400' : 'bg-amber-700'
-                          } shadow-lg`}>
-                          <Trophy className="h-8 w-8 text-white" />
-                        </div>
-                        <div className="flex-1">
-                          <h3 className="text-lg font-bold">{isRTL ? "عضوية" : "Membership"} {membership.name}</h3>
-                          <p className="text-sm text-muted-foreground">
-                            {isRTL ? "100 نقطة حتى المستوى التالي" : "100 points to next level"}
-                          </p>
-                          <div className="w-full h-2 bg-muted rounded-full mt-2 overflow-hidden">
-                            <div className={`h-full rounded-full ${membership.level === 'gold' ? 'bg-yellow-500' :
-                              membership.level === 'silver' ? 'bg-gray-400' : 'bg-amber-700'
-                              }`} style={{ width: '60%' }} />
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-              </div>
-            </TabsContent>
-
-            {/* Orders Tab */}
-            <TabsContent value="orders">
-              <Card className="overflow-hidden">
-                <CardContent className="pt-6">
-                  <UserOrdersSection user={user} isRTL={isRTL} />
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            {/* Favorites Tab */}
-            <TabsContent value="favorites">
-              <Card className="overflow-hidden">
-                {wishlistLoading ? (
-                  <CardContent className="py-12 flex items-center justify-center">
-                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                  </CardContent>
-                ) : wishlistItems.length === 0 ? (
-                  <CardContent className="py-20 text-center">
-                    <div className="relative inline-block mb-6">
-                      <div className="h-24 w-24 rounded-full bg-rose-500/10 flex items-center justify-center mx-auto">
-                        <Heart className="h-12 w-12 text-rose-500/50" />
-                      </div>
-                      <Sparkles className="absolute top-0 right-0 h-6 w-6 text-rose-500/30 animate-pulse" />
-                    </div>
-                    <h3 className="text-2xl font-bold text-foreground mb-3">
-                      {isRTL ? "قائمة المفضلة فارغة" : "No Favorites Yet"}
-                    </h3>
-                    <p className="text-muted-foreground mb-8 max-w-md mx-auto">
-                      {isRTL
-                        ? "احفظ سياراتك المفضلة هنا لتجدها بسهولة لاحقاً"
-                        : "Save your favorite cars here to find them easily later"
-                      }
-                    </p>
-                    <Button onClick={() => navigate("/cars")} variant="outline" size="lg" className="gap-2 rounded-xl border-rose-500/30 text-rose-500 hover:bg-rose-500/5">
-                      <Heart className="h-5 w-5" />
-                      {isRTL ? "اكتشف السيارات" : "Discover Cars"}
-                    </Button>
-                  </CardContent>
-                ) : (
-                  <CardContent className="pt-6">
-                    <div className="flex items-center justify-between mb-6">
-                      <h3 className="text-lg font-semibold">
-                        {isRTL ? `${wishlistItems.length} سيارة في المفضلة` : `${wishlistItems.length} cars in favorites`}
-                      </h3>
-                      <Button variant="outline" size="sm" onClick={() => navigate("/wishlist")} className="gap-2">
-                        <Eye className="h-4 w-4" />
-                        {isRTL ? "عرض الكل" : "View All"}
-                      </Button>
-                    </div>
-                    <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {wishlistCars.slice(0, 6).map((car: any) => (
-                        <div key={car.id} className="relative group">
-                          <CarCard car={mapCarToCardData(car)} />
-                          <Button
-                            variant="destructive"
-                            size="icon"
-                            className="absolute top-2 right-2 h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity z-10"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              removeFromWishlist(car.id);
-                            }}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      ))}
-                    </div>
-                    {wishlistItems.length > 6 && (
-                      <div className="text-center mt-6">
-                        <Button onClick={() => navigate("/wishlist")} className="gap-2">
-                          {isRTL ? `عرض ${wishlistItems.length - 6} سيارة أخرى` : `View ${wishlistItems.length - 6} more cars`}
-                        </Button>
-                      </div>
-                    )}
-                  </CardContent>
-                )}
-              </Card>
-            </TabsContent>
-
-            {/* Notifications Tab */}
-            <TabsContent value="notifications">
-              <Card className="overflow-hidden">
-                <CardHeader className="bg-gradient-to-br from-amber-500/5 to-transparent">
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="flex items-center gap-2">
-                      <div className="h-10 w-10 rounded-xl bg-amber-500/20 flex items-center justify-center">
-                        <Bell className="h-5 w-5 text-amber-500" />
-                      </div>
-                      {isRTL ? "الإشعارات" : "Notifications"}
-                      {unreadCount > 0 && (
-                        <Badge className="bg-destructive">{unreadCount}</Badge>
-                      )}
-                    </CardTitle>
-                    {unreadCount > 0 && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => markAllAsReadMutation.mutate()}
-                        disabled={markAllAsReadMutation.isPending}
-                        className="gap-2"
-                      >
-                        <CheckCheck className="h-4 w-4" />
-                        {isRTL ? "تحديد الكل كمقروء" : "Mark all as read"}
-                      </Button>
-                    )}
-                  </div>
-                </CardHeader>
-                <CardContent className="pt-6">
-                  {notificationsLoading ? (
-                    <div className="py-12 flex items-center justify-center">
-                      <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                    </div>
-                  ) : notifications.length === 0 ? (
-                    <div className="py-16 text-center">
-                      <div className="h-24 w-24 rounded-full bg-amber-500/10 flex items-center justify-center mx-auto mb-6">
-                        <Bell className="h-12 w-12 text-amber-500/50" />
-                      </div>
-                      <h3 className="text-xl font-bold text-foreground mb-2">
-                        {isRTL ? "لا توجد إشعارات" : "No Notifications"}
-                      </h3>
-                      <p className="text-muted-foreground">
-                        {isRTL ? "ستظهر إشعاراتك هنا" : "Your notifications will appear here"}
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="space-y-3">
-                      {notifications.map((notification) => (
-                        <div
-                          key={notification.id}
-                          className={`p-4 rounded-xl border transition-colors cursor-pointer ${notification.is_read
-                            ? 'bg-muted/30 border-border/50'
-                            : 'bg-primary/5 border-primary/20 hover:bg-primary/10'
-                            }`}
-                          onClick={() => {
-                            if (!notification.is_read) {
-                              markAsReadMutation.mutate(notification.id);
-                            }
-                            if (notification.link) {
-                              navigate(notification.link);
-                            }
-                          }}
-                        >
-                          <div className="flex gap-4">
-                            <div className={`h-12 w-12 rounded-xl flex items-center justify-center shrink-0 ${notification.is_read ? 'bg-muted' : 'bg-primary/10'
-                              }`}>
-                              {getNotificationIcon(notification.type)}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-start justify-between gap-2">
-                                <h4 className={`font-semibold ${notification.is_read ? 'text-muted-foreground' : 'text-foreground'}`}>
-                                  {isRTL && notification.title_ar ? notification.title_ar : notification.title}
-                                </h4>
-                                {!notification.is_read && (
-                                  <div className="h-2 w-2 rounded-full bg-primary shrink-0 mt-2" />
-                                )}
-                              </div>
-                              <p className="text-sm text-muted-foreground line-clamp-2 mt-1">
-                                {isRTL && notification.message_ar ? notification.message_ar : notification.message}
-                              </p>
-                              <p className="text-xs text-muted-foreground/70 mt-2">
-                                {formatDistanceToNow(new Date(notification.created_at), {
-                                  addSuffix: true,
-                                  locale: isRTL ? ar : undefined,
-                                })}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            {/* Rewards Tab */}
-            <TabsContent value="rewards">
-              <div className="grid md:grid-cols-2 gap-6">
-                <Card className="overflow-hidden">
-                  <CardHeader className="bg-gradient-to-br from-yellow-500/10 to-transparent">
-                    <CardTitle className="flex items-center gap-2">
-                      <div className="h-10 w-10 rounded-xl bg-yellow-500/20 flex items-center justify-center">
-                        <Star className="h-5 w-5 text-yellow-500" />
-                      </div>
-                      {isRTL ? "نقاطي" : "My Points"}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="pt-6">
-                    <div className="text-center py-6">
-                      <p className="text-5xl font-black text-foreground mb-2">{calculatePoints()}</p>
-                      <p className="text-muted-foreground">{isRTL ? "نقطة متاحة" : "Points Available"}</p>
-                    </div>
-                    <div className="space-y-3 pt-4 border-t">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">{isRTL ? "نقاط التسجيل" : "Sign up bonus"}</span>
-                        <span className="font-semibold text-green-500">+100</span>
-                      </div>
-                      {ordersCount > 0 && (
-                        <div className="flex justify-between text-sm">
-                          <span className="text-muted-foreground">{isRTL ? "نقاط الطلبات" : "Order points"}</span>
-                          <span className="font-semibold text-green-500">+{ordersCount * 50}</span>
-                        </div>
-                      )}
-                      {(profile?.referral_earnings || 0) > 0 && (
-                        <div className="flex justify-between text-sm">
-                          <span className="text-muted-foreground">{isRTL ? "أرباح الإحالات" : "Referral earnings"}</span>
-                          <span className="font-semibold text-green-500">+{profile?.referral_earnings}</span>
-                        </div>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Referral Card */}
-                <ReferralCard />
-
-                <Card className="overflow-hidden md:col-span-2">
-                  <CardHeader className="bg-gradient-to-br from-primary/5 to-transparent">
-                    <CardTitle className="flex items-center gap-2">
-                      <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                        <Gift className="h-5 w-5 text-primary" />
-                      </div>
-                      {isRTL ? "المكافآت المتاحة" : "Available Rewards"}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="pt-6">
-                    <div className="grid sm:grid-cols-3 gap-4">
-                      {[
-                        { points: 500, reward: isRTL ? "خصم 5% على أي سيارة" : "5% off any car", icon: "🎁" },
-                        { points: 1000, reward: isRTL ? "فحص مجاني للسيارة" : "Free car inspection", icon: "🔧" },
-                        { points: 2500, reward: isRTL ? "تأمين مجاني لمدة شهر" : "1 month free insurance", icon: "🛡️" },
-                      ].map((item, index) => (
-                        <div key={index} className="flex items-center justify-between p-4 rounded-xl bg-muted/50 hover:bg-muted transition-colors">
-                          <div className="flex items-center gap-3">
-                            <div className="h-12 w-12 rounded-lg bg-yellow-500/20 flex items-center justify-center text-2xl">
-                              {item.icon}
-                            </div>
-                            <div>
-                              <span className="font-medium block">{item.reward}</span>
-                              <Badge variant="outline" className="gap-1 mt-1">
-                                {item.points} {isRTL ? "نقطة" : "pts"}
-                              </Badge>
-                            </div>
-                          </div>
-                          <Button
-                            size="sm"
-                            variant={calculatePoints() >= item.points ? "default" : "outline"}
-                            disabled={calculatePoints() < item.points}
-                          >
-                            {isRTL ? "استبدال" : "Redeem"}
-                          </Button>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </TabsContent>
-
-            {/* Addresses Tab */}
-            <TabsContent value="addresses">
-              <Card className="overflow-hidden">
-                <CardHeader className="bg-gradient-to-br from-teal-500/5 to-transparent">
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="flex items-center gap-2">
-                      <div className="h-10 w-10 rounded-xl bg-teal-500/20 flex items-center justify-center">
-                        <MapPin className="h-5 w-5 text-teal-500" />
-                      </div>
-                      {isRTL ? "العناوين المحفوظة" : "Saved Addresses"}
-                    </CardTitle>
-                    <Button
-                      onClick={() => {
-                        resetAddressForm();
-                        setShowAddressForm(true);
-                      }}
-                      className="gap-2"
-                    >
-                      <Plus className="h-4 w-4" />
-                      {isRTL ? "إضافة عنوان" : "Add Address"}
-                    </Button>
-                  </div>
-                </CardHeader>
-                <CardContent className="pt-6">
-                  {addressesLoading ? (
-                    <div className="py-12 flex items-center justify-center">
-                      <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                    </div>
-                  ) : showAddressForm || editingAddress ? (
-                    <div className="space-y-4 max-w-lg">
-                      <h3 className="font-semibold">
-                        {editingAddress
-                          ? (isRTL ? "تعديل العنوان" : "Edit Address")
-                          : (isRTL ? "إضافة عنوان جديد" : "Add New Address")
-                        }
-                      </h3>
-                      <div className="grid grid-cols-3 gap-2">
-                        {["home", "work", "other"].map((label) => (
-                          <Button
-                            key={label}
-                            type="button"
-                            variant={addressForm.label === label ? "default" : "outline"}
-                            onClick={() => setAddressForm({ ...addressForm, label })}
-                            className="gap-2"
-                          >
-                            {getAddressIcon(label)}
-                            {getAddressLabel(label)}
-                          </Button>
-                        ))}
-                      </div>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <label className="text-sm font-medium">{isRTL ? "المدينة" : "City"}</label>
-                          <Input
-                            value={addressForm.city}
-                            onChange={(e) => setAddressForm({ ...addressForm, city: e.target.value })}
-                            placeholder={isRTL ? "الرياض" : "Riyadh"}
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <label className="text-sm font-medium">{isRTL ? "الحي" : "District"}</label>
-                          <Input
-                            value={addressForm.district}
-                            onChange={(e) => setAddressForm({ ...addressForm, district: e.target.value })}
-                            placeholder={isRTL ? "العليا" : "Al Olaya"}
-                          />
-                        </div>
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium">{isRTL ? "الشارع" : "Street"}</label>
-                        <Input
-                          value={addressForm.street}
-                          onChange={(e) => setAddressForm({ ...addressForm, street: e.target.value })}
-                          placeholder={isRTL ? "شارع العليا" : "Al Olaya Street"}
-                        />
-                      </div>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <label className="text-sm font-medium">{isRTL ? "رقم المبنى" : "Building No."}</label>
-                          <Input
-                            value={addressForm.building_number}
-                            onChange={(e) => setAddressForm({ ...addressForm, building_number: e.target.value })}
-                            placeholder="1234"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <label className="text-sm font-medium">{isRTL ? "الرمز البريدي" : "Postal Code"}</label>
-                          <Input
-                            value={addressForm.postal_code}
-                            onChange={(e) => setAddressForm({ ...addressForm, postal_code: e.target.value })}
-                            placeholder="12345"
-                          />
-                        </div>
-                      </div>
-                      <div className="flex gap-3 pt-4">
-                        <Button
-                          onClick={() => {
-                            if (editingAddress) {
-                              updateAddressMutation.mutate({
-                                ...editingAddress,
-                                ...addressForm,
-                              });
-                            } else {
-                              addAddressMutation.mutate(addressForm);
-                            }
-                          }}
-                          disabled={addAddressMutation.isPending || updateAddressMutation.isPending}
-                          className="gap-2"
-                        >
-                          {(addAddressMutation.isPending || updateAddressMutation.isPending) && (
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                          )}
-                          <Save className="h-4 w-4" />
-                          {isRTL ? "حفظ" : "Save"}
-                        </Button>
-                        <Button
-                          variant="outline"
-                          onClick={() => {
-                            setShowAddressForm(false);
-                            setEditingAddress(null);
-                            resetAddressForm();
-                          }}
-                        >
-                          {isRTL ? "إلغاء" : "Cancel"}
-                        </Button>
-                      </div>
-                    </div>
-                  ) : addresses.length === 0 ? (
-                    <div className="py-16 text-center">
-                      <div className="h-24 w-24 rounded-full bg-teal-500/10 flex items-center justify-center mx-auto mb-6">
-                        <MapPin className="h-12 w-12 text-teal-500/50" />
-                      </div>
-                      <h3 className="text-xl font-bold text-foreground mb-2">
-                        {isRTL ? "لا توجد عناوين محفوظة" : "No Saved Addresses"}
-                      </h3>
-                      <p className="text-muted-foreground mb-6">
-                        {isRTL ? "أضف عنوانك لتسهيل عملية التوصيل" : "Add your address to make delivery easier"}
-                      </p>
-                      <Button onClick={() => setShowAddressForm(true)} className="gap-2">
-                        <Plus className="h-4 w-4" />
-                        {isRTL ? "إضافة عنوان" : "Add Address"}
-                      </Button>
-                    </div>
-                  ) : (
-                    <div className="grid sm:grid-cols-2 gap-4">
-                      {addresses.map((address) => (
-                        <div
-                          key={address.id}
-                          className={`p-4 rounded-xl border-2 transition-colors ${address.is_default
-                            ? 'border-primary bg-primary/5'
-                            : 'border-border hover:border-primary/30'
-                            }`}
-                        >
-                          <div className="flex items-start justify-between mb-3">
-                            <div className="flex items-center gap-2">
-                              <div className={`h-10 w-10 rounded-lg flex items-center justify-center ${address.is_default ? 'bg-primary text-primary-foreground' : 'bg-muted'
-                                }`}>
-                                {getAddressIcon(address.label)}
-                              </div>
-                              <div>
-                                <h4 className="font-semibold">{getAddressLabel(address.label)}</h4>
-                                {address.is_default && (
-                                  <Badge variant="secondary" className="text-xs">
-                                    {isRTL ? "افتراضي" : "Default"}
-                                  </Badge>
-                                )}
-                              </div>
-                            </div>
-                            <div className="flex gap-1">
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-8 w-8"
-                                onClick={() => {
-                                  setEditingAddress(address);
-                                  setAddressForm({
-                                    label: address.label,
-                                    city: address.city || "",
-                                    district: address.district || "",
-                                    street: address.street || "",
-                                    building_number: address.building_number || "",
-                                    postal_code: address.postal_code || "",
-                                    is_default: address.is_default,
-                                  });
-                                }}
-                              >
-                                <Edit3 className="h-4 w-4" />
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-8 w-8 text-destructive hover:text-destructive"
-                                onClick={() => deleteAddressMutation.mutate(address.id)}
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </div>
-                          <div className="text-sm text-muted-foreground space-y-1">
-                            {address.street && <p>{address.street}</p>}
-                            {(address.district || address.city) && (
-                              <p>{[address.district, address.city].filter(Boolean).join(", ")}</p>
-                            )}
-                            {(address.building_number || address.postal_code) && (
-                              <p>
-                                {address.building_number && `${isRTL ? "مبنى" : "Bldg"} ${address.building_number}`}
-                                {address.building_number && address.postal_code && " - "}
-                                {address.postal_code && `${isRTL ? "ر.ب" : "P.O"} ${address.postal_code}`}
-                              </p>
-                            )}
-                          </div>
-                          {!address.is_default && (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="mt-3 w-full"
-                              onClick={() => setDefaultAddressMutation.mutate(address.id)}
-                            >
-                              {isRTL ? "تعيين كافتراضي" : "Set as Default"}
-                            </Button>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            {/* Security Tab */}
-            <TabsContent value="security">
-              <div className="grid md:grid-cols-2 gap-6">
-                <Card className="overflow-hidden">
-                  <CardHeader className="bg-gradient-to-br from-indigo-500/5 to-transparent">
-                    <CardTitle className="flex items-center gap-2">
-                      <div className="h-10 w-10 rounded-xl bg-indigo-500/20 flex items-center justify-center">
-                        <Key className="h-5 w-5 text-indigo-500" />
-                      </div>
-                      {isRTL ? "تغيير كلمة المرور" : "Change Password"}
-                    </CardTitle>
-                    <CardDescription>
-                      {isRTL
-                        ? "قم بتحديث كلمة المرور الخاصة بك للحفاظ على أمان حسابك"
-                        : "Update your password to keep your account secure"
-                      }
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="pt-6 space-y-4">
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium flex items-center gap-2">
-                        <Lock className="h-4 w-4 text-primary" />
-                        {isRTL ? "كلمة المرور الجديدة" : "New Password"}
-                      </label>
-                      <Input
-                        type="password"
-                        value={passwordForm.newPassword}
-                        onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
-                        placeholder="••••••••"
-                        className="h-12 rounded-xl"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium flex items-center gap-2">
-                        <Lock className="h-4 w-4 text-primary" />
-                        {isRTL ? "تأكيد كلمة المرور" : "Confirm Password"}
-                      </label>
-                      <Input
-                        type="password"
-                        value={passwordForm.confirmPassword}
-                        onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })}
-                        placeholder="••••••••"
-                        className="h-12 rounded-xl"
-                      />
-                    </div>
-                    <Button
-                      onClick={handlePasswordChange}
-                      disabled={changingPassword || !passwordForm.newPassword}
-                      className="w-full gap-2"
-                    >
-                      {changingPassword && <Loader2 className="h-4 w-4 animate-spin" />}
-                      <Key className="h-4 w-4" />
-                      {isRTL ? "تحديث كلمة المرور" : "Update Password"}
-                    </Button>
-                  </CardContent>
-                </Card>
-
-                <Card className="overflow-hidden">
-                  <CardHeader className="bg-gradient-to-br from-green-500/5 to-transparent">
-                    <CardTitle className="flex items-center gap-2">
-                      <div className="h-10 w-10 rounded-xl bg-green-500/20 flex items-center justify-center">
-                        <Shield className="h-5 w-5 text-green-500" />
-                      </div>
-                      {isRTL ? "أمان الحساب" : "Account Security"}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="pt-6 space-y-4">
-                    <div className="flex items-center justify-between p-4 rounded-xl bg-muted/50">
-                      <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 rounded-lg bg-green-500/20 flex items-center justify-center">
-                          <Mail className="h-5 w-5 text-green-500" />
-                        </div>
-                        <div>
-                          <p className="font-medium">{isRTL ? "البريد الإلكتروني" : "Email"}</p>
-                          <p className="text-sm text-muted-foreground">{user?.email}</p>
-                        </div>
-                      </div>
-                      <Badge className="bg-green-500/20 text-green-600 border-green-500/30">
-                        <CheckCircle2 className="h-3 w-3 me-1" />
-                        {isRTL ? "موثق" : "Verified"}
-                      </Badge>
-                    </div>
-
-                    <div className="flex flex-col gap-4 p-4 rounded-xl bg-muted/50">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="h-10 w-10 rounded-lg bg-amber-500/20 flex items-center justify-center">
-                            <Smartphone className="h-5 w-5 text-amber-500" />
-                          </div>
-                          <div>
-                            <p className="font-medium">{isRTL ? "المصادقة الثنائية" : "Two-Factor Auth"}</p>
-                            <p className="text-sm text-muted-foreground">
-                              {isRTL ? "حماية إضافية لحسابك" : "Extra protection for your account"}
-                            </p>
-                          </div>
-                        </div>
-                        {!mfaData && (
-                          <Button variant="outline" size="sm" onClick={handleEnrollMFA} disabled={isEnrollingMfa}>
-                            {isEnrollingMfa ? <Loader2 className="h-4 w-4 animate-spin" /> : (isRTL ? "تفعيل" : "Enable")}
-                          </Button>
-                        )}
-                      </div>
-
-                      {mfaData && (
-                        <div className="space-y-4 p-4 border rounded-xl bg-background animate-in fade-in zoom-in-95">
-                          <div className="flex flex-col items-center gap-4">
-                            <p className="text-sm text-center text-muted-foreground">
-                              {isRTL
-                                ? "امسح الرمز المربع باستخدام تطبيق المصادقة (Google Authenticator)"
-                                : "Scan the QR code with your authenticator app (e.g. Google Authenticator)"}
-                            </p>
-                            <img src={mfaData.qr_code} alt="QR Code" className="w-48 h-48 rounded-lg border shadow-sm" />
-                            <p className="text-xs text-muted-foreground font-mono bg-muted p-2 rounded selectable">
-                              {mfaData.secret}
-                            </p>
-                          </div>
-                          <div className="space-y-2">
-                            <label className="text-sm font-medium">{isRTL ? "أدخل رمز التحقق" : "Enter Verification Code"}</label>
-                            <div className="flex gap-2">
-                              <Input
-                                value={mfaCode}
-                                onChange={(e) => setMfaCode(e.target.value)}
-                                placeholder="123456"
-                                className="text-center tracking-widest text-lg"
-                                maxLength={6}
-                              />
-                              <Button onClick={handleVerifyMFA} disabled={verifyingMfa || mfaCode.length < 6}>
-                                {verifyingMfa ? <Loader2 className="h-4 w-4 animate-spin" /> : (isRTL ? "تأكيد" : "Verify")}
-                              </Button>
-                            </div>
-                          </div>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="w-full text-destructive hover:text-destructive hover:bg-destructive/10"
-                            onClick={() => setMfaData(null)}
-                          >
-                            {isRTL ? "إلغاء" : "Cancel"}
-                          </Button>
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="flex items-center justify-between p-4 rounded-xl bg-muted/50">
-                      <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 rounded-lg bg-primary/20 flex items-center justify-center">
-                          <Clock className="h-5 w-5 text-primary" />
-                        </div>
-                        <div>
-                          <p className="font-medium">{isRTL ? "آخر تسجيل دخول" : "Last Login"}</p>
-                          <p className="text-sm text-muted-foreground">
-                            {user?.last_sign_in_at
-                              ? new Date(user.last_sign_in_at).toLocaleString(isRTL ? "ar-SA" : "en-US")
-                              : (isRTL ? "غير متاح" : "Not available")
-                            }
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <Button
-                      variant="destructive"
-                      className="w-full gap-2"
-                      onClick={handleLogout}
-                    >
-                      <LogOut className="h-4 w-4" />
-                      {isRTL ? "تسجيل الخروج من جميع الأجهزة" : "Sign out from all devices"}
-                    </Button>
-                  </CardContent>
-                </Card>
-              </div>
-            </TabsContent>
-          </Tabs>
         </div>
       </main>
 

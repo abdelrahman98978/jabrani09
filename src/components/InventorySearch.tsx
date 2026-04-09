@@ -72,38 +72,38 @@ const InventorySearch = () => {
   };
 
   return (
-    <div className="relative z-20 mb-12">
-      <div className="container mx-auto px-4">
-        <div className="bg-background border border-foreground/5 shadow-luxury rounded-none p-8">
-          <div className="flex flex-col gap-8">
-            <div className="flex flex-col md:flex-row justify-between items-end gap-6">
-              <div className="space-y-2">
-                <span className="text-[10px] uppercase font-bold tracking-[0.4em] opacity-40">
-                  {isRTL ? "البحث المتقدم" : "Inventory Search"}
+    <div className="relative z-20 -mt-24 mb-32">
+      <div className="container mx-auto px-6 md:px-12">
+        <div className="bg-surface-low p-12 md:p-16 border-t-[3px] border-primary">
+          <div className="flex flex-col gap-16">
+            <div className="flex flex-col md:flex-row justify-between items-end gap-12">
+              <div className="space-y-4">
+                <span className="text-[11px] uppercase font-bold tracking-[0.5em] text-primary">
+                  {isRTL ? "محدد السيادة" : "The Sovereign Selector"}
                 </span>
-                <h3 className="text-2xl font-light tracking-tight">
-                  {isRTL ? "اعثر على" : "Find Your"} <span className="font-bold">{isRTL ? "سيارتك" : "Drive"}</span>
+                <h3 className="text-4xl md:text-5xl font-light tracking-tighter text-white uppercase">
+                  {isRTL ? "ابحث عن" : "Find Your"} <span className="font-bold">{isRTL ? "المحرك المثالي" : "Mastery"}</span>
                 </h3>
               </div>
               <button
                 onClick={() => setShowAdvanced(!showAdvanced)}
-                className="text-[10px] uppercase tracking-widest font-bold opacity-40 hover:opacity-100 transition-opacity flex items-center gap-2 mb-1"
+                className="text-[11px] uppercase tracking-[0.4em] font-bold text-white/40 hover:text-white transition-all flex items-center gap-4 mb-2 group"
               >
-                <SlidersHorizontal className="h-3 w-3" />
-                {isRTL ? "الفلاتر" : "Filters"}
+                <SlidersHorizontal className="h-4 w-4 group-hover:rotate-180 transition-transform duration-700" />
+                {isRTL ? "تخصيص البحث" : "Refine Selection"}
               </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12">
               {/* Keyword Search */}
               <div className="lg:col-span-2">
                 <div className="relative group">
-                  <Search className="absolute top-1/2 -translate-y-1/2 start-0 h-4 w-4 opacity-20" />
+                  <Search className="absolute top-1/2 -translate-y-1/2 start-0 h-5 w-5 text-white/20 group-hover:text-primary transition-colors duration-500" />
                   <Input
-                    placeholder={isRTL ? "البحث بالكلمة..." : "BY KEYWORD..."}
+                    placeholder={isRTL ? "اسم الطراز أو العلامة..." : "MODEL OR SIGNATURE..."}
                     value={keyword}
                     onChange={(e) => setKeyword(e.target.value)}
-                    className="ps-8 h-12 bg-transparent border-0 border-b border-foreground/10 rounded-none focus-visible:ring-0 focus-visible:border-foreground transition-all uppercase text-[10px] tracking-widest"
+                    className="ps-10 h-16 bg-transparent border-0 border-b border-white/10 rounded-none focus-visible:ring-0 focus-visible:border-primary transition-all uppercase text-[12px] tracking-[0.3em] font-medium text-white placeholder:text-white/20"
                   />
                 </div>
               </div>
@@ -111,13 +111,13 @@ const InventorySearch = () => {
               {/* Brand Select */}
               <div className="relative group">
                 <Select value={brand} onValueChange={setBrand}>
-                  <SelectTrigger className="h-12 bg-transparent border-0 border-b border-foreground/10 rounded-none px-0 focus:ring-0 focus:border-foreground transition-all">
-                    <SelectValue placeholder={isRTL ? "الماركة" : "BRAND"} className="uppercase text-[10px] tracking-widest" />
+                  <SelectTrigger className="h-16 bg-transparent border-0 border-b border-white/10 rounded-none px-0 focus:ring-0 focus:border-primary transition-all text-white uppercase text-[12px] tracking-[0.3em] font-medium">
+                    <SelectValue placeholder={isRTL ? "العلامة التجارية" : "SIGNATURE"} />
                   </SelectTrigger>
-                  <SelectContent className="rounded-none border-foreground/10">
-                    <SelectItem value="all" className="uppercase text-[10px] tracking-widest">{isRTL ? "جميع الماركات" : "All Brands"}</SelectItem>
+                  <SelectContent className="rounded-none border-white/10 bg-black text-white">
+                    <SelectItem value="all" className="uppercase text-[11px] tracking-widest">{isRTL ? "الكل" : "All Signatures"}</SelectItem>
                     {brands?.map((b) => (
-                      <SelectItem key={b.id} value={b.id} className="uppercase text-[10px] tracking-widest">
+                      <SelectItem key={b.id} value={b.id} className="uppercase text-[11px] tracking-widest">
                         {isRTL ? b.name_ar : b.name}
                       </SelectItem>
                     ))}
@@ -128,13 +128,13 @@ const InventorySearch = () => {
               {/* Fuel Type */}
               <div className="relative group">
                 <Select value={fuelType} onValueChange={setFuelType}>
-                  <SelectTrigger className="h-12 bg-transparent border-0 border-b border-foreground/10 rounded-none px-0 focus:ring-0 focus:border-foreground transition-all">
-                    <SelectValue placeholder={isRTL ? "المحرك" : "DRIVETRAIN"} className="uppercase text-[10px] tracking-widest" />
+                  <SelectTrigger className="h-16 bg-transparent border-0 border-b border-white/10 rounded-none px-0 focus:ring-0 focus:border-primary transition-all text-white uppercase text-[12px] tracking-[0.3em] font-medium">
+                    <SelectValue placeholder={isRTL ? "مصدر الطاقة" : "ENERGY SOURCE"} />
                   </SelectTrigger>
-                  <SelectContent className="rounded-none border-foreground/10">
-                    <SelectItem value="all" className="uppercase text-[10px] tracking-widest">{isRTL ? "جميع الأنواع" : "All Types"}</SelectItem>
+                  <SelectContent className="rounded-none border-white/10 bg-black text-white">
+                    <SelectItem value="all" className="uppercase text-[11px] tracking-widest">{isRTL ? "الجميع" : "All Energy"}</SelectItem>
                     {fuelTypes.map((fuel) => (
-                      <SelectItem key={fuel.value} value={fuel.value} className="uppercase text-[10px] tracking-widest">
+                      <SelectItem key={fuel.value} value={fuel.value} className="uppercase text-[11px] tracking-widest">
                         {isRTL ? fuel.labelAr : fuel.labelEn}
                       </SelectItem>
                     ))}
@@ -142,14 +142,15 @@ const InventorySearch = () => {
                 </Select>
               </div>
 
-              {/* Search Button */}
+              {/* Launch Button */}
               <div className="flex items-end">
-                <Button
+                <button
                   onClick={handleSearch}
-                  className="w-full h-12 bg-foreground text-background rounded-none uppercase text-[10px] tracking-[0.3em] font-bold hover:bg-foreground/90 transition-all"
+                  className="group relative w-full h-16 bg-white text-black uppercase text-[11px] tracking-[0.5em] font-bold overflow-hidden transition-all duration-700 hover:tracking-[0.7em]"
                 >
-                  {isRTL ? "بحث" : "Launch Search"}
-                </Button>
+                  <span className="relative z-10">{isRTL ? "إطلاق البحث" : "Launch"}</span>
+                  <div className="absolute inset-0 bg-primary translate-y-full group-hover:translate-y-0 transition-transform duration-700" />
+                </button>
               </div>
             </div>
 

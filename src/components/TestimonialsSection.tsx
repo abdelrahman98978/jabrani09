@@ -88,92 +88,109 @@ const TestimonialsSection = () => {
   const currentTestimonial = testimonials[currentIndex];
 
   return (
-    <section className="py-32 bg-background border-t border-foreground/5 relative overflow-hidden">
-      <div className="container mx-auto px-4 relative z-10">
+    <section className="py-40 bg-black overflow-hidden border-t border-white/5">
+      <div className="container mx-auto px-6 md:px-12 relative z-10">
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row justify-between items-end gap-12 mb-24">
-          <div className="max-w-2xl space-y-6">
-            <div className="inline-flex items-center gap-2 px-0 py-0 text-foreground/40 text-[10px] font-bold uppercase tracking-[0.4em]">
-              {isRTL ? "قالوا عنا" : "Voices / 03"}
-            </div>
-            <h2 className="text-4xl md:text-6xl font-light text-foreground leading-[1.1] tracking-tight">
-              {isRTL ? "آراء" : "Client"} <span className="font-bold">{isRTL ? "عملائنا" : "Sentiments"}</span>
-            </h2>
-            <div className="w-20 h-[1px] bg-foreground/10" />
-            <p className="text-muted-foreground/60 text-sm md:text-base uppercase tracking-widest leading-relaxed">
-              {isRTL
-                ? "قراءات في تجارب من اختاروا التميز معنا"
-                : "A collection of experiences from those who chose excellence."}
-            </p>
-          </div>
+        <div className="max-w-4xl mb-32">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 1, ease: [0.19, 1, 0.22, 1] }}
+            className="mb-12 inline-flex items-center"
+          >
+            <span className="text-[11px] uppercase tracking-[0.5em] text-primary font-bold">
+              {isRTL ? "أصوات السيادة" : "Voices of Sovereignty"}
+            </span>
+          </motion.div>
+          <motion.h2
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.2, delay: 0.2, ease: [0.19, 1, 0.22, 1] }}
+            className="text-5xl md:text-8xl text-hero text-white"
+          >
+            {isRTL ? (
+              <>
+                آراء <span className="font-bold">شركائنا</span>
+                <br />
+                في <span className="text-white/30 italic">النجاح</span>
+              </>
+            ) : (
+              <>
+                Verified <span className="font-bold">Sentiments</span>
+                <br />
+                Defined by <span className="text-white/30 italic">Trust</span>
+              </>
+            )}
+          </motion.h2>
         </div>
 
         {/* Testimonial Card */}
-        <div className="max-w-5xl mx-auto">
-          <div className={`relative min-h-[400px] flex flex-col items-center justify-center text-center transition-all duration-1000 ${isAnimating ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'}`}>
-            <Quote className="h-12 w-12 text-foreground/5 mb-12" />
+        <div className="max-w-6xl">
+          <div className="relative flex flex-col items-start min-h-[500px]">
+            <Quote className="h-16 w-16 text-primary/10 mb-16" />
 
-            <blockquote className="text-2xl md:text-4xl font-light leading-relaxed tracking-tight text-foreground mb-12 italic">
-              "{isRTL ? currentTestimonial.content : currentTestimonial.contentEn}"
-            </blockquote>
+            <div className={`transition-all duration-1000 ease-[0.19, 1, 0.22, 1] ${isAnimating ? 'opacity-0 -translate-y-8' : 'opacity-100 translate-y-0'}`}>
+              <blockquote className="text-2xl md:text-5xl font-light leading-[1.3] text-white tracking-tighter mb-16 italic">
+                "{isRTL ? currentTestimonial.content : currentTestimonial.contentEn}"
+              </blockquote>
 
-            <div className="space-y-4">
-              <div className="flex justify-center gap-1 opacity-20">
-                {[...Array(5)].map((_, i) => (
-                  <Star
-                    key={i}
-                    className={`h-3 w-3 ${i < currentTestimonial.rating ? "fill-foreground text-foreground" : "text-foreground"}`}
-                  />
-                ))}
-              </div>
-
-              <div className="space-y-1">
-                <h4 className="text-xs uppercase font-bold tracking-[0.3em] text-foreground">
-                  {isRTL ? currentTestimonial.name : currentTestimonial.nameEn}
-                </h4>
-                <p className="text-[10px] uppercase tracking-widest text-foreground/30">
-                  {isRTL ? currentTestimonial.role : currentTestimonial.roleEn}
-                </p>
+              <div className="flex items-center gap-12">
+                <div className="w-12 h-[1px] bg-primary" />
+                <div className="space-y-2">
+                  <h4 className="text-sm uppercase font-bold tracking-[0.4em] text-white">
+                    {isRTL ? currentTestimonial.name : currentTestimonial.nameEn}
+                  </h4>
+                  <p className="text-[10px] uppercase tracking-[0.3em] text-primary/60">
+                    {isRTL ? currentTestimonial.role : currentTestimonial.roleEn}
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* New Navigation Design */}
-          <div className="flex flex-col md:flex-row items-center justify-between gap-8 mt-24 pt-12 border-t border-foreground/5">
-            <div className="flex gap-4">
-              <button
-                onClick={prev}
-                className="w-12 h-12 flex items-center justify-center border border-foreground/10 hover:border-foreground/40 transition-all opacity-40 hover:opacity-100"
-              >
-                {isRTL ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-              </button>
-              <button
-                onClick={next}
-                className="w-12 h-12 flex items-center justify-center border border-foreground/10 hover:border-foreground/40 transition-all opacity-40 hover:opacity-100"
-              >
-                {isRTL ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-              </button>
-            </div>
+            {/* Luxurious Navigation Controls */}
+            <div className="absolute bottom-0 inset-x-0 flex flex-col md:flex-row items-end md:items-center justify-between gap-12 pt-12">
+              <div className="flex items-center gap-12">
+                <div className="flex gap-4">
+                  {testimonials.map((_, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => {
+                        if (idx === currentIndex) return;
+                        setIsAnimating(true);
+                        setTimeout(() => {
+                          setCurrentIndex(idx);
+                          setIsAnimating(false);
+                        }, 500);
+                      }}
+                      className={`h-[1px] transition-all duration-1000 ${idx === currentIndex
+                        ? "w-16 bg-primary"
+                        : "w-6 bg-white/20 hover:bg-white/40"
+                        }`}
+                    />
+                  ))}
+                </div>
+                <div className="text-[11px] uppercase font-bold tracking-[0.4em] text-white/20">
+                  {currentIndex + 1} / {testimonials.length}
+                </div>
+              </div>
 
-            <div className="flex gap-3">
-              {testimonials.map((_, idx) => (
+              <div className="flex gap-12">
                 <button
-                  key={idx}
-                  onClick={() => {
-                    setIsAnimating(true);
-                    setCurrentIndex(idx);
-                    setTimeout(() => setIsAnimating(false), 500);
-                  }}
-                  className={`h-[2px] transition-all duration-700 ${idx === currentIndex
-                    ? "w-12 bg-foreground"
-                    : "w-4 bg-foreground/10 hover:bg-foreground/30"
-                    }`}
-                />
-              ))}
-            </div>
-
-            <div className="hidden md:block text-[10px] uppercase font-bold tracking-[0.4em] opacity-20">
-              {currentIndex + 1} / {testimonials.length}
+                  onClick={prev}
+                  className="group relative flex items-center gap-4 text-[11px] uppercase tracking-[0.4em] text-white/40 hover:text-white transition-all duration-500"
+                >
+                  <ChevronLeft className={`h-4 w-4 ${isRTL ? 'rotate-180' : ''}`} />
+                  <span>{isRTL ? "السابق" : "Prev"}</span>
+                </button>
+                <div className="w-[1px] h-4 bg-white/10" />
+                <button
+                  onClick={next}
+                  className="group relative flex items-center gap-4 text-[11px] uppercase tracking-[0.4em] text-white/40 hover:text-white transition-all duration-500"
+                >
+                  <span>{isRTL ? "التالي" : "Next"}</span>
+                  <ChevronRight className={`h-4 w-4 ${isRTL ? 'rotate-180' : ''}`} />
+                </button>
+              </div>
             </div>
           </div>
         </div>

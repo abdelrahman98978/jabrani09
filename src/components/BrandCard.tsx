@@ -23,37 +23,41 @@ const BrandCard = ({ brand, carCount }: BrandCardProps) => {
 
   return (
     <Link to={`/cars?brand=${brand.id}`}>
-      <div className="group relative flex flex-col items-center justify-center p-8 border border-foreground/5 hover:border-foreground/20 transition-all duration-700 aspect-square bg-foreground/[0.01] hover:bg-foreground/[0.03] shadow-luxury overflow-hidden">
+      <motion.div 
+        whileHover={{ y: -5 }}
+        transition={{ duration: 0.8, ease: [0.19, 1, 0.22, 1] }}
+        className="group relative flex flex-col items-center justify-center p-12 bg-surface-low overflow-hidden transition-all duration-1000"
+      >
         {showLogo ? (
-          <div className="h-20 w-32 flex items-center justify-center">
+          <div className="h-24 w-40 flex items-center justify-center px-4">
             <img
               src={brand.logo_url!}
               alt={displayName}
               loading="lazy"
               onError={() => setLogoError(true)}
-              className="max-h-full max-w-full object-contain opacity-20 group-hover:opacity-100 transition-all duration-700 grayscale group-hover:grayscale-0 scale-90 group-hover:scale-110"
+              className="max-h-full max-w-full object-contain opacity-20 contrast-125 grayscale group-hover:opacity-100 group-hover:grayscale-0 transition-all duration-1000 scale-90 group-hover:scale-100"
             />
           </div>
         ) : (
-          <div className="h-20 w-20 flex items-center justify-center text-3xl font-light text-foreground/10 group-hover:text-foreground transition-colors duration-700 border border-foreground/5 group-hover:border-foreground/20 italic">
+          <div className="h-24 w-24 flex items-center justify-center text-4xl font-light text-foreground/5 opacity-40 group-hover:text-primary transition-colors duration-700 italic">
             {displayName.charAt(0)}
           </div>
         )}
 
-        <div className="absolute inset-x-0 bottom-0 p-4 opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-700 text-center">
-          <h3 className="text-[10px] uppercase font-bold tracking-[0.3em] text-foreground">
+        <div className="mt-8 text-center opacity-0 group-hover:opacity-100 transition-all duration-1000 translate-y-2 group-hover:translate-y-0">
+          <h3 className="text-[10px] uppercase font-bold tracking-[0.4em] text-foreground">
             {displayName}
           </h3>
           {carCount !== undefined && carCount > 0 && (
-            <p className="text-[8px] uppercase tracking-widest text-foreground/40 mt-1">
-              {carCount} {isRTL ? "مركبة متاحة" : "Models Available"}
+            <p className="text-[8px] uppercase tracking-[0.3em] text-primary/60 mt-2">
+              {carCount} {isRTL ? "قطعة ميكانيكية" : "Exquisite Models"}
             </p>
           )}
         </div>
 
-        {/* Subtle Accent Line */}
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-[1px] bg-foreground transition-all duration-700 group-hover:w-full" />
-      </div>
+        {/* Global Sovereign Accent */}
+        <div className="absolute top-0 inset-x-0 h-[2px] bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-1000 origin-left" />
+      </motion.div>
     </Link>
   );
 };

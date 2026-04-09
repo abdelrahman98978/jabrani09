@@ -162,265 +162,179 @@ const AuthPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden font-cairo flex flex-col md:flex-row">
-      {/* Visual Side (Left on LTR, Right on RTL) */}
-      <div className="hidden md:flex md:w-1/2 bg-primary/5 relative flex-col justify-between p-12 overflow-hidden">
-        <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-5" />
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2" />
+    <div className="min-h-screen bg-black relative overflow-hidden flex flex-col md:flex-row">
+      {/* Cinematic Visual Side */}
+      <div className="hidden md:flex md:w-1/2 relative bg-black border-e border-white/5 p-20 flex-col justify-between overflow-hidden">
+        {/* Background Depth */}
+        <div className="absolute inset-0 opacity-40">
+          <img 
+            src="https://images.unsplash.com/photo-1542281286-9e0a16bb7366?q=80&w=2070" 
+            alt="Luxury Car Interior" 
+            className="w-full h-full object-cover grayscale"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent" />
+        </div>
 
         <div className="relative z-10">
-          <Link to="/" className="flex items-center gap-2 group mb-12">
-            <div className="bg-background rounded-full p-2 group-hover:bg-primary group-hover:text-white transition-colors duration-300">
-              <ArrowLeft className={`h-5 w-5 ${isRTL ? 'rotate-180' : ''}`} />
+          <Link to="/" className="inline-flex items-center gap-6 group">
+            <div className="w-12 h-12 flex items-center justify-center border border-white/10 group-hover:border-primary transition-all duration-700">
+              <ArrowLeft className={`h-4 w-4 text-white/40 group-hover:text-primary transition-all duration-700 ${isRTL ? 'rotate-180' : ''}`} />
             </div>
-            <span className="font-bold text-foreground group-hover:text-primary transition-colors">{isRTL ? "العودة للرئيسية" : "Back to Home"}</span>
+            <span className="text-[11px] uppercase tracking-[0.5em] text-white/40 group-hover:text-white transition-all duration-700">
+              {isRTL ? "العودة للرئيسية" : "Home"}
+            </span>
           </Link>
-
-          <h2 className="text-4xl font-black text-foreground mb-6 leading-tight">
-            {isRTL ? "تجربة شراء سيارات" : "Car Buying Experience"} <br />
-            <span className="text-primary">{isRTL ? "فاخرة وموثوقة" : "Luxury & Reliable"}</span>
-          </h2>
-          <p className="text-muted-foreground text-lg max-w-md">
-            {isRTL
-              ? "انضم إلينا اليوم للحصول على أفضل العروض والخدمات الحصرية في عالم السيارات."
-              : "Join us today to get the best offers and exclusive services in the automotive world."}
-          </p>
         </div>
 
-        <div className="relative z-10 space-y-6">
-          <div className="flex items-center gap-4 bg-background/60 backdrop-blur-sm p-4 rounded-2xl border border-border/50">
-            <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-              <Gift className="h-5 w-5" />
-            </div>
-            <div>
-              <h4 className="font-bold text-foreground">{isRTL ? "عروض حصرية" : "Exclusive Offers"}</h4>
-              <p className="text-xs text-muted-foreground">{isRTL ? "خصومات خاصة للأعضاء المسجلين" : "Special discounts for registered members"}</p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-4 bg-background/60 backdrop-blur-sm p-4 rounded-2xl border border-border/50">
-            <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-              <Car className="h-5 w-5" />
-            </div>
-            <div>
-              <h4 className="font-bold text-foreground">{isRTL ? "أحدث الموديلات" : "Latest Models"}</h4>
-              <p className="text-xs text-muted-foreground">{isRTL ? "تصفح أحدث السيارات فور وصولها" : "Browse the newest cars as they arrive"}</p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-4 bg-background/60 backdrop-blur-sm p-4 rounded-2xl border border-border/50">
-            <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-              <ShieldCheck className="h-5 w-5" />
-            </div>
-            <div>
-              <h4 className="font-bold text-foreground">{isRTL ? "ضمان شامل" : "Comprehensive Warranty"}</h4>
-              <p className="text-xs text-muted-foreground">{isRTL ? "جميع سياراتنا مضمونة ومفحوصة" : "All our cars are guaranteed and inspected"}</p>
-            </div>
-          </div>
+        <div className="relative z-10 max-w-lg">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 1, ease: [0.19, 1, 0.22, 1] }}
+          >
+            <span className="text-[11px] uppercase tracking-[0.6em] text-primary font-bold mb-8 block">
+              {isRTL ? "مؤسسة جبراني" : "Jabrani Atelier"}
+            </span>
+            <h2 className="text-5xl md:text-7xl text-hero text-white mb-12">
+              {isRTL ? (
+                <>
+                  أفق جديد <br />
+                  <span className="font-bold">من السيادة</span>
+                </>
+              ) : (
+                <>
+                  New Horizon <br />
+                  <span className="font-bold text-primary">of Sovereignty</span>
+                </>
+              )}
+            </h2>
+            <p className="text-white/40 text-lg leading-relaxed uppercase tracking-widest">
+              {isRTL
+                ? "انقر لفتح بوابة التميز في عالم السيارات الفاخرة."
+                : "Entry point to the world's most curated automotive collection."}
+            </p>
+          </motion.div>
         </div>
 
-        <div className="relative z-10 flex gap-2 pt-8">
-          {[1, 2, 3].map(i => (
-            <div key={i} className="h-1 flex-1 bg-primary/20 rounded-full overflow-hidden">
-              <div className="h-full bg-primary w-full animate-progress origin-left" style={{ animationDelay: `${i * 0.5}s`, animationDuration: '3s' }} />
+        <div className="relative z-10 grid grid-cols-3 gap-8 pt-20 border-t border-white/5">
+          {[
+            { label: isRTL ? "تميز" : "Excellence", val: "01" },
+            { label: isRTL ? "ثقة" : "Trust", val: "02" },
+            { label: isRTL ? "سيادة" : "Sovereignty", val: "03" }
+          ].map((item, i) => (
+            <div key={i} className="space-y-4">
+              <span className="text-[10px] text-primary font-bold tracking-[0.4em]">{item.val}</span>
+              <p className="text-[10px] text-white/40 uppercase tracking-[0.4em]">{item.label}</p>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Form Side */}
-      <div className="flex-1 flex items-center justify-center p-6 md:p-12 relative">
-        <div className="absolute top-6 right-6 md:hidden">
-          <Link
-            to="/"
-            className="group flex items-center gap-2 text-muted-foreground hover:text-primary transition-all duration-300"
-          >
-            <div className="h-8 w-8 flex items-center justify-center rounded-full bg-secondary group-hover:bg-primary/10 transition-colors">
-              <ArrowLeft className={`h-4 w-4 ${isRTL ? 'group-hover:translate-x-1' : 'group-hover:-translate-x-1'}`} />
-            </div>
-            <span className="font-bold text-sm">{isRTL ? "العودة" : "Back"}</span>
-          </Link>
-        </div>
-
-        <div className="w-full max-w-md">
-          <div className="text-center mb-8">
-            <div className="flex justify-center mb-6">
-              <div className="relative group cursor-pointer" onClick={() => navigate('/')}>
-                <div className="absolute -inset-1 bg-gradient-to-r from-primary to-accent rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
-                <img
-                  src={alJabraniLogo}
-                  alt="AL FAKHIM CAR SHOWROOM"
-                  className="relative h-20 w-20 rounded-2xl object-cover shadow-2xl transition-transform duration-500 group-hover:scale-105"
-                />
-              </div>
-            </div>
-            <h1 className="text-3xl font-black tracking-tight text-foreground mb-2">
-              {isLogin ? (isRTL ? "تسجيل الدخول" : "Sign In") : (isRTL ? "إنشاء حساب" : "Create Account")}
+      {/* Sovereign Form Side */}
+      <div className="flex-1 flex items-center justify-center p-8 md:p-24 bg-black relative">
+        <div className="w-full max-w-sm">
+          <div className="mb-16">
+            <h1 className="text-4xl md:text-5xl font-light text-white tracking-tighter uppercase mb-4">
+              {isLogin ? (isRTL ? "دخول المستشار" : "Consultant Login") : (isRTL ? "تأسيس هوية" : "Establish Identity")}
             </h1>
-            <p className="text-muted-foreground text-sm">
-              {isLogin ? (isRTL ? "مرحباً بعودتك! الرجاء إدخال بياناتك" : "Welcome back! Please enter your details") : (isRTL ? "أدخل بياناتك للتسجيل معنا مجاناً" : "Enter your details to sign up for free")}
+            <div className="w-12 h-[2px] bg-primary mb-8" />
+            <p className="text-white/30 text-[11px] uppercase tracking-[0.4em]">
+              {isLogin ? (isRTL ? "أدحل بيانات الوصول الخاصة بك" : "Enter access credentials") : (isRTL ? "سجل هويتك للوصول الكامل" : "Register identity for full access")}
             </p>
           </div>
 
-          <Card className="border-border/40 shadow-xl bg-card/50 backdrop-blur-sm">
-            <CardContent className="p-6 sm:p-8">
-              {/* Google Auth */}
-              <Button
-                type="button"
-                variant="outline"
-                className="w-full h-12 gap-3 text-sm font-bold border hover:bg-secondary/50 transition-all"
-                onClick={handleGoogleLogin}
-                disabled={googleLoading}
-              >
-                {googleLoading ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <>
-                    <Chrome className="h-5 w-5" />
-                    {t.auth.loginWithGoogle}
-                  </>
-                )}
-              </Button>
-
-              <div className="relative my-8">
-                <div className="absolute inset-0 flex items-center">
-                  <Separator className="w-full" />
+          <form onSubmit={handleSubmit} className="space-y-12">
+            {!isLogin && (
+              <div className="space-y-8">
+                <div className="relative group">
+                  <Input
+                    name="fullName"
+                    value={formData.fullName}
+                    onChange={handleChange}
+                    placeholder={isRTL ? "الاسم الكامل" : "FULL NAME"}
+                    required={!isLogin}
+                    className="h-14 bg-transparent border-0 border-b border-white/10 rounded-none focus-visible:ring-0 focus-visible:border-primary transition-all uppercase text-[11px] tracking-[0.3em] text-white placeholder:text-white/10 px-0"
+                  />
                 </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-background px-2 text-muted-foreground">{isRTL ? "أو المتابعة عبر" : "Or continue with"}</span>
+                <div className="relative group">
+                  <Input
+                    name="phone"
+                    type="tel"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    placeholder={isRTL ? "رقم الجوال" : "PHONE"}
+                    className="h-14 bg-transparent border-0 border-b border-white/10 rounded-none focus-visible:ring-0 focus-visible:border-primary transition-all uppercase text-[11px] tracking-[0.3em] text-white placeholder:text-white/10 px-0"
+                  />
                 </div>
               </div>
+            )}
 
-              <form onSubmit={handleSubmit} className="space-y-5">
-                {!isLogin && (
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <div className="space-y-2">
-                      <label className="text-xs font-bold text-foreground">
-                        {t.auth.fullName}
-                      </label>
-                      <div className="relative">
-                        <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          name="fullName"
-                          value={formData.fullName}
-                          onChange={handleChange}
-                          placeholder={isRTL ? "الاسم الكامل" : "John Doe"}
-                          required={!isLogin}
-                          className="pl-9 h-11"
-                        />
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-xs font-bold text-foreground">
-                        {t.auth.phone}
-                      </label>
-                      <div className="relative">
-                        <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          name="phone"
-                          type="tel"
-                          value={formData.phone}
-                          onChange={handleChange}
-                          placeholder="+966"
-                          dir="ltr"
-                          className="pl-9 h-11 text-left"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                )}
+            <div className="space-y-8">
+              <div className="relative group">
+                <Input
+                  name="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder={isRTL ? "البريد الإلكتروني" : "SIGNATURE EMAIL"}
+                  required
+                  className="h-14 bg-transparent border-0 border-b border-white/10 rounded-none focus-visible:ring-0 focus-visible:border-primary transition-all uppercase text-[11px] tracking-[0.3em] text-white placeholder:text-white/10 px-0"
+                />
+              </div>
 
-                <div className="space-y-2">
-                  <label className="text-xs font-bold text-foreground">
-                    {t.auth.email}
-                  </label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      name="email"
-                      type="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      placeholder="name@example.com"
-                      required
-                      dir="ltr"
-                      className="pl-9 h-11 text-left"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <div className="flex justify-between items-center">
-                    <label className="text-xs font-bold text-foreground">
-                      {t.auth.password}
-                    </label>
-                    {isLogin && (
-                      <Link to="#" className="text-xs font-medium text-primary hover:text-primary/80 transition-colors">
-                        {isRTL ? "نسيت كلمة المرور؟" : "Forgot Password?"}
-                      </Link>
-                    )}
-                  </div>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      name="password"
-                      type={showPassword ? "text" : "password"}
-                      value={formData.password}
-                      onChange={handleChange}
-                      placeholder="••••••••"
-                      required
-                      minLength={6}
-                      className="pl-9 pr-10 h-11"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                    >
-                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                    </button>
-                  </div>
-                </div>
-
-                {!isLogin && (
-                  <div className="text-xs text-muted-foreground flex gap-2 items-start">
-                    <CheckCircle2 className="h-3 w-3 text-primary mt-0.5 shrink-0" />
-                    <span>
-                      {isRTL
-                        ? "بإنشاء حساب فإنك توافق على شروط الخدمة وسياسة الخصوصية الخاصة بنا."
-                        : "By creating an account, you agree to our Terms of Service and Privacy Policy."}
-                    </span>
-                  </div>
-                )}
-
-                <Button
-                  type="submit"
-                  variant="gold"
-                  className="w-full h-12 text-sm"
-                  disabled={loading}
-                >
-                  {loading ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    isLogin ? t.auth.login : t.auth.signup
-                  )}
-                </Button>
-              </form>
-
-              <div className="mt-8 text-center text-sm">
-                <span className="text-muted-foreground">
-                  {isLogin ? t.auth.noAccount : t.auth.hasAccount}{" "}
-                </span>
+              <div className="relative group">
+                <Input
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder={isRTL ? "كلمة المرور" : "ACCESS KEY"}
+                  required
+                  minLength={6}
+                  className="h-14 bg-transparent border-0 border-b border-white/10 rounded-none focus-visible:ring-0 focus-visible:border-primary transition-all uppercase text-[11px] tracking-[0.3em] text-white placeholder:text-white/10 px-0"
+                />
                 <button
                   type="button"
-                  onClick={() => setIsLogin(!isLogin)}
-                  className="font-bold text-primary hover:underline transition-all"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-0 top-1/2 -translate-y-1/2 text-white/20 hover:text-white transition-colors"
                 >
-                  {isLogin ? (isRTL ? "سجل الآن" : "Sign up") : (isRTL ? "سجل الدخول" : "Login")}
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+
+            <div className="space-y-6">
+              <button
+                type="submit"
+                disabled={loading}
+                className="group relative w-full h-16 bg-white text-black text-[11px] uppercase tracking-[0.6em] font-bold overflow-hidden transition-all duration-700 hover:tracking-[0.8em]"
+              >
+                <span className="relative z-10">
+                  {loading ? <Loader2 className="h-4 w-4 animate-spin mx-auto text-black" /> : (isLogin ? t.auth.login : t.auth.signup)}
+                </span>
+                <div className="absolute inset-0 bg-primary translate-y-full group-hover:translate-y-0 transition-transform duration-700" />
+              </button>
+
+              <button
+                type="button"
+                onClick={handleGoogleLogin}
+                disabled={googleLoading}
+                className="w-full h-16 border border-white/10 text-white/40 text-[10px] uppercase tracking-[0.5em] hover:text-white hover:border-white transition-all duration-500"
+              >
+                {googleLoading ? <Loader2 className="h-4 w-4 animate-spin mx-auto" /> : (isRTL ? "المتابعة عبر جوجل" : "Continue with Google")}
+              </button>
+            </div>
+          </form>
+
+          <div className="mt-16 text-center">
+            <button
+              type="button"
+              onClick={() => setIsLogin(!isLogin)}
+              className="text-[10px] uppercase tracking-[0.4em] text-white/20 hover:text-primary transition-all duration-500"
+            >
+              {isLogin ? (isRTL ? "ليس لديك حساب؟ تأسيس الآن" : "No Account? Establish One") : (isRTL ? "لديك حساب؟ دخول" : "Has Identity? Entry")}
+            </button>
+          </div>
         </div>
       </div>
     </div>

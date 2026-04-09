@@ -77,38 +77,33 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="wp-footer bg-accent text-accent-foreground relative overflow-hidden">
-      {/* Wave Top */}
-      <div className="wp-section-wave-top" />
-
+    <footer className="bg-black text-white relative overflow-hidden border-t border-white/5">
       {/* Main Footer */}
-      <div className="container mx-auto px-3 sm:px-4 pt-12 sm:pt-16 md:pt-20 pb-6 sm:pb-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 lg:gap-8">
+      <div className="container mx-auto px-6 md:px-12 pt-24 pb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 md:gap-24 mb-24">
           {/* About Column */}
-          <div className="space-y-8">
+          <div className="space-y-12">
             <div className="flex flex-col gap-4">
-              <h3 className="text-xl font-bold tracking-tight">{siteName}</h3>
-              <p className="text-[10px] uppercase tracking-[0.3em] font-medium opacity-40">
-                {t.siteSlogan}
-              </p>
+              <h3 className="text-3xl font-light tracking-tighter uppercase">{siteName}</h3>
+              <div className="h-[1px] w-12 bg-primary" />
             </div>
-            <p className="text-sm text-foreground/50 leading-relaxed max-w-xs">
+            <p className="text-xs text-white/40 leading-relaxed uppercase tracking-widest">
               {language === "ar"
                 ? (settings?.about_text_ar || t.whyUs.qualityDesc)
                 : (settings?.about_text || t.whyUs.qualityDesc)
               }
             </p>
             {/* Social Links */}
-            <div className="flex gap-4">
+            <div className="flex gap-8">
               {socialLinks.map((link, idx) => link.url && (
                 <a
                   key={idx}
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-8 h-8 flex items-center justify-center border border-foreground/10 hover:border-foreground/40 transition-all opacity-40 hover:opacity-100"
+                  className="text-white/20 hover:text-primary transition-colors"
                 >
-                  <link.icon className="h-3.5 w-3.5" />
+                  <link.icon className="h-4 w-4" />
                 </a>
               ))}
             </div>

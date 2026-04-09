@@ -14,50 +14,72 @@ const CTABanner = () => {
   const whatsappLink = `https://wa.me/${cleanNumber}`;
 
   return (
-    <section className="py-24 bg-background border-t border-foreground/5 relative overflow-hidden">
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="flex flex-col lg:flex-row items-center justify-between gap-16 p-12 md:p-24 bg-foreground relative overflow-hidden group shadow-luxury">
-          {/* Subtle Background Pattern */}
-          <div className="absolute inset-0 opacity-10 group-hover:opacity-20 transition-opacity duration-1000"
-            style={{ backgroundImage: "linear-gradient(45deg, #ffffff 1px, transparent 1px), linear-gradient(-45deg, #ffffff 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
+    <section className="relative py-40 bg-black overflow-hidden border-t border-white/5">
+      {/* Background Media Depth */}
+      <div className="absolute inset-0 opacity-40">
+        <img 
+          src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?q=80&w=2083" 
+          alt="Luxury background" 
+          className="w-full h-full object-cover grayscale"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-transparent" />
+      </div>
 
-          {/* Text Content */}
-          <div className="text-center lg:text-start relative z-10 space-y-6">
-            <span className="text-[10px] uppercase font-bold tracking-[0.4em] text-background/40">
-              {isRTL ? "مستقبلك يبدأ هنا" : "Next Chapter / 04"}
+      <div className="container mx-auto px-6 md:px-12 relative z-10">
+        <div className="max-w-4xl">
+          {/* Tagline */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 1, ease: [0.19, 1, 0.22, 1] }}
+            className="mb-12 inline-flex items-center"
+          >
+            <span className="text-[11px] uppercase tracking-[0.5em] text-primary font-bold">
+              {isRTL ? "بداية رحلة السيادة" : "The Beginning of Sovereignty"}
             </span>
-            <h2 className="text-4xl md:text-6xl font-light text-background leading-tight tracking-tight">
-              {isRTL
-                ? "ابدأ رحلة"
-                : "Own the"} <span className="font-bold">{isRTL ? "الفخامة اليوم" : "Experience"}</span>
-            </h2>
-            <p className="text-background/50 text-base md:text-lg max-w-xl uppercase tracking-widest leading-relaxed">
-              {isRTL
-                ? "فريقنا المتخصص في انتظارك لتقديم استشارة تليق بطلعاتك."
-                : "A world of performance and elegance awaits. Reach out to our specialist team."}
-            </p>
-          </div>
+          </motion.div>
 
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-6 relative z-10">
-            <a href={`tel:${settings?.phone || "+966543389314"}`}>
-              <Button
-                className="h-16 px-10 bg-background text-foreground rounded-none uppercase text-[10px] tracking-[0.3em] font-bold hover:bg-background/90 transition-all shadow-luxury"
-              >
-                <Phone className="h-4 w-4 me-3" />
-                {isRTL ? "اتصل بنا" : "Telephone"}
-              </Button>
+          {/* Master Headline */}
+          <motion.h2
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.2, delay: 0.2, ease: [0.19, 1, 0.22, 1] }}
+            className="text-5xl md:text-8xl text-hero text-white mb-16"
+          >
+            {isRTL ? (
+              <>
+                تملّك <span className="font-bold">التجربة</span>
+                <br />
+                بكل <span className="text-white/30 italic">تفاصيلها</span>
+              </>
+            ) : (
+              <>
+                Own the <span className="font-bold">Moment</span>
+                <br />
+                Master the <span className="text-white/30 italic">Road</span>
+              </>
+            )}
+          </motion.h2>
+
+          {/* High-Fidelity CTAs */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 0.4, ease: [0.19, 1, 0.22, 1] }}
+            className="flex flex-col sm:flex-row gap-12"
+          >
+            <a href={`tel:${settings?.phone || "+966543389314"}`} className="group">
+              <button className="relative px-12 py-5 bg-white text-black text-[12px] uppercase tracking-[0.4em] font-bold overflow-hidden transition-all duration-700 hover:tracking-[0.6em]">
+                <span className="relative z-10 font-bold">{isRTL ? "اتصل بالمستشار" : "Consult Specialist"}</span>
+                <div className="absolute inset-0 bg-primary translate-y-full group-hover:translate-y-0 transition-transform duration-700" />
+              </button>
             </a>
             <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
-              <Button
-                variant="outline"
-                className="h-16 px-10 border-background/20 text-background rounded-none uppercase text-[10px] tracking-[0.3em] font-bold hover:bg-background/10 hover:border-background transition-all"
-              >
-                <MessageCircle className="h-4 w-4 me-3" />
-                {isRTL ? "واتساب" : "WhatsApp"}
-              </Button>
+              <button className="px-12 py-5 border border-white/20 text-white text-[12px] uppercase tracking-[0.4em] font-medium transition-all duration-700 hover:bg-white hover:text-black">
+                {isRTL ? "تواصل فوراً" : "Instant Inquire"}
+              </button>
             </a>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

@@ -98,133 +98,90 @@ const CarCard = ({ car }: CarCardProps) => {
 
   return (
     <>
+  return (
+    <>
       <motion.div
         layout
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95 }}
-        whileHover={{ y: -12 }}
+        transition={{ duration: 1, ease: [0.19, 1, 0.22, 1] }}
         onHoverStart={() => setIsHovered(true)}
         onHoverEnd={() => setIsHovered(false)}
         className="h-full"
       >
         <Link to={`/cars/${car.id}`} className="block h-full group">
-          <Card className="relative h-full flex flex-col overflow-hidden border-border/40 transition-all duration-700 bg-background hover:shadow-luxury border-none rounded-none">
-            {/* Image Section */}
-            <div className="relative aspect-[4/3] sm:aspect-[16/10] overflow-hidden bg-secondary">
+          <div className="relative h-full flex flex-col bg-surface-low transition-all duration-1000 overflow-hidden">
+            {/* Gallery Image */}
+            <div className="relative aspect-[16/10] overflow-hidden">
               <motion.img
                 src={car.main_image || "/placeholder.svg"}
                 alt={car.name_ar}
-                className="w-full h-full object-cover car-image transition-all duration-700"
+                initial={{ scale: 1 }}
+                animate={{ scale: isHovered ? 1.05 : 1 }}
+                transition={{ duration: 1.5, ease: [0.19, 1, 0.22, 1] }}
+                className="w-full h-full object-cover grayscale-[0.5] group-hover:grayscale-0 transition-all duration-1000"
                 loading="lazy"
               />
+              
+              {/* Overlay Gradient */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
 
-              {/* Overlays */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
-
-              {/* Status Badges */}
-              <div className="absolute top-4 start-4 flex flex-col gap-2 z-10">
-                {car.is_new && (
-                  <div className="bg-foreground text-background text-[10px] font-medium px-3 py-1 uppercase tracking-widest">
-                    {isRTL ? "جديدة" : "New"}
-                  </div>
-                )}
-                {car.has_discount && (
-                  <div className="bg-accent text-white text-[10px] font-medium px-3 py-1 uppercase tracking-widest">
-                    {isRTL ? "عرض خاص" : "Special"}
-                  </div>
-                )}
-              </div>
-
-              {/* Quick Actions Overlay */}
-              <AnimatePresence>
-                {isHovered && (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="absolute inset-0 flex items-center justify-center gap-3 bg-black/40 backdrop-blur-[2px]"
-                  >
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      onClick={handleQuickView}
-                      className="rounded-full font-bold shadow-2xl h-10 px-6 gap-2"
-                    >
-                      <Maximize2 className="h-4 w-4" />
-                      {isRTL ? "نظرة سريعة" : "Quick View"}
-                    </Button>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              {/* View Count */}
-              <div className="absolute bottom-4 start-4 text-white/80 text-xs font-bold flex items-center gap-1.5 drop-shadow-md">
-                <Eye className="h-4 w-4" />
-                {car.views_count.toLocaleString()} {isRTL ? "مشاهدة" : "Views"}
-              </div>
-
-              {/* Wishlist */}
-              <div className="absolute top-4 end-4">
-                <WishlistButton carId={car.id} variant="icon" />
-              </div>
+              {/* Status Indicator */}
+              {car.is_new && (
+                <div className="absolute top-6 start-6">
+                  <span className="text-[10px] uppercase tracking-[0.4em] font-bold text-white bg-primary px-3 py-1">
+                    {isRTL ? "إصدار جديد" : "New Release"}
+                  </span>
+                </div>
+              )}
             </div>
 
-            {/* Content Section */}
-            <CardContent className="p-6 flex-1 flex flex-col bg-background">
-              <div className="flex justify-between items-start mb-6">
-                <div>
-                  <h3 className="text-lg font-bold text-foreground mb-1 group-hover:tracking-wider transition-all duration-500">
-                    {car.name_ar}
-                  </h3>
-                  <div className="flex gap-2 items-center opacity-40">
-                    <span className="text-[10px] uppercase tracking-[0.2em] font-medium">{car.model}</span>
-                    <span className="w-1 h-1 rounded-full bg-foreground" />
-                    <span className="text-[10px] uppercase tracking-[0.2em] font-medium">{car.year}</span>
-                  </div>
-                </div>
+            {/* Editorial Content Section */}
+            <div className="p-8 flex-1 flex flex-col">
+              <div className="flex justify-between items-baseline mb-4">
+                <h3 className="text-xl font-light tracking-tighter uppercase group-hover:text-primary transition-colors duration-500">
+                  {car.name_ar}
+                </h3>
+                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                  {car.year}
+                </span>
               </div>
 
-              {/* Specs Line */}
-              <div className="flex gap-4 mb-8 opacity-60">
-                <div className="flex items-center gap-1.5">
-                  <Gauge className="h-3 w-3" />
-                  <span className="text-[10px] uppercase tracking-widest font-medium">
-                    {car.mileage.toLocaleString()} KM
-                  </span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <Fuel className="h-3 w-3" />
-                  <span className="text-[10px] uppercase tracking-widest font-medium">
-                    {isRTL ? fuelTypeAr[car.fuel_type] : car.fuel_type}
-                  </span>
-                </div>
+              <div className="flex gap-4 items-center mb-8">
+                <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-[0.2em]">
+                  {car.model}
+                </span>
+                <div className="w-1 h-1 rounded-full bg-primary/40" />
+                <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-[0.2em]">
+                  {car.fuel_type}
+                </span>
               </div>
 
-              {/* Price & Cart */}
-              <div className="mt-auto flex items-end justify-between pt-6 border-t border-border/10">
+              {/* Price & Action */}
+              <div className="mt-auto pt-8 border-t border-white/5 flex items-end justify-between">
                 <div className="flex flex-col">
-                  {car.original_price && car.original_price > car.price && (
-                    <span className="text-[10px] text-muted-foreground line-through font-medium mb-1">
-                      {formatPrice(car.original_price)}
-                    </span>
-                  )}
-                  <span className="text-xl font-bold tracking-tight">
+                  <span className="text-2xl font-light tracking-tighter">
                     {formatPrice(car.price)}
                   </span>
                 </div>
-                <div className="flex gap-4">
+                
+                <div className="flex items-center gap-6">
                   <CompareButton carId={car.id} variant="icon" />
-                  <button
+                  <button 
                     onClick={handleAddToCart}
-                    className="text-[10px] uppercase tracking-[0.2em] font-medium border-b border-foreground/20 hover:border-foreground transition-all pb-0.5"
+                    className="text-[10px] font-bold uppercase tracking-[0.3em] overflow-hidden group/btn"
                   >
-                    {isRTL ? "أضف للسلة" : "Add to Cart"}
+                    <span className="relative inline-block transition-transform duration-500 group-hover/btn:-translate-y-full">
+                      {isRTL ? "أضف للسلة" : "Add to Cart"}
+                    </span>
+                    <span className="absolute left-0 translate-y-full text-primary transition-transform duration-500 group-hover/btn:translate-y-0">
+                      {isRTL ? "أضف للسلة" : "Add to Cart"}
+                    </span>
                   </button>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </Link>
       </motion.div>
 

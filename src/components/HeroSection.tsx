@@ -36,119 +36,89 @@ const HeroSection = () => {
   const heroImage = settings?.hero_image_url || "https://images.unsplash.com/photo-1621007947382-bb34aa031024?q=80&w=2070";
 
   return (
-    <section className="relative min-h-[100vh] flex items-center justify-center overflow-hidden perspective-container bg-black">
-      {/* Background Layer with Video */}
-      <div className="absolute inset-0 z-0 overflow-hidden">
+    <section className="relative h-[100vh] flex items-center justify-center overflow-hidden bg-black select-none">
+      {/* Cinematic Background Layer */}
+      <motion.div 
+        className="absolute inset-0 z-0"
+        initial={{ scale: 1.1 }}
+        animate={{ scale: 1 }}
+        transition={{ duration: 2.5, ease: [0.19, 1, 0.22, 1] }}
+      >
         <video
           autoPlay
           loop
           muted
           playsInline
           poster={heroImage}
-          className="absolute inset-0 w-full h-full object-cover scale-105"
+          className="absolute inset-0 w-full h-full object-cover opacity-60"
         >
           <source src={heroVideo} type="video/mp4" />
-          {/* Fallback to image if video not supported */}
-          <div
-            className="absolute inset-0 bg-cover bg-center bg-no-repeat ken-burns"
-            style={{ backgroundImage: `url(${heroImage})` }}
-          />
         </video>
 
-        {/* Refined Overlays */}
-        <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px]" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/20" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.4)_100%)]" />
-      </div>
+        {/* Multilayered Overlays for Depth */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-transparent to-black" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.6)_100%)]" />
+      </motion.div>
 
-      {/* Content Container */}
-      <div className="relative z-10 container mx-auto px-4 pt-40">
-        <div className="max-w-4xl mx-auto flex flex-col items-center">
-          {/* Subtle Badge */}
+      {/* Editorial Content */}
+      <div className="relative z-10 container mx-auto px-6 md:px-12 text-center">
+        <div className="max-w-6xl mx-auto">
+          {/* Tagline */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-white/5 backdrop-blur-md border border-white/10 mb-8"
+            transition={{ duration: 1.2, delay: 0.5, ease: [0.19, 1, 0.22, 1] }}
+            className="mb-12 inline-flex items-center"
           >
-            <span className="text-[10px] uppercase tracking-[0.4em] text-white/60 font-medium">
-              {isRTL ? "التميز في عالم السيارات" : "Excellence in Motion"}
+            <span className="text-[11px] uppercase tracking-[0.5em] text-primary font-bold">
+              {isRTL ? "قمة السيادة الميكانيكية" : "The Apex of Automotive Sovereignty"}
             </span>
           </motion.div>
 
-          {/* Main Heading */}
+          {/* Master Headline */}
           <motion.h1
-            initial={{ opacity: 0, y: 40 }}
+            initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, ease: [0.19, 1, 0.22, 1], delay: 0.4 }}
-            className="text-5xl sm:text-7xl md:text-9xl font-light text-center mb-12 text-white leading-[1.05] tracking-tight"
+            transition={{ duration: 1.5, delay: 0.7, ease: [0.19, 1, 0.22, 1] }}
+            className="text-6xl sm:text-8xl md:text-[11rem] text-hero text-white mb-16"
           >
             {isRTL ? (
               <>
-                اكتشف <span className="font-bold">الفخامة</span>
+                الجوهرة <span className="font-bold">المصقولة</span>
                 <br />
-                في كل <span className="text-white/40 italic">تفصيل</span>
+                بإتقان <span className="text-white/30 italic">عالمي</span>
               </>
             ) : (
               <>
-                Driven by <span className="font-bold">Precision</span>
+                Refined <span className="font-bold">Power</span>
                 <br />
-                Defined by <span className="text-white/40 italic">Luxury</span>
+                Defined by <span className="text-white/30 italic">Art</span>
               </>
             )}
           </motion.h1>
 
-          {/* Subtext */}
-          <motion.p
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 0.6 }}
-            className="text-sm md:text-lg text-white/50 text-center max-w-xl mb-16 uppercase tracking-[0.2em] font-light leading-relaxed"
-          >
-            {isRTL
-              ? "نخبة من أكثر السيارات فخامة وأداءً في السوق العالمي ، منتقاة بعناية لترتقي بتوقعاتك."
-              : "Discover a curated collection of the world's most prestigious automobiles, where performance meets artistry."}
-          </motion.p>
-
-          {/* CTAs */}
+          {/* World-Class CTAs */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 0.8 }}
-            className="flex flex-col sm:flex-row gap-8 mb-24"
+            transition={{ duration: 1.2, delay: 1, ease: [0.19, 1, 0.22, 1] }}
+            className="flex flex-col sm:flex-row items-center justify-center gap-12"
           >
-            <Link to="/cars" className="w-full sm:w-auto">
-              <Button size="xl" className="w-full sm:w-72 h-14 text-[13px] uppercase tracking-[0.3em] font-medium rounded-none bg-white text-black hover:bg-white/90 border border-white/50 shadow-2xl transition-all group">
-                {isRTL ? "تصفح المجموعة" : "Explore Fleet"}
-                <ArrowLeft className={`h-4 w-4 ms-3 transition-transform ${isRTL ? 'group-hover:translate-x-2' : 'group-hover:-translate-x-2'}`} />
-              </Button>
+            <Link to="/cars">
+              <button className="group relative px-12 py-5 bg-white text-black text-[12px] uppercase tracking-[0.4em] font-bold overflow-hidden transition-all duration-700 hover:tracking-[0.6em]">
+                <span className="relative z-10">{isRTL ? "تصفح الأسطول" : "Explore Fleet"}</span>
+                <div className="absolute inset-0 bg-primary translate-y-full group-hover:translate-y-0 transition-transform duration-700" />
+              </button>
             </Link>
-            <Link to="/contact" className="w-full sm:w-auto">
-              <Button size="xl" variant="outline" className="w-full sm:w-72 h-14 text-[13px] uppercase tracking-[0.3em] font-medium rounded-none border-white/20 text-white hover:bg-white/10 transition-all">
-                {isRTL ? "تواصل معنا" : "Contact Us"}
-              </Button>
+            <Link to="/contact">
+              <button className="px-12 py-5 border border-white/20 text-white text-[12px] uppercase tracking-[0.4em] font-medium transition-all duration-700 hover:bg-white hover:text-black">
+                {isRTL ? "طلب استشارة" : "Request Consult"}
+              </button>
             </Link>
           </motion.div>
-
-          {/* Trusted stats */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 1 }}
-            className={`grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-12 w-full`}
-          >
-            {[
-              { icon: ShieldCheck, val: stats?.carsCount, label: isRTL ? "سيارة معتمدة" : "Certified Cars" },
-              { icon: Zap, val: stats?.brandsCount, label: isRTL ? "وكالة عالمية" : "Global Brands" },
-              { icon: Trophy, val: "10+", label: isRTL ? "سنوات خبرة" : "Years Exp." },
-              { icon: Sparkles, val: stats?.customersCount, label: isRTL ? "عميل سعيد" : "Happy Clients" },
-            ].map((item, idx) => (
-              <div key={idx} className="flex flex-col items-center p-6 rounded-none border border-white/5 bg-white/[0.02] backdrop-blur-sm group hover:bg-white/[0.05] transition-colors">
-                <item.icon className="h-6 w-6 text-white/40 mb-3 group-hover:scale-110 transition-transform" />
-                <span className="text-2xl font-light text-white mb-1">
-                  {typeof item.val === 'number' ? `+${item.val}` : item.val}
-                </span>
-                <span className="text-[10px] font-medium text-white/30 uppercase tracking-widest text-center">
+        </div>
+      </div>
+dest text-center">
                   {item.label}
                 </span>
               </div>

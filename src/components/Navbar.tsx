@@ -96,48 +96,52 @@ const Navbar = () => {
 
   return (
     <motion.nav
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.8, ease: [0.19, 1, 0.22, 1] }}
-      className={`fixed top-0 right-0 left-0 z-50 transition-all duration-700 ${isTransparent
-        ? 'bg-transparent py-6'
-        : 'bg-background/80 backdrop-blur-md border-b border-border/40 py-4 shadow-sm'
+      initial={{ y: -100, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 1.2, ease: [0.19, 1, 0.22, 1] }}
+      className={`fixed top-0 inset-x-0 z-50 transition-all duration-700 ${isTransparent
+        ? 'py-8'
+        : 'glass-modern py-4 shadow-2xl shadow-black/20'
         }`}
     >
-      <div className="container mx-auto px-2 sm:px-4 md:px-6">
-        <div className="flex items-center justify-between gap-2 sm:gap-4">
-          {/* Logo Section */}
+      <div className="container mx-auto px-6 md:px-12">
+        <div className="flex items-center justify-between">
+          {/* Brand Identity */}
           <Link to="/" className="flex items-center group relative">
             <div className="relative">
-              <div className="absolute -inset-2 bg-primary/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
               <img
                 src={showroomLogo}
                 alt={siteName}
-                className={`h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 rounded-lg sm:rounded-xl object-cover shadow-2xl transition-all duration-500 ${isTransparent ? 'scale-110' : 'scale-100'}`}
+                className={`h-10 w-10 md:h-14 md:w-14 rounded-none object-cover transition-all duration-1000 ${isTransparent ? 'scale-110 grayscale' : 'scale-100 grayscale-0'}`}
               />
+              <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity" />
             </div>
-            <div className={`ms-2 sm:ms-3 flex flex-col transition-all duration-500 ${isTransparent ? 'translate-x-1' : 'translate-x-0'}`}>
-              <span className={`text-sm sm:text-lg md:text-xl font-black leading-tight tracking-tight ${isTransparent ? 'text-white' : 'text-foreground'} line-clamp-1`}>
+            <div className="ms-4 flex flex-col pt-1">
+              <span className={`text-lg md:text-2xl font-light tracking-tighter uppercase ${isTransparent ? 'text-white' : 'text-foreground'}`}>
                 {siteName}
-                <Sparkles className="hidden sm:inline-block h-3 w-3 ms-1 text-primary animate-pulse" />
               </span>
-              {/* Secondary name removed as requested */}
+              <div className="h-[1px] w-0 bg-primary group-hover:w-full transition-all duration-700" />
             </div>
           </Link>
 
-          {/* Desktop Nav Links */}
-          <nav className="hidden lg:flex items-center gap-2">
+          {/* Minimalist Navigation */}
+          <nav className="hidden lg:flex items-center gap-12">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 to={link.href}
-                className={`px-4 py-2 text-[13px] font-medium uppercase tracking-[0.2em] transition-all relative group ${isActive(link.href)
+                className={`text-[11px] font-medium uppercase tracking-[0.4em] transition-all relative group py-2 ${isActive(link.href)
                   ? isTransparent ? 'text-white' : 'text-foreground'
-                  : isTransparent ? 'text-white/60 hover:text-white' : 'text-muted-foreground hover:text-foreground'
+                  : isTransparent ? 'text-white/40 hover:text-white' : 'text-muted-foreground hover:text-foreground'
                   }`}
               >
                 {link.label}
-                <span className={`absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-[1px] bg-primary transition-all duration-500 group-hover:w-full ${isActive(link.href) ? 'w-full' : 'w-0'}`} />
+                <motion.span 
+                  className="absolute bottom-0 inset-x-0 h-[1.5px] bg-primary origin-left"
+                  initial={false}
+                  animate={{ scaleX: isActive(link.href) ? 1 : 0 }}
+                  transition={{ duration: 0.8, ease: [0.19, 1, 0.22, 1] }}
+                />
               </Link>
             ))}
           </nav>

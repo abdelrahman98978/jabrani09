@@ -61,48 +61,70 @@ const WhyUsSection = () => {
     : settings?.about_text || defaultSubtitleEn;
 
   return (
-    <section className="py-32 bg-background relative overflow-hidden">
-      <div className="container mx-auto px-4 relative z-10">
+    <section className="py-40 bg-black overflow-hidden border-t border-white/5">
+      <div className="container mx-auto px-6 md:px-12 relative z-10">
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row justify-between items-end gap-12 mb-24">
-          <div className="max-w-2xl space-y-6">
-            <div className="inline-flex items-center gap-2 px-0 py-0 text-foreground/40 text-[10px] font-bold uppercase tracking-[0.4em]">
-              {isRTL ? "لماذا نحن" : "Philosophy / 02"}
-            </div>
-            <h2 className="text-4xl md:text-6xl font-light text-foreground leading-[1.1] tracking-tight">
-              {isRTL ? "لماذا" : "Why"} <span className="font-bold">{isRTL ? "تختار تميزنا؟" : "Select Us?"}</span>
-            </h2>
-            <div className="w-20 h-[1px] bg-foreground/10" />
-            <p className="text-muted-foreground/60 text-sm md:text-base uppercase tracking-widest leading-relaxed">
-              {subtitle}
-            </p>
-          </div>
+        <div className="max-w-4xl mb-32">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 1, ease: [0.19, 1, 0.22, 1] }}
+            className="mb-12 inline-flex items-center"
+          >
+            <span className="text-[11px] uppercase tracking-[0.5em] text-primary font-bold">
+              {isRTL ? "فلسفة السيادة" : "Sovereign Philosophy"}
+            </span>
+          </motion.div>
+          <motion.h2
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.2, delay: 0.2, ease: [0.19, 1, 0.22, 1] }}
+            className="text-5xl md:text-8xl text-hero text-white"
+          >
+            {isRTL ? (
+              <>
+                لماذا <span className="font-bold">مؤسسة</span>
+                <br />
+                <span className="text-white/30 italic">جبراني؟</span>
+              </>
+            ) : (
+              <>
+                Defining <span className="font-bold">Exceptional</span>
+                <br />
+                The <span className="text-white/30 italic">Atelier</span>
+              </>
+            )}
+          </motion.h2>
         </div>
 
-        {/* Features Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0 border border-foreground/5 shadow-luxury">
+        {/* Features Grid - Editorial Layout */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
           {features.map((feature, index) => (
-            <div
+            <motion.div
               key={index}
-              className="group p-12 border-b border-e border-foreground/5 last:border-b-0 lg:[&:nth-child(3)]:border-e-0 lg:[&:nth-child(6)]:border-e-0 lg:last:border-b-0 last:border-e-0 transition-all duration-500 hover:bg-foreground/[0.02]"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: index * 0.1, ease: [0.19, 1, 0.22, 1] }}
+              className="group relative"
             >
-              <div className="flex flex-col space-y-8">
-                {/* Icon */}
-                <div className="w-12 h-12 flex items-center justify-center border border-foreground/10 group-hover:border-foreground/40 transition-all duration-500">
-                  <feature.icon className="h-5 w-5 text-foreground/40 group-hover:text-foreground transition-colors duration-500" />
+              <div className="flex flex-col space-y-12 p-12 bg-surface-low border border-white/5 transition-all duration-700 hover:border-primary/20">
+                {/* Icon with Ambient Glow */}
+                <div className="relative w-16 h-16 flex items-center justify-center">
+                  <div className="absolute inset-0 bg-primary/20 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                  <feature.icon className="h-6 w-6 text-primary group-hover:scale-110 transition-transform duration-700" />
                 </div>
 
                 {/* Content */}
-                <div className="space-y-4">
-                  <h3 className="font-bold text-lg uppercase tracking-widest text-foreground">
+                <div className="space-y-6">
+                  <h3 className="text-xl font-bold uppercase tracking-[0.3em] text-white">
                     {isRTL ? feature.titleAr : feature.titleEn}
                   </h3>
-                  <p className="text-xs text-foreground/40 leading-relaxed tracking-wider">
+                  <p className="text-[11px] uppercase leading-relaxed tracking-[0.2em] text-white/30 group-hover:text-white/60 transition-colors duration-700">
                     {isRTL ? feature.descriptionAr : feature.descriptionEn}
                   </p>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>

@@ -111,25 +111,35 @@ const StatsCounter = () => {
   ];
 
   return (
-    <section className="py-32 bg-background border-y border-foreground/5">
-      <div className="container mx-auto px-4">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-12 sm:gap-24">
+    <section className="py-40 bg-black overflow-hidden border-y border-white/5">
+      <div className="container mx-auto px-6 md:px-12">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-24 md:gap-40">
           {counters.map((counter, idx) => (
-            <div
+            <motion.div
               key={idx}
-              className="group flex flex-col items-center sm:items-start text-center sm:text-start space-y-4"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1, delay: idx * 0.1, ease: [0.19, 1, 0.22, 1] }}
+              className="group flex flex-col items-start space-y-8"
             >
-              <AnimatedCounter
-                end={counter.value}
-                suffix={counter.suffix}
-              />
-              <div className="space-y-1">
-                <p className="text-[10px] uppercase tracking-[0.3em] font-bold opacity-30 group-hover:opacity-100 transition-opacity">
-                  {isRTL ? counter.labelAr : counter.labelEn}
-                </p>
-                <div className="w-8 h-[1px] bg-foreground/10 group-hover:w-16 transition-all duration-700 mx-auto sm:mx-0" />
+              <div className="text-primary group-hover:scale-110 transition-transform duration-1000">
+                <counter.icon className="h-4 w-4 opacity-40 group-hover:opacity-100 transition-opacity" />
               </div>
-            </div>
+              
+              <div className="space-y-4">
+                <AnimatedCounter
+                  end={counter.value}
+                  suffix={counter.suffix}
+                />
+                
+                <div className="space-y-4">
+                  <p className="text-[11px] uppercase tracking-[0.6em] font-bold text-white/30 group-hover:text-primary transition-colors duration-700">
+                    {isRTL ? counter.labelAr : counter.labelEn}
+                  </p>
+                  <div className="w-8 h-[1px] bg-primary/20 group-hover:w-full transition-all duration-1000" />
+                </div>
+              </div>
+            </motion.div>
           ))}
         </div>
       </div>

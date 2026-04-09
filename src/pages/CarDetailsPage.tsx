@@ -5,40 +5,29 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import AIChatBot from "@/components/AIChatBot";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
-  ArrowRight,
-  Phone,
-  MessageCircle,
+  ChevronLeft,
+  ChevronRight,
+  ShoppingCart,
   Calendar,
   Fuel,
   Gauge,
   Palette,
   Eye,
-  Share2,
-  Heart,
-  Loader2,
-  ShoppingCart,
-  ChevronLeft,
-  ChevronRight,
-  ZoomIn,
   Camera,
   RotateCw,
-  Download,
 } from "lucide-react";
 import { useState, lazy, Suspense, useRef } from "react";
-import HeroVideoControls from "@/components/HeroVideoControls";
 import { useSettings } from "@/hooks/useSettings";
 import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { CarQuickOrderDialog } from "@/components/CarQuickOrderDialog";
-import CompareButton from "@/components/CompareButton";
 import ReviewsList from "@/components/ReviewsList";
 import TestDriveBookingDialog from "@/components/TestDriveBookingDialog";
+import { motion, AnimatePresence } from "framer-motion";
 
 // Lazy load the 360 viewer for better performance
 const Car360Viewer = lazy(() => import("@/components/Car360Viewer"));
@@ -47,9 +36,9 @@ const CarDetailsPage = () => {
   const { id } = useParams();
   const { toast } = useToast();
   const { t, language } = useLanguage();
+  const isRTL = language === "ar";
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
-  const [isFavorite, setIsFavorite] = useState(false);
   const [isQuickOrderOpen, setIsQuickOrderOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("gallery");
   const heroVideoRef = useRef<HTMLVideoElement>(null);
@@ -78,8 +67,6 @@ const CarDetailsPage = () => {
 
       const applyPromotionsToCar = (car: any, promotionsList: any[]) => {
         if (!car) return car;
-        if (car.has_discount && !car.original_price) return car;
-
         const now = new Date();
         const activePromos = promotionsList.filter((p) => {
           if (!p.is_active) return false;
@@ -98,22 +85,13 @@ const CarDetailsPage = () => {
             (!promo.target_cars && !promo.target_brands);
 
           if (!matchesCar) continue;
-
-          if (promo.min_price && car.price < promo.min_price) continue;
-          if (promo.max_price && car.price > promo.max_price) continue;
-
-          if (!promo.discount_type || !promo.discount_value) continue;
-
           let discountedPrice = car.price;
           if (promo.discount_type === "percentage") {
             discountedPrice = car.price * (1 - promo.discount_value / 100);
           } else {
             discountedPrice = car.price - promo.discount_value;
           }
-
-          discountedPrice = Math.max(discountedPrice, 0);
-          const discountAmount = car.price - discountedPrice;
-
+          const discountAmount = car.price - Math.max(discountedPrice, 0);
           if (discountAmount > bestDiscount) {
             bestDiscount = discountAmount;
             bestPromo = promo;
@@ -121,22 +99,16 @@ const CarDetailsPage = () => {
         }
 
         if (!bestDiscount || !bestPromo) return car;
-
-        const discountedPrice = car.price - bestDiscount;
-        const percent = Math.round((bestDiscount / car.price) * 100);
-
         return {
           ...car,
           original_price: car.original_price ?? car.price,
-          price: discountedPrice,
+          price: car.price - bestDiscount,
           has_discount: true,
-          promotion_percent: percent,
-          promotion_type: bestPromo.discount_type || undefined,
+          promotion_percent: Math.round((bestDiscount / car.price) * 100),
         };
       };
 
-      const carWithPromo = applyPromotionsToCar(data, promotions || []);
-      return carWithPromo;
+      return applyPromotionsToCar(data, promotions || []);
     },
     enabled: !!id,
   });
@@ -144,10 +116,10 @@ const CarDetailsPage = () => {
   const { data: settings } = useSettings();
 
   const formatPrice = (price: number) => {
-    const formatted = new Intl.NumberFormat(language === "ar" ? "ar-SD" : "en-US", {
+    const formatted = new Intl.NumberFormat(isRTL ? "ar-SD" : "en-US", {
       maximumFractionDigits: 0,
     }).format(price);
-    const symbol = settings?.currency_symbol || (language === "ar" ? "ج.س" : "SDG");
+    const symbol = (settings as any)?.currency_symbol || (isRTL ? "ج.س" : "SDG");
     return `${formatted} ${symbol}`;
   };
 
@@ -171,11 +143,11 @@ const CarDetailsPage = () => {
   };
 
   const handleOrderViaWhatsApp = () => {
-    const carName = language === "ar" ? car?.name_ar : car?.name;
-    const brandName = language === "ar" ? car?.brands?.name_ar : car?.brands?.name;
+    const carName = isRTL ? car?.name_ar : car?.name;
+    const brandName = isRTL ? car?.brands?.name_ar : car?.brands?.name;
     const fuelType = fuelTypes[language]?.[car?.fuel_type || ""] || car?.fuel_type;
     const transmission = transmissionTypes[language]?.[car?.transmission || ""] || car?.transmission;
-    const color = language === "ar" ? car?.color_ar : car?.color;
+    const color = isRTL ? car?.color_ar : car?.color;
 
     const orderMessages: Record<string, string> = {
       ar: `🚗 *طلب شراء سيارة*\n\n📋 *تفاصيل السيارة:*\n━━━━━━━━━━━━━━━━\n🏷️ الاسم: ${carName}\n🏭 الماركة: ${brandName}\n📅 الموديل: ${car?.model} - ${car?.year}\n💰 السعر: ${formatPrice(car?.price || 0)}\n⛽ الوقود: ${fuelType}\n⚙️ ناقل الحركة: ${transmission}\n🎨 اللون: ${color || "-"}\n📏 المسافة: ${car?.mileage?.toLocaleString() || 0} كم\n━━━━━━━━━━━━━━━━\n\nأرغب في شراء هذه السيارة.`,
@@ -189,48 +161,41 @@ const CarDetailsPage = () => {
   const handleShare = async () => {
     try {
       await navigator.share({
-        title: language === "ar" ? `${car?.name_ar} ${car?.model}` : `${car?.name} ${car?.model}`,
+        title: isRTL ? `${car?.name_ar} ${car?.model}` : `${car?.name} ${car?.model}`,
         url: window.location.href,
       });
     } catch {
       navigator.clipboard.writeText(window.location.href);
-      toast({ description: language === "ar" ? "تم نسخ الرابط" : "Link copied" });
+      toast({ description: isRTL ? "تم نسخ الرابط" : "Link copied" });
     }
   };
 
   const allImages = [car?.main_image, ...(car?.images || [])].filter(Boolean) as string[];
-
-  const nextImage = () => {
-    setSelectedImageIndex((prev) => (prev + 1) % allImages.length);
-  };
-
-  const prevImage = () => {
-    setSelectedImageIndex((prev) => (prev - 1 + allImages.length) % allImages.length);
-  };
+  const nextImage = () => setSelectedImageIndex((prev) => (prev + 1) % allImages.length);
+  const prevImage = () => setSelectedImageIndex((prev) => (prev - 1 + allImages.length) % allImages.length);
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto" />
-          <p className="mt-4 text-muted-foreground">{language === "ar" ? "جاري التحميل..." : "Loading..."}</p>
-        </div>
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <motion.div 
+          animate={{ scale: [1, 1.1, 1], opacity: [0.5, 1, 0.5] }}
+          transition={{ duration: 2, repeat: Infinity }}
+          className="text-primary font-bold tracking-[0.5em] uppercase text-xs"
+        >
+          Sovereign Loading
+        </motion.div>
       </div>
     );
   }
 
   if (!car) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-black">
         <Navbar />
-        <div className="container mx-auto px-4 pt-24 text-center">
-          <h1 className="text-2xl font-bold text-foreground">
-            {language === "ar" ? "السيارة غير موجودة" : "Car not found"}
-          </h1>
-          <Link to="/cars">
-            <Button variant="outline" className="mt-4">
-              {language === "ar" ? "العودة للسيارات" : "Back to Cars"}
-            </Button>
+        <div className="container mx-auto px-6 pt-40 text-center">
+          <h1 className="text-4xl font-light text-white italic">Car not found.</h1>
+          <Link to="/cars" className="mt-8 inline-block text-primary uppercase tracking-[0.3em] text-xs">
+            Return to Gallery
           </Link>
         </div>
       </div>
@@ -240,29 +205,17 @@ const CarDetailsPage = () => {
   const currentImage = allImages[selectedImageIndex] || "/placeholder.svg";
   const fuelTypeLabel = fuelTypes[language]?.[car.fuel_type] || car.fuel_type;
   const transmissionLabel = transmissionTypes[language]?.[car.transmission] || car.transmission;
-
-  // Check if car has hero video
-  const hasHeroVideo = (car as any)?.video_url;
+  const hasHeroVideo = !!(car as any)?.video_url;
   const heroVideoUrl = (car as any)?.video_url;
   const heroVideoThumbnail = (car as any)?.video_thumbnail || car?.main_image;
-  const heroOverlayOpacity = (car as any)?.video_overlay_opacity || "medium";
-
-  const getHeroOverlayClass = () => {
-    switch (heroOverlayOpacity) {
-      case "light": return "bg-gradient-to-t from-black/40 via-black/20 to-transparent";
-      case "dark": return "bg-gradient-to-t from-black/80 via-black/50 to-black/30";
-      default: return "bg-gradient-to-t from-black/60 via-black/30 to-transparent";
-    }
-  };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-black selection:bg-primary/30 overflow-x-hidden">
       <Navbar />
 
-      {/* Hero Video Section */}
-      {hasHeroVideo && (
-        <section className="relative h-[70vh] md:h-[80vh] overflow-hidden perspective-container hero-video-container">
-          {/* Video Background */}
+      {/* Cinematic Hero */}
+      {hasHeroVideo ? (
+        <section className="relative h-[85vh] overflow-hidden">
           <video
             ref={heroVideoRef}
             autoPlay
@@ -270,508 +223,214 @@ const CarDetailsPage = () => {
             loop
             playsInline
             poster={heroVideoThumbnail}
-            className="absolute inset-0 w-full h-full object-cover scale-105"
+            className="absolute inset-0 w-full h-full object-cover"
           >
             <source src={heroVideoUrl} type="video/mp4" />
           </video>
-
-          {/* Video Controls */}
-          <HeroVideoControls
-            videoRef={heroVideoRef}
-            isRTL={language === "ar"}
-          />
-
-          {/* Animated Overlay */}
-          <div className={`absolute inset-0 ${getHeroOverlayClass()}`} />
-
-          {/* Floating 3D Particles */}
-          <div className="absolute inset-0 pointer-events-none overflow-hidden">
-            {[...Array(8)].map((_, i) => (
-              <div
-                key={i}
-                className="absolute w-1 h-1 bg-white/30 rounded-full animate-float-3d"
-                style={{
-                  left: `${10 + i * 12}%`,
-                  top: `${15 + (i % 4) * 20}%`,
-                  animationDelay: `${i * 0.3}s`,
-                  animationDuration: `${3 + i * 0.3}s`,
-                }}
-              />
-            ))}
-          </div>
-
-          {/* Content with 3D Animations */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="text-center space-y-6 px-4 stagger-3d-entrance">
-              {/* Brand Badge */}
-              {car.brands && (
-                <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-black/40 backdrop-blur-sm border border-white/20 badge-3d-float">
-                  {car.brands.logo_url && (
-                    <img src={car.brands.logo_url} alt={car.brands.name} className="h-6 w-auto" />
-                  )}
-                  <span className="text-white/90 font-medium">
-                    {language === "ar" ? car.brands.name_ar : car.brands.name}
-                  </span>
-                </div>
-              )}
-
-              {/* Car Name with 3D Effect */}
-              <h1 className="text-4xl sm:text-5xl md:text-7xl font-black text-white hero-text-shadow animate-slide-3d">
-                {language === "ar" ? car.name_ar : car.name}
-              </h1>
-
-              {/* Model & Year */}
-              <p className="text-xl md:text-2xl text-white/80 animate-fade-in" style={{ animationDelay: '0.3s' }}>
-                {car.model} • {car.year}
-              </p>
-
-              {/* Price with Glow */}
-              <div className="space-y-2 animate-pop-3d" style={{ animationDelay: '0.5s' }}>
-                {car.has_discount && car.original_price && (
-                  <span className="text-lg text-white/60 line-through block">
-                    {formatPrice(car.original_price)}
-                  </span>
-                )}
-                <div className="text-4xl md:text-6xl font-black text-gradient-gold drop-shadow-lg animate-pulse-scale">
-                  {formatPrice(car.price)}
-                </div>
-                {car.promotion_percent && (
-                  <Badge className="bg-emerald-500/90 text-white text-sm px-4 py-1.5 badge-3d-float">
-                    {language === "ar" ? `خصم ${car.promotion_percent}%` : `${car.promotion_percent}% OFF`}
-                  </Badge>
-                )}
-              </div>
-
-              {/* CTA Buttons */}
-              <div className="flex flex-wrap gap-4 justify-center pt-4 animate-fade-in" style={{ animationDelay: '0.7s' }}>
-                <Button
-                  variant="premium"
-                  size="lg"
-                  className="gap-2 hover-lift-3d btn-glow"
-                  onClick={handleOrderViaWhatsApp}
-                >
-                  <ShoppingCart className="h-5 w-5" />
-                  {t.common.whatsappOrder}
-                </Button>
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="gap-2 border-white/50 text-white hover:bg-white/10 hover-lift-3d"
-                  onClick={handleWhatsApp}
-                >
-                  <MessageCircle className="h-5 w-5" />
-                  {language === "ar" ? "استفسار" : "Inquire"}
-                </Button>
-              </div>
-            </div>
-          </div>
-
-          {/* Scroll Indicator */}
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2">
-            <div className="w-6 h-10 rounded-full border-2 border-white/50 flex justify-center pt-2 animate-bounce-3d">
-              <div className="w-1 h-2 rounded-full bg-white animate-pulse" />
-            </div>
-          </div>
-
-          {/* Quick Specs Bar */}
-          <div className="absolute bottom-0 left-0 right-0 bg-black/60 backdrop-blur-sm border-t border-white/10">
-            <div className="container mx-auto px-4 py-4">
-              <div className="flex justify-center gap-6 md:gap-12 flex-wrap">
-                {[
-                  { icon: Calendar, value: car.year, label: t.common.year },
-                  { icon: Fuel, value: fuelTypeLabel, label: t.common.fuel },
-                  { icon: Gauge, value: transmissionLabel, label: t.common.transmission },
-                  { icon: Eye, value: car.views_count, label: t.common.views },
-                ].map((spec, idx) => (
-                  <div key={idx} className="flex items-center gap-2 text-white/90">
-                    <spec.icon className="h-5 w-5 text-primary" />
-                    <div>
-                      <div className="font-bold">{spec.value}</div>
-                      <div className="text-xs text-white/60">{spec.label}</div>
-                    </div>
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
+          <div className="absolute inset-0 flex items-end pb-32">
+            <div className="container mx-auto px-6 md:px-12">
+              <motion.div
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1.2, ease: [0.19, 1, 0.22, 1] }}
+                className="max-w-4xl space-y-8"
+              >
+                {car.brands && (
+                  <div className="inline-flex items-center gap-4 px-4 py-2 bg-white/5 backdrop-blur-md border border-white/10 rounded-full">
+                    {car.brands.logo_url && <img src={car.brands.logo_url} alt="" className="h-6 w-auto grayscale brightness-200" />}
+                    <span className="text-white/60 text-[11px] uppercase tracking-[0.4em]">
+                       {isRTL ? car.brands.name_ar : car.brands.name}
+                    </span>
                   </div>
-                ))}
-              </div>
+                )}
+                <h1 className="text-6xl md:text-9xl text-hero text-white tracking-tighter">
+                  {isRTL ? car.name_ar : car.name}
+                  <span className="block text-white/20 italic font-light text-4xl md:text-6xl mt-4">
+                    {car.model} — {car.year}
+                  </span>
+                </h1>
+              </motion.div>
             </div>
           </div>
         </section>
+      ) : (
+        <div className="pt-48 pb-20 container mx-auto px-6 md:px-12">
+           <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="max-w-4xl space-y-4"
+              >
+                <div className="text-primary text-[11px] uppercase tracking-[0.5em] font-black">
+                  Exquisite Selection
+                </div>
+                <h1 className="text-6xl md:text-9xl text-hero text-white tracking-tighter leading-none">
+                  {isRTL ? car.name_ar : car.name}
+                </h1>
+              </motion.div>
+        </div>
       )}
 
-      <main className={hasHeroVideo ? "pb-12" : "pt-24 pb-12"}>
-        <div className="container mx-auto px-4">
-          {/* Breadcrumb */}
-          <div className={`flex items-center gap-2 text-sm text-muted-foreground mb-6 ${hasHeroVideo ? 'pt-8' : ''}`}>
-            <Link to="/" className="hover:text-primary transition-colors">{t.nav.home}</Link>
-            <ArrowRight className="h-4 w-4 rotate-180" />
-            <Link to="/cars" className="hover:text-primary transition-colors">{t.nav.cars}</Link>
-            <ArrowRight className="h-4 w-4 rotate-180" />
-            <span className="text-foreground font-medium">{language === "ar" ? car.name_ar : car.name}</span>
-          </div>
+      <main className="pb-32">
+        <div className="container mx-auto px-6 md:px-12">
+          <div className="grid lg:grid-cols-12 gap-20">
+            {/* Visuals */}
+            <div className="lg:col-span-12 xl:col-span-8 space-y-12">
+              <motion.div
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                transition={{ duration: 1 }}
+                className="relative aspect-[16/9] bg-surface-low border border-white/5 overflow-hidden group cursor-pointer"
+                onClick={() => setIsGalleryOpen(true)}
+              >
+                <img
+                  src={currentImage}
+                  alt=""
+                  className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                
+                <div className="absolute bottom-8 right-8 flex items-center gap-6 z-10">
+                   <span className="text-[11px] text-white/40 tracking-[0.4em] uppercase">Visual Selection</span>
+                   <div className="flex gap-2">
+                     <button onClick={(e) => { e.stopPropagation(); prevImage(); }} className="w-12 h-12 border border-white/10 flex items-center justify-center hover:bg-white hover:text-black transition-all">
+                       <ChevronLeft className="h-4 w-4" />
+                     </button>
+                     <button onClick={(e) => { e.stopPropagation(); nextImage(); }} className="w-12 h-12 border border-white/10 flex items-center justify-center hover:bg-white hover:text-black transition-all">
+                       <ChevronRight className="h-4 w-4" />
+                     </button>
+                   </div>
+                </div>
 
-          <div className="grid lg:grid-cols-2 gap-8">
-            {/* Images & 360 Section */}
-            <div className="space-y-4">
-              {/* Tabs for Gallery and 360 View */}
-              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="grid w-full grid-cols-2 mb-4">
-                  <TabsTrigger value="gallery" className="gap-2">
-                    <Camera className="w-4 h-4" />
-                    {language === "ar" ? "معرض الصور" : "Gallery"}
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="360"
-                    disabled={!((car as any).video_360_url || (car as any).view_360_url)}
-                    className="gap-2"
+                <div className="absolute top-8 left-8 flex gap-4">
+                  <Badge className="bg-primary text-black text-[10px] tracking-[0.3em] font-black rounded-none px-4 py-2">
+                    {car.year} EDITION
+                  </Badge>
+                  {car.has_discount && (
+                     <Badge className="bg-white text-black text-[10px] tracking-[0.3em] font-black rounded-none px-4 py-2">
+                       OFFER ACTIVE
+                     </Badge>
+                  )}
+                </div>
+              </motion.div>
+
+              <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
+                {allImages.map((img, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setSelectedImageIndex(idx)}
+                    className={`aspect-square border transition-all duration-500 overflow-hidden ${
+                      selectedImageIndex === idx ? "border-primary p-px" : "border-white/5 opacity-40 hover:opacity-100"
+                    }`}
                   >
-                    <RotateCw className="w-4 h-4" />
-                    {language === "ar" ? "عرض 360°" : "360° View"}
-                  </TabsTrigger>
-                </TabsList>
-
-                {/* Gallery Tab */}
-                <TabsContent value="gallery" className="mt-0">
-                  {/* Main Image */}
-                  <div className="relative aspect-[16/10] rounded-2xl overflow-hidden bg-secondary group">
-                    <img
-                      src={currentImage}
-                      alt={language === "ar" ? car.name_ar : car.name}
-                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-
-                    {/* Image Navigation */}
-                    {allImages.length > 1 && (
-                      <>
-                        <button
-                          onClick={prevImage}
-                          className="absolute right-4 top-1/2 -translate-y-1/2 h-12 w-12 rounded-full bg-background/90 backdrop-blur-sm flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all shadow-lg opacity-0 group-hover:opacity-100"
-                        >
-                          <ChevronRight className="h-6 w-6" />
-                        </button>
-                        <button
-                          onClick={nextImage}
-                          className="absolute left-4 top-1/2 -translate-y-1/2 h-12 w-12 rounded-full bg-background/90 backdrop-blur-sm flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all shadow-lg opacity-0 group-hover:opacity-100"
-                        >
-                          <ChevronLeft className="h-6 w-6" />
-                        </button>
-                      </>
-                    )}
-
-                    {/* Zoom Button */}
-                    <button
-                      onClick={() => setIsGalleryOpen(true)}
-                      className="absolute bottom-4 left-4 h-10 w-10 rounded-full bg-background/90 backdrop-blur-sm flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all shadow-lg"
-                    >
-                      <ZoomIn className="h-5 w-5" />
-                    </button>
-
-                    {/* Badges */}
-                    <div className="absolute top-4 right-4 flex flex-col gap-2">
-                      {car.is_new && (
-                        <Badge className="bg-primary text-primary-foreground shadow-lg">{t.common.new}</Badge>
-                      )}
-                      {car.has_discount && (
-                        <Badge className="bg-destructive shadow-lg">{t.common.discount}</Badge>
-                      )}
-                      {car.has_test_drive && (
-                        <Badge variant="secondary" className="shadow-lg">{t.common.testDrive}</Badge>
-                      )}
-                    </div>
-
-                    {/* Actions */}
-                    <div className="absolute top-4 left-4 flex gap-2">
-                      <button
-                        onClick={handleShare}
-                        className="h-10 w-10 rounded-full bg-background/90 backdrop-blur-sm flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all shadow-lg"
-                      >
-                        <Share2 className="h-5 w-5" />
-                      </button>
-                      <button
-                        onClick={() => setIsFavorite(!isFavorite)}
-                        className={`h-10 w-10 rounded-full backdrop-blur-sm flex items-center justify-center transition-all shadow-lg ${isFavorite ? "bg-primary text-primary-foreground" : "bg-background/90 hover:bg-primary hover:text-primary-foreground"
-                          }`}
-                      >
-                        <Heart className={`h-5 w-5 ${isFavorite ? "fill-current" : ""}`} />
-                      </button>
-                    </div>
-
-                    {/* Image Counter */}
-                    <div className="absolute bottom-4 right-4 px-4 py-2 rounded-full bg-background/90 backdrop-blur-sm text-sm font-medium shadow-lg">
-                      {selectedImageIndex + 1} / {allImages.length}
-                    </div>
-
-                    {/* Views */}
-                    <div className="absolute bottom-4 left-16 flex items-center gap-2 px-3 py-1.5 rounded-full bg-background/90 backdrop-blur-sm text-sm shadow-lg">
-                      <Eye className="h-4 w-4 text-primary" />
-                      <span>{car.views_count} {t.common.views}</span>
-                    </div>
-                  </div>
-
-                  {/* Thumbnails */}
-                  {allImages.length > 1 && (
-                    <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide mt-4">
-                      {allImages.map((img, idx) => (
-                        <button
-                          key={idx}
-                          onClick={() => setSelectedImageIndex(idx)}
-                          className={`flex-shrink-0 w-24 h-20 rounded-xl overflow-hidden border-3 transition-all duration-300 ${selectedImageIndex === idx
-                            ? "border-primary shadow-primary ring-2 ring-primary/30"
-                            : "border-transparent hover:border-primary/50"
-                            }`}
-                        >
-                          <img src={img} alt="" className="h-full w-full object-cover" />
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </TabsContent>
-
-                {/* 360 View Tab */}
-                <TabsContent value="360" className="mt-0">
-                  {(car as any).view_360_url ? (
-                    <div className="aspect-[16/10] rounded-2xl overflow-hidden bg-secondary border border-border">
-                      <iframe
-                        src={(car as any).view_360_url}
-                        className="w-full h-full border-0"
-                        title="360 View"
-                        allowFullScreen
-                        loading="lazy"
-                      />
-                    </div>
-                  ) : (car as any).video_360_url && (
-                    <Suspense fallback={
-                      <div className="aspect-[16/10] rounded-2xl bg-secondary flex items-center justify-center">
-                        <Loader2 className="h-12 w-12 animate-spin text-primary" />
-                      </div>
-                    }>
-                      <Car360Viewer
-                        videoUrl={(car as any).video_360_url}
-                        thumbnailUrl={(car as any).video_360_thumbnail || car.main_image}
-                        type={(car as any).video_360_type}
-                        className="aspect-[16/10] rounded-2xl"
-                      />
-                    </Suspense>
-                  )}
-
-                  {/* 360 Info Card */}
-                  <div className="mt-4 p-4 rounded-xl bg-gradient-to-r from-primary/10 to-secondary/50 border border-primary/20">
-                    <div className="flex items-center gap-3">
-                      <div className="h-12 w-12 rounded-full bg-primary/20 flex items-center justify-center">
-                        <RotateCw className="h-6 w-6 text-primary" />
-                      </div>
-                      <div>
-                        <h4 className="font-bold text-foreground">
-                          {language === "ar" ? "عرض تفاعلي 360°" : "Interactive 360° View"}
-                        </h4>
-                        <p className="text-sm text-muted-foreground">
-                          {language === "ar"
-                            ? "اسحب للتدوير وتكبير للاستكشاف"
-                            : "Drag to rotate and pinch to zoom"}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </TabsContent>
-              </Tabs>
+                    <img src={img} alt="" className="w-full h-full object-cover" />
+                  </button>
+                ))}
+              </div>
             </div>
 
-            {/* Details Section */}
-            <div className="space-y-6">
-              {/* Title & Brand */}
-              <div>
-                {car.brands && (
-                  <Link to={`/brands/${car.brands.id}`} className="inline-flex items-center gap-2 text-xs sm:text-sm text-primary font-semibold hover:underline">
-                    {car.brands.logo_url && (
-                      <img src={car.brands.logo_url} alt={car.brands.name} className="h-5 w-auto sm:h-6 object-contain" />
-                    )}
-                    {language === "ar" ? car.brands.name_ar : car.brands.name}
-                  </Link>
-                )}
-                <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-foreground mt-2">
-                  {language === "ar" ? car.name_ar : car.name}
-                </h1>
-                <p className="text-lg sm:text-xl text-muted-foreground mt-1">{car.model} - {car.year}</p>
-              </div>
-
-              {/* Price */}
-              <Card className="border-2 border-primary/20 bg-gradient-to-br from-card to-secondary/30">
-                <CardContent className="p-6 space-y-2">
-                  <div className="flex items-end gap-4 flex-wrap">
+            {/* Acquisition & Details */}
+            <div className="lg:col-span-12 xl:col-span-4 space-y-20">
+              <div className="space-y-12">
+                <div className="space-y-4">
+                  <div className="text-[11px] uppercase tracking-[0.6em] text-primary font-bold">
+                    {isRTL ? "الاستثمار" : "The Investment"}
+                  </div>
+                  <div className="flex flex-col">
                     {car.has_discount && car.original_price && (
-                      <span className="text-xl text-muted-foreground line-through">
+                      <span className="text-xl text-white/20 line-through tracking-tighter">
                         {formatPrice(car.original_price)}
                       </span>
                     )}
-                    <span className="text-4xl font-black text-gradient-primary">
+                    <span className="text-6xl md:text-7xl font-bold text-white tracking-tighter">
                       {formatPrice(car.price)}
                     </span>
-                    {car.promotion_percent && (
-                      <Badge className="bg-emerald-600 text-primary-foreground text-sm px-3 py-1 rounded-full">
-                        %{car.promotion_percent} خصم عرض
-                      </Badge>
-                    )}
                   </div>
-                  <p className="text-sm text-muted-foreground">
-                    {language === "ar" ? "* السعر شامل الضريبة" : "* Price includes VAT"}
-                  </p>
-                </CardContent>
-              </Card>
+                </div>
 
-              {/* Quick Specs */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {[
-                  { icon: Calendar, label: t.common.year, value: car.year },
-                  { icon: Fuel, label: t.common.fuel, value: fuelTypeLabel },
-                  { icon: Gauge, label: t.common.transmission, value: transmissionLabel },
-                  { icon: Palette, label: t.common.color, value: (language === "ar" ? car.color_ar : car.color) || "-" },
-                ].map((spec, idx) => (
-                  <Card key={idx} className="border-border/50 hover:border-primary/50 transition-colors">
-                    <CardContent className="p-4 flex flex-col items-center text-center">
-                      <spec.icon className="h-6 w-6 text-primary mb-2" />
-                      <span className="text-xs text-muted-foreground">{spec.label}</span>
-                      <span className="font-bold text-lg">{spec.value}</span>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-
-              {/* Contact Buttons */}
-              <div className="flex flex-col gap-3">
-                <Button variant="premium" size="xl" className="gap-3 text-sm sm:text-base" onClick={handleOrderViaWhatsApp}>
-                  <ShoppingCart className="h-5 w-5 sm:h-6 sm:w-6" />
-                  {t.common.whatsappOrder}
-                </Button>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
-                  <Button variant="whatsapp" size="lg" className="gap-2 text-sm sm:text-base" onClick={handleWhatsApp}>
-                    <MessageCircle className="h-4 w-4 sm:h-5 sm:w-5" />
-                    {language === "ar" ? "استفسار" : "Inquire"}
-                  </Button>
-                  <Button variant="outline" size="lg" className="gap-2 text-sm sm:text-base" asChild>
-                    <a href="tel:+966543389314">
-                      <Phone className="h-4 w-4 sm:h-5 sm:w-5" />
-                      {language === "ar" ? "اتصل" : "Call"}
-                    </a>
-                  </Button>
-                  {/* Website order button */}
-                  <Button
-                    variant="default"
-                    size="lg"
-                    className="gap-2 text-sm sm:text-base sm:col-span-2"
-                    onClick={() => setIsQuickOrderOpen(true)}
+                <div className="flex flex-col gap-4">
+                  <button 
+                    onClick={handleOrderViaWhatsApp}
+                    className="w-full h-20 bg-primary text-black text-[12px] uppercase tracking-[0.5em] font-black hover:bg-white transition-all duration-700 flex items-center justify-center gap-4 group"
                   >
-                    <ShoppingCart className="h-4 w-4 sm:h-5 sm:w-5" />
-                    {language === "ar" ? "طلب عبر الموقع" : "Order via website"}
-                  </Button>
-                  {/* Download Catalog Button */}
-                  {(car as any).catalog_url && (
-                    <Button
-                      variant="outline"
-                      size="lg"
-                      className="gap-2 text-sm sm:text-base sm:col-span-2 border-primary/50 hover:bg-primary/10"
-                      asChild
-                    >
-                      <a
-                        href={(car as any).catalog_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        download
-                      >
-                        <Download className="h-4 w-4 sm:h-5 sm:w-5" />
-                        {language === "ar" ? "تحميل الكاتالوج" : "Download Catalog"}
-                      </a>
-                    </Button>
-                  )}
+                    <ShoppingCart className="h-4 w-4 group-hover:scale-110 transition-transform" />
+                    {t.common.whatsappOrder}
+                  </button>
+                  <div className="grid grid-cols-2 gap-4">
+                    <button onClick={handleWhatsApp} className="h-16 border border-white/10 text-white text-[11px] uppercase tracking-[0.3em] hover:bg-white hover:text-black transition-all">
+                      Inquire
+                    </button>
+                    <button onClick={handleShare} className="h-16 border border-white/10 text-white text-[11px] uppercase tracking-[0.3em] hover:bg-white hover:text-black transition-all">
+                      Dispatch
+                    </button>
+                  </div>
                 </div>
-                {/* Test Drive Booking Button */}
-                <TestDriveBookingDialog
-                  carId={car.id}
-                  carName={language === "ar" ? `${car.name_ar} ${car.model} ${car.year}` : `${car.name} ${car.model} ${car.year}`}
-                />
               </div>
 
-              {/* Description */}
-              {(language === "ar" ? car.description_ar : car.description) && (
-                <div className="space-y-2">
-                  <h3 className="font-bold text-lg text-foreground">
-                    {language === "ar" ? "الوصف" : "Description"}
-                  </h3>
-                  <p className="text-muted-foreground leading-relaxed">
-                    {language === "ar" ? car.description_ar : car.description}
-                  </p>
-                </div>
-              )}
-
-              {/* Additional Specs */}
-              <div className="space-y-3">
-                <h3 className="font-bold text-lg text-foreground">
-                  {language === "ar" ? "المواصفات" : "Specifications"}
+              <div className="space-y-8">
+                <h3 className="text-[11px] uppercase tracking-[0.6em] text-white/30 font-bold px-4">
+                   Specifications
                 </h3>
-                <div className="grid grid-cols-2 gap-3">
-                  {[
-                    { label: t.common.brand, value: (language === "ar" ? car.brands?.name_ar : car.brands?.name) || "-" },
-                    { label: t.common.model, value: car.model },
-                    { label: t.common.mileage, value: `${car.mileage?.toLocaleString() || 0} ${language === "ar" ? "كم" : "km"}` },
-                    ...(car.engine_size ? [{ label: language === "ar" ? "حجم المحرك" : "Engine Size", value: car.engine_size }] : []),
-                  ].map((spec, idx) => (
-                    <div key={idx} className="flex justify-between p-4 rounded-xl bg-secondary/50 hover:bg-secondary transition-colors">
-                      <span className="text-muted-foreground">{spec.label}</span>
-                      <span className="font-semibold">{spec.value}</span>
-                    </div>
-                  ))}
+                <div className="grid grid-cols-2 gap-px bg-white/5 border border-white/5">
+                   {[
+                     { label: "Temporal", value: car.year, icon: Calendar },
+                     { label: "Propulsion", value: fuelTypeLabel, icon: Fuel },
+                     { label: "Sequence", value: transmissionLabel, icon: Gauge },
+                     { label: "Shade", value: (isRTL ? car.color_ar : car.color) || "-", icon: Palette },
+                     { label: "Engagement", value: `${car.mileage?.toLocaleString() || 0} km`, icon: Eye },
+                     { label: "Velocity", value: car.engine_size || "N/A", icon: Gauge }
+                   ].map((spec, idx) => (
+                     <div key={idx} className="bg-black p-8 space-y-4 transition-colors hover:bg-surface-low group">
+                        <spec.icon className="h-4 w-4 text-white/10 group-hover:text-primary transition-colors" />
+                        <div className="space-y-1">
+                          <p className="text-[9px] uppercase tracking-[0.4em] text-white/20">{spec.label}</p>
+                          <p className="text-[14px] uppercase tracking-[0.1em] text-white font-bold">{spec.value}</p>
+                        </div>
+                     </div>
+                   ))}
                 </div>
               </div>
 
-              {/* Compare Button */}
-              <div className="pt-4 border-t border-border">
-                <CompareButton carId={car.id} variant="full" className="w-full" />
-              </div>
+              <TestDriveBookingDialog
+                carId={car.id}
+                carName={isRTL ? `${car.name_ar} ${car.model}` : `${car.name} ${car.model}`}
+              />
             </div>
           </div>
 
-          {/* Reviews Section */}
-          <div className="mt-12 pt-8 border-t border-border">
+          <div className="mt-48 max-w-4xl border-t border-white/5 pt-20">
+             <h3 className="text-[10px] uppercase tracking-[0.8em] text-primary font-bold mb-12">
+               The Narrative
+             </h3>
+             <p className="text-3xl md:text-4xl font-light text-white/60 leading-relaxed tracking-tight italic">
+                {isRTL ? car.description_ar : car.description}
+             </p>
+          </div>
+
+          <div className="mt-48 border-t border-white/5 pt-20">
             <ReviewsList carId={car.id} />
           </div>
         </div>
       </main>
 
-      {/* Full Screen Gallery */}
+      {/* 360 & Gallery Dialogs */}
       <Dialog open={isGalleryOpen} onOpenChange={setIsGalleryOpen}>
-        <DialogContent className="max-w-7xl p-0 bg-background/95 backdrop-blur-xl border-0">
-          <div className="relative aspect-video">
-            <img
-              src={currentImage}
-              alt={language === "ar" ? car.name_ar : car.name}
-              className="h-full w-full object-contain"
-            />
-            {allImages.length > 1 && (
-              <>
-                <button
-                  onClick={prevImage}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 h-14 w-14 rounded-full bg-background/90 flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all"
-                >
-                  <ChevronRight className="h-8 w-8" />
+        <DialogContent className="max-w-7xl p-0 bg-black/95 backdrop-blur-xl border-white/10 rounded-none">
+          <div className="relative aspect-video flex items-center justify-center">
+            <img src={currentImage} alt="" className="h-full w-full object-contain" />
+            <div className="absolute inset-0 flex items-center justify-between px-8">
+                <button onClick={prevImage} className="w-16 h-16 border border-white/20 flex items-center justify-center text-white hover:bg-white hover:text-black rounded-full transition-all">
+                  <ChevronLeft className="h-6 w-6" />
                 </button>
-                <button
-                  onClick={nextImage}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 h-14 w-14 rounded-full bg-background/90 flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all"
-                >
-                  <ChevronLeft className="h-8 w-8" />
+                <button onClick={nextImage} className="w-16 h-16 border border-white/20 flex items-center justify-center text-white hover:bg-white hover:text-black rounded-full transition-all">
+                  <ChevronRight className="h-6 w-6" />
                 </button>
-              </>
-            )}
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-6 py-3 rounded-full bg-background/90 text-lg font-medium">
-              {selectedImageIndex + 1} / {allImages.length}
             </div>
           </div>
         </DialogContent>
       </Dialog>
 
-      <CarQuickOrderDialog
-        open={isQuickOrderOpen}
-        onOpenChange={setIsQuickOrderOpen}
-        car={car}
-      />
-
+      <CarQuickOrderDialog open={isQuickOrderOpen} onOpenChange={setIsQuickOrderOpen} car={car} />
       <Footer />
       <WhatsAppButton />
       <AIChatBot />

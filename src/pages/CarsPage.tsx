@@ -173,137 +173,211 @@ const CarsPage = () => {
   const hasActiveFilters = search || selectedBrand !== "all" || fuelType !== "all" || 
     transmission !== "all" || priceRange !== "all";
 
+import { motion, AnimatePresence } from "framer-motion";
+
+const CarsPage = () => {
+  const [searchParams] = useSearchParams();
+  const { language } = useLanguage();
+  const isRTL = language === "ar";
+  const brandFilter = searchParams.get("brand");
+  
+  const [search, setSearch] = useState("");
+  const [selectedBrand, setSelectedBrand] = useState<string>(brandFilter || "all");
+  const [fuelType, setFuelType] = useState<string>("all");
+  const [transmission, setTransmission] = useState<string>("all");
+  const [priceRange, setPriceRange] = useState<string>("all");
+  const [sortBy, setSortBy] = useState<string>("newest");
+
+  // ... (keep query logic same, but we will wrap the UI in our new sovereign style)
+
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-black overflow-x-hidden selection:bg-primary/30">
       <Navbar />
       
-      <main className="pt-24 pb-12">
-        <div className="container mx-auto px-4">
-          {/* Page Header */}
-          <div className="text-center mb-10">
-            <h1 className="text-4xl font-black text-foreground">
-              جميع <span className="text-gradient-gold">السيارات</span>
-            </h1>
-            <p className="text-muted-foreground mt-2">
-              تصفح مجموعتنا الواسعة من السيارات
-            </p>
+      <main className="pt-40 pb-32">
+        <div className="container mx-auto px-6 md:px-12">
+          {/* Page Header - Cinematic Reveal */}
+          <div className="max-w-4xl mb-32">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 1, ease: [0.19, 1, 0.22, 1] }}
+              className="mb-12 inline-flex items-center"
+            >
+              <span className="text-[11px] uppercase tracking-[0.5em] text-primary font-bold">
+                {isRTL ? "المخزون السيادي" : "Sovereign Inventory"}
+              </span>
+            </motion.div>
+            <motion.h1
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1.2, delay: 0.2, ease: [0.19, 1, 0.22, 1] }}
+              className="text-6xl md:text-9xl text-hero text-white"
+            >
+              {isRTL ? (
+                <>
+                  معرض <span className="font-bold">النخبة</span>
+                  <br />
+                  <span className="text-white/30 italic">المتاح الآن</span>
+                </>
+              ) : (
+                <>
+                  The <span className="font-bold">Elite</span>
+                  <br />
+                  <span className="text-white/30 italic">Showroom</span>
+                </>
+              )}
+            </motion.h1>
           </div>
 
-          {/* Filters */}
-          <div className="bg-card rounded-xl border border-border p-4 mb-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
-              {/* Search */}
-              <div className="lg:col-span-2 relative">
-                <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="ابحث عن سيارة..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className="pr-10"
-                />
-              </div>
-
-              {/* Brand Filter */}
-              <Select value={selectedBrand} onValueChange={setSelectedBrand}>
-                <SelectTrigger>
-                  <SelectValue placeholder="الماركة" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">جميع الماركات</SelectItem>
-                  {brands?.map((brand) => (
-                    <SelectItem key={brand.id} value={brand.id}>
-                      {brand.name_ar}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-
-              {/* Fuel Type */}
-              <Select value={fuelType} onValueChange={setFuelType}>
-                <SelectTrigger>
-                  <SelectValue placeholder="نوع الوقود" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">جميع الأنواع</SelectItem>
-                  <SelectItem value="petrol">بنزين</SelectItem>
-                  <SelectItem value="diesel">ديزل</SelectItem>
-                  <SelectItem value="electric">كهربائي</SelectItem>
-                  <SelectItem value="hybrid">هايبرد</SelectItem>
-                </SelectContent>
-              </Select>
-
-              {/* Price Range */}
-              <Select value={priceRange} onValueChange={setPriceRange}>
-                <SelectTrigger>
-                  <SelectValue placeholder="نطاق السعر" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">جميع الأسعار</SelectItem>
-                  <SelectItem value="0-50000">أقل من 50,000</SelectItem>
-                  <SelectItem value="50000-100000">50,000 - 100,000</SelectItem>
-                  <SelectItem value="100000-200000">100,000 - 200,000</SelectItem>
-                  <SelectItem value="200000-500000">200,000 - 500,000</SelectItem>
-                  <SelectItem value="500000-">أكثر من 500,000</SelectItem>
-                </SelectContent>
-              </Select>
-
-              {/* Sort */}
-              <Select value={sortBy} onValueChange={setSortBy}>
-                <SelectTrigger>
-                  <SelectValue placeholder="الترتيب" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="newest">الأحدث</SelectItem>
-                  <SelectItem value="price_asc">السعر: الأقل أولاً</SelectItem>
-                  <SelectItem value="price_desc">السعر: الأعلى أولاً</SelectItem>
-                  <SelectItem value="year_desc">الموديل: الأحدث</SelectItem>
-                </SelectContent>
-              </Select>
+          {/* Filters - Sovereign Selector Row */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 0.4 }}
+            className="flex flex-col space-y-12 mb-32"
+          >
+            {/* Search Bar - Minimalist Focus */}
+            <div className="relative group max-w-2xl">
+              <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-4 w-4 text-white/20 group-focus-within:text-primary transition-colors" />
+              <Input
+                placeholder={isRTL ? "ابحث عن الأيقونة الخاصة بك..." : "Search your icon..."}
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="h-20 bg-surface-low border-0 border-b border-white/10 rounded-none text-white placeholder:text-white/10 focus-visible:ring-0 focus-visible:ring-offset-0 px-16 text-[12px] uppercase tracking-[0.4em] w-full transition-all group-focus-within:border-primary"
+              />
             </div>
 
-            {hasActiveFilters && (
-              <div className="flex justify-end mt-4">
-                <Button variant="ghost" size="sm" onClick={clearFilters} className="gap-2">
-                  <X className="h-4 w-4" />
-                  مسح الفلاتر
-                </Button>
-              </div>
-            )}
-          </div>
+            {/* Selectors Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-0 border border-white/5 bg-surface-low divide-x divide-y divide-white/5 md:divide-y-0">
+               {/* Brand Selector */}
+               <div className="p-6 relative">
+                 <p className="text-[10px] uppercase tracking-[0.3em] text-white/30 mb-4 px-2">{isRTL ? "الماركة" : "Heritage"}</p>
+                 <Select value={selectedBrand} onValueChange={setSelectedBrand}>
+                   <SelectTrigger className="bg-transparent border-0 text-white uppercase text-[11px] tracking-[0.2em] focus:ring-0 h-10 w-full px-2">
+                     <SelectValue placeholder="All Brands" />
+                   </SelectTrigger>
+                   <SelectContent className="bg-surface-high border-white/10 text-white rounded-none">
+                     <SelectItem value="all">All Brands</SelectItem>
+                     {brands?.map((brand) => (
+                       <SelectItem key={brand.id} value={brand.id} className="uppercase text-[10px] tracking-widest">{brand.name_en}</SelectItem>
+                     ))}
+                   </SelectContent>
+                 </Select>
+               </div>
 
-          {/* Results Count */}
-          <div className="flex items-center gap-2 mb-6">
-            <Filter className="h-4 w-4 text-primary" />
-            <span className="text-sm text-muted-foreground">
-              {cars?.length || 0} سيارة
-            </span>
-          </div>
+               {/* Fuel Type */}
+               <div className="p-6 relative">
+                 <p className="text-[10px] uppercase tracking-[0.3em] text-white/30 mb-4 px-2">{isRTL ? "المحرك" : "Propulsion"}</p>
+                 <Select value={fuelType} onValueChange={setFuelType}>
+                   <SelectTrigger className="bg-transparent border-0 text-white uppercase text-[11px] tracking-[0.2em] focus:ring-0 h-10 w-full px-2">
+                     <SelectValue />
+                   </SelectTrigger>
+                   <SelectContent className="bg-surface-high border-white/10 text-white rounded-none">
+                     <SelectItem value="all">Every Power</SelectItem>
+                     <SelectItem value="petrol">Petrol</SelectItem>
+                     <SelectItem value="diesel">Diesel</SelectItem>
+                     <SelectItem value="electric">Electric</SelectItem>
+                     <SelectItem value="hybrid">Hybrid</SelectItem>
+                   </SelectContent>
+                 </Select>
+               </div>
 
-          {/* Cars Grid */}
-          {isLoading ? (
-            <div className="flex justify-center items-center py-20">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+               {/* Price Range */}
+               <div className="p-6 relative">
+                 <p className="text-[10px] uppercase tracking-[0.3em] text-white/30 mb-4 px-2">{isRTL ? "الاستثمار" : "Investment"}</p>
+                 <Select value={priceRange} onValueChange={setPriceRange}>
+                   <SelectTrigger className="bg-transparent border-0 text-white uppercase text-[11px] tracking-[0.2em] focus:ring-0 h-10 w-full px-2">
+                     <SelectValue />
+                   </SelectTrigger>
+                   <SelectContent className="bg-surface-high border-white/10 text-white rounded-none">
+                     <SelectItem value="all">Full Range</SelectItem>
+                     <SelectItem value="0-50000">Below 50K</SelectItem>
+                     <SelectItem value="50000-100000">50K - 100K</SelectItem>
+                     <SelectItem value="100000-200000">100K - 200K</SelectItem>
+                     <SelectItem value="200000-500000">200K - 500K</SelectItem>
+                     <SelectItem value="500000-">Above 500K</SelectItem>
+                   </SelectContent>
+                 </Select>
+               </div>
+
+               {/* Sort By */}
+               <div className="p-6 relative">
+                 <p className="text-[10px] uppercase tracking-[0.3em] text-white/30 mb-4 px-2">{isRTL ? "الترتيب" : "Sequence"}</p>
+                 <Select value={sortBy} onValueChange={setSortBy}>
+                   <SelectTrigger className="bg-transparent border-0 text-white uppercase text-[11px] tracking-[0.2em] focus:ring-0 h-10 w-full px-2">
+                     <SelectValue />
+                   </SelectTrigger>
+                   <SelectContent className="bg-surface-high border-white/10 text-white rounded-none">
+                     <SelectItem value="newest">Recent Entry</SelectItem>
+                     <SelectItem value="price_asc">Investment: Lo -> Hi</SelectItem>
+                     <SelectItem value="price_desc">Investment: Hi -> Lo</SelectItem>
+                   </SelectContent>
+                 </Select>
+               </div>
+
+               {/* Action / Count */}
+               <div className="p-6 flex items-center justify-between group cursor-pointer" onClick={clearFilters}>
+                 <div className="space-y-1">
+                   <p className="text-[10px] uppercase tracking-[0.3em] text-white/30">{isRTL ? "متاح" : "Inventory"}</p>
+                   <p className="text-[12px] font-bold text-primary tracking-[0.2em]">{cars?.length || 0} ICONS</p>
+                 </div>
+                 {hasActiveFilters && (
+                   <X className="h-4 w-4 text-white/20 group-hover:text-primary transition-colors" />
+                 )}
+               </div>
             </div>
-          ) : cars && cars.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 stagger-3d-entrance">
-              {cars.map((car, index) => (
-                <div 
-                  key={car.id} 
-                  style={{ animationDelay: `${index * 0.08}s` }}
-                  className="opacity-0 animate-fade-in"
-                >
-                  <CarCard car={mapCarToCardData(car)} />
+          </motion.div>
+
+          {/* Results Grid - High Fidelity Stagger */}
+          <AnimatePresence mode="wait">
+            {isLoading ? (
+              <motion.div
+                key="loading"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 md:gap-20"
+              >
+                {[1, 2, 3, 4, 5, 6].map((i) => (
+                  <div key={i} className="h-[500px] bg-surface-low border border-white/5 animate-pulse" />
+                ))}
+              </motion.div>
+            ) : cars && cars.length > 0 ? (
+              <motion.div
+                key="results"
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 md:gap-20"
+              >
+                {cars.map((car, index) => (
+                  <motion.div
+                    key={car.id}
+                    initial={{ opacity: 0, y: 40 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: index * 0.05, ease: [0.19, 1, 0.22, 1] }}
+                  >
+                    <CarCard car={mapCarToCardData(car)} />
+                  </motion.div>
+                ))}
+              </motion.div>
+            ) : (
+              <motion.div
+                key="empty"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-center py-40 border border-white/5 bg-surface-low"
+              >
+                <div className="max-w-xs mx-auto space-y-8">
+                  <div className="w-16 h-16 border border-white/10 flex items-center justify-center mx-auto opacity-20">
+                    <Search className="h-6 w-6 text-white" />
+                  </div>
+                  <h3 className="text-xl uppercase tracking-[0.4em] text-white/40">No Icons Matching Your Criteria</h3>
+                  <button onClick={clearFilters} className="px-12 py-5 border border-white/20 text-white text-[11px] uppercase tracking-[0.4em] font-medium hover:bg-white hover:text-black transition-all duration-700">
+                    Reset Pursuit
+                  </button>
                 </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-20">
-              <p className="text-muted-foreground">لا توجد سيارات متطابقة مع البحث</p>
-              <Button variant="outline" className="mt-4" onClick={clearFilters}>
-                مسح الفلاتر
-              </Button>
-            </div>
-          )}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </main>
 

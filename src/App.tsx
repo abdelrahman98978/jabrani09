@@ -9,6 +9,7 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 import { CartProvider } from "@/contexts/CartContext";
 import { CompareProvider } from "@/contexts/CompareContext";
 import { WishlistProvider } from "@/contexts/WishlistContext";
+import { TenantProvider, useTenant } from "@/contexts/TenantContext";
 import { useSettings } from "@/hooks/useSettings";
 import Index from "./pages/Index";
 import CarsPage from "./pages/CarsPage";
@@ -176,8 +177,6 @@ const AppInner = () => {
     </ThemeProvider>
   );
 };
-
-import { TenantProvider } from "@/contexts/TenantContext";
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
